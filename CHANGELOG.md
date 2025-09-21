@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/cjh-store/cc/compare/v1.0.0...v1.1.0) (2025-09-21)
+
+### Features
+
+* **api:** 重构删除命令模块 ([984dcf4](https://github.com/cjh-store/cc/commit/984dcf4bed7f0ac94ebf6273d265a180603e1a39))
+
 ## 1.0.0 (2025-09-21)
 
 ### Features
