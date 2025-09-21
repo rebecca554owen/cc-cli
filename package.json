@@ -14,7 +14,7 @@
     "link": "npm link",
     "unlink": "npm unlink",
     "start": "node bin/cc.js",
-    "git:push": "git add -A && git-pro commit && git pull && git push",
+    "git:push": "git add -A && git-pro commit && git pull --rebase && git push",
     "release": "semantic-release",
     "release:dry": "semantic-release --dry-run",
     "version:patch": "npm version patch && git push --tags",
