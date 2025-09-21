@@ -1,6 +1,6 @@
 {
   "name": "@cjh0/cc-cli",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "description": "Claude Code配置管理CLI工具",
   "main": "src/index.js",
   "bin": {
@@ -14,7 +14,7 @@
     "link": "npm link",
     "unlink": "npm unlink",
     "start": "node bin/cc.js",
-  "git:push": "git add -A && git-pro commit && git pull && git push",
+    "git:push": "git add -A && git-pro commit && git pull && git push",
     "release": "semantic-release",
     "release:dry": "semantic-release --dry-run",
     "version:patch": "npm version patch && git push --tags",
