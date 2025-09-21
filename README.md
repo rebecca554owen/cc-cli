@@ -55,6 +55,14 @@ npm link       # 或 yarn link 或 pnpm link --global
 
 ## 🚀 使用方法
 
+### 📸 界面预览
+
+#### API 配置管理界面
+![API配置管理界面](docs/images/api-menu.png)
+
+#### 配置切换界面
+![配置切换界面](docs/images/switch-config.png)
+
 ### 基本命令
 
 ```bash
