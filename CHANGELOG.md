@@ -4,6 +4,12 @@
 
 * Claude Code配置管理CLI工具初始发布 ([240c51a](https://github.com/cjh-store/cc/commit/240c51af53daf0f89bd3cdc9af961f9b2201a4b0))
 
+## 1.0.0 (2025-09-21)
+
+### Features
+
+* Claude Code配置管理CLI工具初始发布 ([240c51a](https://github.com/cjh-store/cc/commit/240c51af53daf0f89bd3cdc9af961f9b2201a4b0))
+
 ## [1.1.0](https://github.com/cjh-store/cc/compare/v1.0.0...v1.1.0) (2025-09-21)
 
 ### Features
