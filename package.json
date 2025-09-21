@@ -1,0 +1,68 @@
+{
+  "name": "@cjh0/cc-cli",
+  "version": "1.1.0",
+  "description": "Claude Code配置管理CLI工具",
+  "main": "src/index.js",
+  "bin": {
+    "cc": "./bin/cc.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node bin/cc.js --help",
+    "link": "npm link",
+    "unlink": "npm unlink",
+    "start": "node bin/cc.js",
+    "git:push": "git pull && git add -A && git-pro commit && git push",
+    "release": "semantic-release",
+    "release:dry": "semantic-release --dry-run",
+    "version:patch": "npm version patch && git push --tags",
+    "version:minor": "npm version minor && git push --tags",
+    "version:major": "npm version major && git push --tags",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "cli",
+    "claude-code",
+    "api",
+    "config",
+    "management",
+    "anthropic",
+    "ai",
+    "configuration",
+    "tool"
+  ],
+  "author": "cjh0 <your-email@example.com>",
+  "license": "MIT",
+  "dependencies": {
+    "boxen": "^5.1.2",
+    "chalk": "^4.1.2",
+    "commander": "^9.0.0",
+    "figlet": "^1.5.2",
+    "fs-extra": "^11.1.0",
+    "inquirer": "^8.2.0",
+    "ora": "^5.4.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cjh-store/cc.git"
+  },
+  "homepage": "https://github.com/cjh-store/cc#readme",
+  "bugs": {
+    "url": "https://github.com/cjh-store/cc/issues"
+  },
+  "preferGlobal": true,
+  "devDependencies": {
+    "@cjh0/git-pro": "^8.1.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@semantic-release/npm": "^12.0.1",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "semantic-release": "^24.1.0"
+  }
+}

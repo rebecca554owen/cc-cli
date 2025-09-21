@@ -1,0 +1,108 @@
+const chalk = require('chalk');
+const ora = require('ora');
+
+const ConfigManager = require('../../core/ConfigManager');
+const { selectSite, selectToken, confirmSwitch, showSuccess, showError, showInfo } = require('../../utils/ui');
+const { formatSwitchSuccess } = require('../../utils/formatter');
+
+/**
+ * API配置切换命令
+ */
+class SwitchCommand {
+  constructor() {
+    this.configManager = new ConfigManager();
+  }
+
+  /**
+   * 执行配置切换
+   * @param {Array} args 参数
+   */
+  async execute(args = []) {
+    const spinner = ora('正在加载配置...').start();
+    
+    try {
+      // 检查配置文件是否存在
+      if (!await this.configManager.configExists()) {
+        spinner.fail();
+        showError('配置文件不存在');
+        showInfo('请确保 ~/.claude/api_configs.json 文件存在');
+        return;
+      }
+
+      // 读取所有配置
+      const allConfigs = await this.configManager.getAllConfigs();
+      
+      if (!this.configManager.validateConfig(allConfigs)) {
+        spinner.fail();
+        showError('配置文件格式无效');
+        return;
+      }
+
+      spinner.succeed('配置加载完成');
+
+      // 1. 选择站点
+      const selectedSite = await selectSite(allConfigs.sites);
+      const siteConfig = allConfigs.sites[selectedSite];
+
+      console.log(chalk.gray(`✓ 选择站点: ${selectedSite}`));
+      console.log(chalk.gray(`✓ URL: ${siteConfig.config.env.ANTHROPIC_BASE_URL}`));
+
+      // 2. 智能选择Token
+      let selectedToken;
+      const tokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
+      
+      if (Object.keys(tokens).length === 1) {
+        selectedToken = Object.values(tokens)[0];
+        const tokenName = Object.keys(tokens)[0];
+        console.log(chalk.gray(`✓ Token自动选择: ${tokenName} (${selectedToken.substring(0, 10)}...)`));
+      } else {
+        selectedToken = await selectToken(tokens);
+        const tokenName = Object.keys(tokens).find(key => tokens[key] === selectedToken);
+        console.log(chalk.gray(`✓ 选择Token: ${tokenName}`));
+      }
+
+      // 3. 确认切换
+      const config = {
+        site: selectedSite,
+        siteName: selectedSite,
+        ANTHROPIC_BASE_URL: siteConfig.config.env.ANTHROPIC_BASE_URL,
+        token: selectedToken,
+        tokenName: Object.keys(tokens).find(key => tokens[key] === selectedToken)
+      };
+
+      const confirmed = await confirmSwitch(config);
+      
+      if (!confirmed) {
+        showInfo('取消切换配置');
+        return;
+      }
+
+      // 4. 保存配置
+      const saveSpinner = ora('正在保存配置...').start();
+      
+      try {
+        await this.configManager.switchConfig(selectedSite, selectedToken, siteConfig);
+        saveSpinner.succeed('配置保存成功');
+        
+        // 显示成功信息
+        console.log(formatSwitchSuccess(config));
+        showSuccess('配置切换完成！');
+        
+      } catch (error) {
+        saveSpinner.fail();
+        showError(`保存配置失败: ${error.message}`);
+      }
+
+    } catch (error) {
+      spinner.fail();
+      showError(`配置切换失败: ${error.message}`);
+      
+      if (error.message.includes('配置文件不存在')) {
+        showInfo('请确保以下文件存在：');
+        console.log(chalk.gray('  ~/.claude/api_configs.json'));
+      }
+    }
+  }
+}
+
+module.exports = new SwitchCommand();
