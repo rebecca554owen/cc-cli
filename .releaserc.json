@@ -4,7 +4,7 @@
     ["@semantic-release/commit-analyzer", {
       "preset": "conventionalcommits",
       "parserOpts": {
-        "headerPattern": "^(?:\\S+\\s+)?(\\w+)(?:\\(([^)]+)\\))?!?\\s*:\\s*(.+)$",
+        "headerPattern": "^(?:[^\\w\\s]+\\s+)?(\\w+)(?:\\(([^)]+)\\))?!?\\s*:\\s*(.+)$",
         "headerCorrespondence": ["type", "scope", "subject"]
       },
       "releaseRules": [
@@ -24,7 +24,7 @@
     ["@semantic-release/release-notes-generator", {
       "preset": "conventionalcommits",
       "parserOpts": {
-        "headerPattern": "^(?:\\S+\\s+)?(\\w+)(?:\\(([^)]+)\\))?!?\\s*:\\s*(.+)$",
+        "headerPattern": "^(?:[^\\w\\s]+\\s+)?(\\w+)(?:\\(([^)]+)\\))?!?\\s*:\\s*(.+)$",
         "headerCorrespondence": ["type", "scope", "subject"]
       }
     }],
