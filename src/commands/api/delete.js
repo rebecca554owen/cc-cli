@@ -311,7 +311,7 @@ class DeleteCommand {
       {
         type: "confirm",
         name: "confirmDelete",
-        message: chalk.yellow("确认删除此Token？"),
+        message: chalk.yellow("确认删除此Token?"),
         default: false,
       },
     ]);
