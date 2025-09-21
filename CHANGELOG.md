@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/cjh-store/cc/compare/v1.1.0...v1.1.1) (2025-09-21)
+
+### Bug Fixes
+
+* 完善发布流程 ([dbecfe2](https://github.com/cjh-store/cc/commit/dbecfe2f36987716c740ff76634a3febc1c4f54a))
+
 ## [1.1.0](https://github.com/cjh-store/cc/compare/v1.0.0...v1.1.0) (2025-09-21)
 
 ### Features
