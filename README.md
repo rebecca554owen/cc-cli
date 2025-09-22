@@ -21,7 +21,6 @@ npm install -g @cjh0/cc-cli
 ```
 
 
-
 ## 🚀 使用方法
 
 ### 主要命令
@@ -67,14 +66,15 @@ cc --help
 ```json
 {
   "sites": {
-    "站点名称": {
-      "url": "https://api.example.com",
-      "description": "站点描述",
+    "XX公益站": {
+      "url": "https://api.example.com",// 站点的地址 免得忘记公益站点，后期会支持一键打开
+      "description": "站点描述",// 随意 可不填
+      // 支持claude code所有配置，与cc原有配置文件进行合并，实现不同站点不同配置和模型设置
       "config": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
           "ANTHROPIC_AUTH_TOKEN": {
-            "Token1": "sk-xxxxxxxxxxxxxx",
+            "Token1": "sk-xxxxxxxxxxxxxx",// 支持多个token 
             "Token2": "sk-yyyyyyyyyyyyyy"
           }
         },
