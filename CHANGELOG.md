@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/cjh-store/cc/compare/v1.2.0...v1.2.1) (2025-09-22)
+
+### Performance Improvements
+
+* **项目:** 优化启动流程和Banner显示功能 ([4594357](https://github.com/cjh-store/cc/commit/459435753efcb1aedd0ef84373750b5a20b0c344))
+
 ## [1.2.0](https://github.com/cjh-store/cc/compare/v1.1.8...v1.2.0) (2025-09-22)
 
 ### Features
