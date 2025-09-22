@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/cjh-store/cc/compare/v1.1.8...v1.2.0) (2025-09-22)
+
+### Features
+
+* **api:** 添加API配置编辑功能 ([da6ca5d](https://github.com/cjh-store/cc/commit/da6ca5d36fa431b3b19855c475f6cdc83ab7032c))
+
 ## [1.1.8](https://github.com/cjh-store/cc/compare/v1.1.7...v1.1.8) (2025-09-22)
 
 ## [1.1.7](https://github.com/cjh-store/cc/compare/v1.1.6...v1.1.7) (2025-09-22)
