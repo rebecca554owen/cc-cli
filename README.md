@@ -74,8 +74,8 @@ cc --help
     "XX公益站": {
       "url": "https://api.example.com", // 站点的地址 免得忘记公益站点，后期会支持一键打开
       "description": "同时支持Claude Code和Codex", // 随意 可不填
-      // Claude Code API配置 (兼容旧版本)
-      "config": {
+      // Claude Code API配置
+      "claude": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
           "ANTHROPIC_AUTH_TOKEN": {
@@ -85,7 +85,7 @@ cc --help
         },
         "model": "claude-3-5-sonnet-20241022"
       },
-      // Codex API配置 (新增支持，仅支持Claude模型)
+      // Codex API配置
       "codex": {
         "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
         "model": "gpt-5",
@@ -103,9 +103,10 @@ cc --help
 
 > **⚠️ 重要说明**：
 >
-> - `config` 字段：用于 Claude Code API 配置（兼容旧版本）
+> - `claude` 字段：用于 Claude Code API 配置（推荐使用）
+> - `config` 字段：用于 Claude Code API 配置（向后兼容）
 > - `codex` 字段：用于 Codex API 配置，仅支持 Claude 模型
-> - 两种配置可在同一站点中共存，实现双重支持
+> - 三种配置可在同一站点中共存，实现双重支持
 > - YOLO 模式：自动开启 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
 
 ## 📸 界面预览

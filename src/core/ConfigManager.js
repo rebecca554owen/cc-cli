@@ -40,7 +40,19 @@ class ConfigManager {
       }
 
       const configContent = await fs.readFile(this.configPath, 'utf8');
-      return JSON.parse(configContent);
+      const config = JSON.parse(configContent);
+
+      // 支持claude别名：自动将claude字段映射为config字段
+      if (config.sites) {
+        for (const siteKey in config.sites) {
+          const site = config.sites[siteKey];
+          if (site.claude && !site.config) {
+            site.config = site.claude;
+          }
+        }
+      }
+
+      return config;
     } catch (error) {
       if (error.message.includes('API配置文件不存在')) {
         throw error;
@@ -250,19 +262,22 @@ class ConfigManager {
     }
 
     for (const [siteKey, siteConfig] of Object.entries(config.sites)) {
-      if (!siteConfig.url || !siteConfig.config) {
+      if (!siteConfig.url || (!siteConfig.config && !siteConfig.claude)) {
         return false;
       }
 
-      if (!siteConfig.config.env || !siteConfig.config.env.ANTHROPIC_BASE_URL || !siteConfig.config.env.ANTHROPIC_AUTH_TOKEN) {
+      // 获取实际的配置对象（支持claude别名）
+      const actualConfig = siteConfig.config || siteConfig.claude;
+
+      if (!actualConfig.env || !actualConfig.env.ANTHROPIC_BASE_URL || !actualConfig.env.ANTHROPIC_AUTH_TOKEN) {
         return false;
       }
 
-      if (typeof siteConfig.config.env.ANTHROPIC_BASE_URL !== 'string' || typeof siteConfig.config.env.ANTHROPIC_AUTH_TOKEN !== 'object') {
+      if (typeof actualConfig.env.ANTHROPIC_BASE_URL !== 'string' || typeof actualConfig.env.ANTHROPIC_AUTH_TOKEN !== 'object') {
         return false;
       }
 
-      if (Object.keys(siteConfig.config.env.ANTHROPIC_AUTH_TOKEN).length === 0) {
+      if (Object.keys(actualConfig.env.ANTHROPIC_AUTH_TOKEN).length === 0) {
         return false;
       }
     }
