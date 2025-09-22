@@ -2,6 +2,7 @@ const chalk = require('chalk');
 const { program } = require('commander');
 
 const switchCommand = require('./switch');
+const editCommand = require('./edit');
 const { showCodexMenu, waitForBackConfirm, createBackChoice } = require('../../utils/ui');
 
 /**
@@ -10,7 +11,8 @@ const { showCodexMenu, waitForBackConfirm, createBackChoice } = require('../../u
 class CodexCommand {
   constructor() {
     this.subCommands = {
-      switch: switchCommand
+      switch: switchCommand,
+      edit: editCommand
     };
   }
 
@@ -31,6 +33,7 @@ class CodexCommand {
     console.log(chalk.white('功能:'));
     console.log('  🔄 切换配置    选择不同的Codex服务提供商');
     console.log('  📋 查看配置    列出所有Codex配置');
+    console.log('  📝 编辑配置    编辑Codex配置文件');
     console.log('  🚀 YOLO模式    开启/关闭最宽松配置模式（approval_policy=never, sandbox_mode=danger-full-access）');
     console.log();
     console.log(chalk.white('配置文件:'));
@@ -131,6 +134,11 @@ class CodexCommand {
             short: '查看配置'
           },
           {
+            name: '📝 编辑配置 - 编辑Codex配置文件',
+            value: 'edit',
+            short: '编辑配置'
+          },
+          {
             name: `${yoloActionText} ${yoloStatusText}`,
             value: 'yolo',
             short: 'YOLO模式'
@@ -158,6 +166,9 @@ class CodexCommand {
             break;
           case 'list':
             await this.listCodexConfigs();
+            break;
+          case 'edit':
+            await this.subCommands.edit.execute([]);
             break;
           case 'yolo':
             await this.toggleYoloMode();
