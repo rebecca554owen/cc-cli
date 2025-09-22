@@ -86,9 +86,9 @@ cc --help
 ```
 
 ## 📸 界面预览
+![CC CLI 界面预览](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/1758509266008.png)
 
-#### API 配置管理界面
-![API配置管理界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/api-menu.png)
+
 
 #### 配置切换界面
 ![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/switch-config.png)
