@@ -1,3 +1,9 @@
+## [2.1.0](https://github.com/cjh-store/cc/compare/v2.0.1...v2.1.0) (2025-09-22)
+
+### Features
+
+* **api:** 添加API配置快速切换功能 ([0227851](https://github.com/cjh-store/cc/commit/022785151bd553d79e9f7016e4f6159eef6eb432))
+
 ## [2.0.1](https://github.com/cjh-store/cc/compare/v2.0.0...v2.0.1) (2025-09-22)
 
 ## [2.0.0](https://github.com/cjh-store/cc/compare/v1.2.2...v2.0.0) (2025-09-22)
