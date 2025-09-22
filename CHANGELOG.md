@@ -1,3 +1,9 @@
+## [2.2.0](https://github.com/cjh-store/cc/compare/v2.1.1...v2.2.0) (2025-09-22)
+
+### Features
+
+* **codex:** 添加编辑命令功能 ([b7785ba](https://github.com/cjh-store/cc/commit/b7785baa6035b2f44c7d4798b5f4a1ba5881bd5e))
+
 ## [2.1.1](https://github.com/cjh-store/cc/compare/v2.1.0...v2.1.1) (2025-09-22)
 
 ## [2.1.0](https://github.com/cjh-store/cc/compare/v2.0.1...v2.1.0) (2025-09-22)
