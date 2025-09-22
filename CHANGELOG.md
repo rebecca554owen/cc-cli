@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/cjh-store/cc/compare/v1.2.1...v1.2.2) (2025-09-22)
+
+### Bug Fixes
+
+* **项目:** 修复Windows平台配置文件打开方式 ([fa4acc7](https://github.com/cjh-store/cc/commit/fa4acc774962b4749b3c2538693602e4f78900d1))
+
 ## [1.2.1](https://github.com/cjh-store/cc/compare/v1.2.0...v1.2.1) (2025-09-22)
 
 ### Performance Improvements
