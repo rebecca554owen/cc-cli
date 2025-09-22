@@ -4,7 +4,8 @@
   "description": "Claude Code配置管理CLI工具",
   "main": "src/index.js",
   "bin": {
-    "cc": "./bin/cc.js"
+    "cc": "./bin/cc.js",
+    "cc-cli": "./bin/cc.js"
   },
   "publishConfig": {
     "access": "public"
@@ -42,7 +43,8 @@
     "figlet": "^1.5.2",
     "fs-extra": "^11.1.0",
     "inquirer": "^8.2.0",
-    "ora": "^5.4.1"
+    "ora": "^5.4.1",
+    "update-notifier": "^5.1.0"
   },
   "engines": {
     "node": ">=14.0.0"

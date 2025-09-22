@@ -57,6 +57,11 @@ class CommandRegistry {
         return;
       }
 
+      if (commandName === 'help') {
+        await this.showHelp();
+        return;
+      }
+
       const command = this.commands.get(commandName);
       if (!command) {
         throw new Error(`未找到命令: ${commandName}`);
@@ -71,6 +76,14 @@ class CommandRegistry {
       console.error(chalk.red(`❌ 执行命令 ${commandName} 失败:`), error.message);
       throw error;
     }
+  }
+
+  /**
+   * 显示帮助信息
+   */
+  async showHelp() {
+    const { formatMainHelp } = require('../utils/formatter');
+    console.log(formatMainHelp());
   }
 
   /**

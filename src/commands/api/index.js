@@ -68,8 +68,7 @@ class ApiCommand {
   cc api --help       显示此帮助信息
 
 配置文件位置:
-  ~/.claude/api_configs.json    API配置文件
-  ~/.claude/current_config.json 当前使用的配置
+  ~/.claude/api_configs.json    API配置文件（包含当前激活配置）
 
 注意:
   - 如果URL或Token只有一个选项，会自动选择
@@ -106,8 +105,7 @@ class ApiCommand {
     console.log('  - 当前使用的配置会用 ⭐ 特殊标识');
     console.log();
     console.log(chalk.white('配置文件:'));
-    console.log(`  ${chalk.gray('~/.claude/api_configs.json')}    API配置文件`);
-    console.log(`  ${chalk.gray('~/.claude/current_config.json')}  当前配置文件`);
+    console.log(`  ${chalk.gray('~/.claude/api_configs.json')}    API配置文件（包含当前激活配置）`);
     console.log();
     console.log(chalk.white('示例:'));
     console.log(`  ${chalk.green('cc api')}           # 显示交互式菜单`);

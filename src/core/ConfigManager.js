@@ -11,7 +11,6 @@ class ConfigManager {
   constructor() {
     this.claudeDir = path.join(os.homedir(), '.claude');
     this.configPath = path.join(this.claudeDir, 'api_configs.json');
-    this.currentConfigPath = path.join(this.claudeDir, 'current_config.json');
     this.settingsPath = path.join(this.claudeDir, 'settings.json');
     this.historyPath = path.join(os.homedir(), '.cc', 'history.json');
   }
@@ -56,14 +55,8 @@ class ConfigManager {
    */
   async getCurrentConfig() {
     try {
-      await this.ensureConfigDir();
-      
-      if (!await fs.pathExists(this.currentConfigPath)) {
-        return null;
-      }
-
-      const configContent = await fs.readFile(this.currentConfigPath, 'utf8');
-      return JSON.parse(configContent);
+      const allConfigs = await this.getAllConfigs();
+      return allConfigs.currentConfig || null;
     } catch (error) {
       console.warn(chalk.yellow('⚠️  读取当前配置失败:'), error.message);
       return null;
@@ -77,7 +70,7 @@ class ConfigManager {
   async saveCurrentConfig(config) {
     try {
       await this.ensureConfigDir();
-      
+
       const configToSave = {
         site: config.site,
         siteName: config.siteName,
@@ -88,11 +81,18 @@ class ConfigManager {
         updatedAt: new Date().toISOString()
       };
 
-      await fs.writeFile(this.currentConfigPath, JSON.stringify(configToSave, null, 2), 'utf8');
-      
+      // 读取现有配置
+      const allConfigs = await this.getAllConfigs();
+
+      // 更新当前配置
+      allConfigs.currentConfig = configToSave;
+
+      // 保存到 api_configs.json
+      await fs.writeFile(this.configPath, JSON.stringify(allConfigs, null, 2), 'utf8');
+
       // 保存到历史记录
       await this.saveToHistory(configToSave);
-      
+
     } catch (error) {
       throw new Error(`保存当前配置失败: ${error.message}`);
     }

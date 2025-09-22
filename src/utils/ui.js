@@ -7,6 +7,8 @@ const figlet = require('figlet');
  * 显示启动Banner
  */
 function showBanner() {
+  const packageJson = require('../../package.json');
+
   const banner = figlet.textSync('CC CLI', {
     font: 'Small',
     horizontalLayout: 'default',
@@ -14,9 +16,9 @@ function showBanner() {
   });
 
   const boxedBanner = boxen(
-    chalk.cyan.bold(banner) + '\n' + 
+    chalk.cyan.bold(banner) + '\n' +
     chalk.white('Claude Code配置管理CLI工具') + '\n' +
-    chalk.gray('v1.0.0'),
+    chalk.gray(`v${packageJson.version}`),
     {
       padding: 1,
       margin: 1,

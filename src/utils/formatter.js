@@ -249,13 +249,45 @@ ${chalk.white("智能选择:")}
   • 当前配置会用 ⭐ 标识
 
 ${chalk.white("配置文件:")}
-  ~/.claude/api_configs.json    API配置文件
-  ~/.claude/current_config.json 当前配置
+  ~/.claude/api_configs.json    API配置文件（包含当前激活配置）
 
 ${chalk.white("使用示例:")}
   cc api           显示交互菜单
   cc api --list    列出所有配置
   cc api --help    显示帮助信息
+`;
+}
+
+/**
+ * 主帮助信息格式化
+ */
+function formatMainHelp() {
+  return `
+${chalk.cyan.bold('CC CLI - Claude Code 配置管理工具')}
+
+${chalk.white("主要功能:")}
+  📡 API配置管理     切换、查看、添加、删除API配置
+  📊 状态查看       查看当前使用的配置信息
+  ❓ 帮助文档       显示详细使用说明
+
+${chalk.white("基本命令:")}
+  cc              启动交互式界面
+  cc-cli          备用命令（避免与系统命令冲突）
+  cc api          API配置管理
+  cc status       查看当前状态
+  cc --version    查看版本信息
+  cc --help       显示帮助信息
+
+${chalk.white("⚠️  命令冲突解决:")}
+  如果遇到 'clang: error' 错误，请使用 cc-cli 命令
+
+${chalk.white("配置文件:")}
+  ~/.claude/api_configs.json    API配置文件（包含当前激活配置）
+
+${chalk.white("使用示例:")}
+  cc-cli api           显示交互菜单
+  cc-cli api --list    列出所有配置
+  cc-cli api --help    显示帮助信息
 `;
 }
 
@@ -266,5 +298,6 @@ module.exports = {
   formatError,
   formatWarning,
   formatApiHelp,
+  formatMainHelp,
   getSiteIcon,
 };
