@@ -14,9 +14,6 @@ const pkg = require("../package.json");
  */
 async function main(program) {
   try {
-    // 检查版本更新（异步，不阻塞主流程）
-    checkForUpdates();
-
     // 注册所有命令
     const commandRegistry = new CommandRegistry();
     await commandRegistry.registerCommands(program);
@@ -39,8 +36,11 @@ async function main(program) {
  * @param {CommandRegistry} commandRegistry 命令注册器
  */
 async function showInteractiveMenu(commandRegistry) {
-  // 显示banner
-  showBanner();
+  // 检查更新信息
+  const updateInfo = checkForUpdates();
+
+  // 显示banner（如果有更新会一起显示）
+  showBanner(updateInfo);
 
   while (true) {
     try {
@@ -94,33 +94,28 @@ async function showInteractiveMenu(commandRegistry) {
 
 /**
  * 检查版本更新
+ * @returns {Object|null} 更新信息，如果没有更新返回null
  */
 function checkForUpdates() {
   try {
     const notifier = updateNotifier({
       pkg,
-      updateCheckInterval: 1000 * 60 * 60 * 24, // 每天检查一次
+      updateCheckInterval: 0, // 每次执行都检查
       shouldNotifyInNpmScript: false
     });
 
     if (notifier.update) {
-      const updateMessage = boxen(
-        `🚀 ${chalk.cyan('新版本可用!')} ${chalk.dim(notifier.update.current)} → ${chalk.green(notifier.update.latest)}\n\n` +
-        `运行 ${chalk.cyan('npm install -g @cjh0/cc-cli')} 更新到最新版本\n\n` +
-        `更新日志: ${chalk.dim('https://github.com/cjh-store/cc/releases')}`,
-        {
-          padding: 1,
-          margin: 1,
-          borderStyle: 'round',
-          borderColor: 'yellow',
-          align: 'center'
-        }
-      );
-
-      console.log(updateMessage);
+      return {
+        current: notifier.update.current,
+        latest: notifier.update.latest,
+        type: notifier.update.type
+      };
     }
+
+    return null;
   } catch (error) {
     // 静默处理更新检查错误，不影响主功能
+    return null;
   }
 }
 

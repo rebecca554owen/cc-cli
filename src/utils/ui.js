@@ -5,8 +5,9 @@ const figlet = require('figlet');
 
 /**
  * 显示启动Banner
+ * @param {Object} updateInfo 更新信息（可选）
  */
-function showBanner() {
+function showBanner(updateInfo = null) {
   const packageJson = require('../../package.json');
 
   const banner = figlet.textSync('CC CLI', {
@@ -15,10 +16,31 @@ function showBanner() {
     verticalLayout: 'default'
   });
 
-  const boxedBanner = boxen(
-    chalk.cyan.bold(banner) + '\n' +
+  let versionText = chalk.gray(`v${packageJson.version}`);
+
+  // 根据更新状态调整版本显示
+  if (updateInfo) {
+    // 有新版本可用
+    versionText += chalk.yellow(' (有更新)');
+  } else {
+    // 已是最新版本
+    versionText += chalk.green(' (最新)');
+  }
+
+  let content = chalk.cyan.bold(banner) + '\n' +
     chalk.white('Claude Code配置管理CLI工具') + '\n' +
-    chalk.gray(`v${packageJson.version}`),
+    versionText;
+
+  // 如果有更新信息，添加到 banner 中
+  if (updateInfo) {
+    content += '\n\n' +
+      chalk.yellow('🚀 新版本可用! ') +
+      chalk.dim(updateInfo.current) + ' → ' + chalk.green(updateInfo.latest) + '\n' +
+      chalk.gray('运行 ') + chalk.cyan('npm install -g @cjh0/cc-cli') + chalk.gray(' 更新');
+  }
+
+  const boxedBanner = boxen(
+    content,
     {
       padding: 1,
       margin: 1,
