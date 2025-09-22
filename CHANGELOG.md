@@ -1,3 +1,13 @@
+## [2.0.0](https://github.com/cjh-store/cc/compare/v1.2.2...v2.0.0) (2025-09-22)
+
+### ⚠ BREAKING CHANGES
+
+* 新增 OpenAI Codex 支持，配置格式已更新
+
+### Features
+
+* 新增 OpenAI Codex 支持，配置格式已更新 ([65d2332](https://github.com/cjh-store/cc/commit/65d23324d4b26e48c121d1e88176577750177ec9))
+
 ## [1.2.2](https://github.com/cjh-store/cc/compare/v1.2.1...v1.2.2) (2025-09-22)
 
 ### Bug Fixes
