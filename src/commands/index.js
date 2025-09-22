@@ -23,6 +23,16 @@ class CommandRegistry {
       this.commands.set('api', apiCommand);
       await apiCommand.register(program);
 
+      // 注册API快速使用命令
+      const apiUseCommand = require('./api/apiuse');
+      this.commands.set('apiuse', apiUseCommand);
+      program
+        .command('apiuse')
+        .description('快速切换 Claude Code API 配置')
+        .action(async () => {
+          await this.executeCommand('apiuse', []);
+        });
+
       // 注册Codex命令（仅用于交互式菜单，不注册独立命令）
       const codexCommand = require('./codex');
       this.commands.set('codexapi', codexCommand);
@@ -63,6 +73,12 @@ class CommandRegistry {
 
       if (commandName === 'help') {
         await this.showHelp();
+        return;
+      }
+
+      if (commandName === 'apiuse') {
+        const apiUseCommand = this.commands.get('apiuse');
+        await apiUseCommand.execute(args);
         return;
       }
 

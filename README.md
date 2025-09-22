@@ -33,8 +33,9 @@ cc-cli
 
 # API配置管理
 cc api
-# 或者
-cc-cli api
+
+# 快速切换 API 配置
+cc apiuse
 
 # 查看当前状态
 cc status
