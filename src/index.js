@@ -52,36 +52,49 @@ async function showInteractiveMenu(commandRegistry) {
       }
 
       if (choice === "api") {
+        // 进入API子菜单（子菜单自己处理循环）
         await commandRegistry.executeCommand("api", []);
+      } else if (choice === "codexapi") {
+        // 进入Codex子菜单（子菜单自己处理循环）
+        await commandRegistry.executeCommand("codexapi", []);
       } else if (choice === "status") {
         await commandRegistry.executeCommand("status", []);
+
+        // 对于单次操作，询问是否继续
+        if (!await askContinue()) {
+          console.log(chalk.green("👋 再见！"));
+          process.exit(0);
+        }
       } else if (choice === "help") {
         await commandRegistry.executeCommand("help", []);
-      }
 
-      // 询问是否继续
-      const { continueChoice } = await inquirer.prompt([
-        {
-          type: "confirm",
-          name: "continueChoice",
-          message: "是否继续使用？",
-          default: true,
-        },
-      ]);
-
-      if (!continueChoice) {
-        console.log(chalk.green("👋 再见！"));
-        process.exit(0);
+        // 对于单次操作，询问是否继续
+        if (!await askContinue()) {
+          console.log(chalk.green("👋 再见！"));
+          process.exit(0);
+        }
       }
     } catch (error) {
       console.error(chalk.red("❌ 操作失败:"), error.message);
 
       const { continueOnError } = await inquirer.prompt([
         {
-          type: "confirm",
+          type: "list",
           name: "continueOnError",
-          message: "发生错误，是否继续？",
-          default: true,
+          message: "发生错误，请选择下一步操作：",
+          choices: [
+            {
+              name: "🔄 继续使用",
+              value: true,
+              short: "继续"
+            },
+            {
+              name: "🚪 退出程序",
+              value: false,
+              short: "退出"
+            }
+          ],
+          default: 0
         },
       ]);
 
@@ -90,6 +103,36 @@ async function showInteractiveMenu(commandRegistry) {
       }
     }
   }
+}
+
+/**
+ * 询问用户是否继续
+ * @param {string} message 询问消息
+ * @returns {boolean} 是否继续
+ */
+async function askContinue(message = "请选择下一步操作：") {
+  const { continueChoice } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "continueChoice",
+      message,
+      choices: [
+        {
+          name: "🔄 继续使用",
+          value: true,
+          short: "继续"
+        },
+        {
+          name: "🚪 退出程序",
+          value: false,
+          short: "退出"
+        }
+      ],
+      default: 0
+    },
+  ]);
+
+  return continueChoice;
 }
 
 /**

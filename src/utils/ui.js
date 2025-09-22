@@ -60,9 +60,14 @@ function showBanner(updateInfo = null) {
 async function showMainMenu() {
   const choices = [
     {
-      name: '📡 API - API配置管理',
+      name: '📡 Claude Code API - Claude Code API配置管理',
       value: 'api',
-      short: 'API'
+      short: 'Claude Code API'
+    },
+    {
+      name: '💻 Codex API - Codex配置管理',
+      value: 'codexapi',
+      short: 'CodexAPI'
     },
     {
       name: '📊 Status - 查看当前状态',
@@ -130,11 +135,7 @@ async function showApiMenu() {
       short: '删除配置'
     },
     new inquirer.Separator(),
-    {
-      name: '⬅️  返回主菜单',
-      value: 'back',
-      short: '返回'
-    }
+    createBackChoice('back')
   ];
 
   const { choice } = await inquirer.prompt([
@@ -165,6 +166,9 @@ async function selectSite(sites) {
       short: key
     };
   });
+
+  // 添加返回选项
+  choices.push(createBackChoice('__back__'));
 
   const { site } = await inquirer.prompt([
     {
@@ -215,6 +219,9 @@ async function selectToken(tokens) {
     value: token,
     short: name
   }));
+
+  // 添加返回选项
+  choices.push(createBackChoice('__back__'));
 
   const { token } = await inquirer.prompt([
     {
@@ -329,6 +336,38 @@ function getTokenIcon(tokenName) {
   return '🔑'; // 固定Token图标
 }
 
+/**
+ * 通用返回确认
+ * @param {string} message 提示消息
+ * @returns {Promise<void>} 等待用户确认返回
+ */
+async function waitForBackConfirm(message = '操作完成') {
+  const inquirer = require('inquirer');
+  await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'back',
+      message: `${message}：`,
+      choices: [
+        createBackChoice('back')
+      ]
+    }
+  ]);
+}
+
+/**
+ * 创建标准返回按钮选项
+ * @param {string} value - 返回值 ('back' | '__back__')
+ * @returns {Object} 标准返回按钮配置
+ */
+function createBackChoice(value = 'back') {
+  return {
+    name: '⬅️  返回上一级菜单',
+    value: value,
+    short: '返回'
+  };
+}
+
 module.exports = {
   showBanner,
   showMainMenu,
@@ -343,5 +382,7 @@ module.exports = {
   showInfo,
   getSiteIcon,
   getRegionIcon,
-  getTokenIcon
+  getTokenIcon,
+  waitForBackConfirm,
+  createBackChoice
 };

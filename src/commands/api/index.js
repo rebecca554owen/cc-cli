@@ -81,7 +81,7 @@ class ApiCommand {
 
 注意:
   - 如果URL或Token只有一个选项，会自动选择
-  - 当前使用的配置会用 ⭐ 标识
+  - 当前使用的配置会用绿色标识，当前站点用⭐标识
   - 所有操作都会实时更新Claude Code配置
 `);
   }
@@ -112,7 +112,7 @@ class ApiCommand {
     console.log(chalk.white('智能选择:'));
     console.log('  - 当URL只有1个时，自动选择，不显示选择界面');
     console.log('  - 当Token只有1个时，自动选择，不显示选择界面');
-    console.log('  - 当前使用的配置会用 ⭐ 特殊标识');
+    console.log('  - 当前使用的配置会用绿色特殊标识，当前站点用⭐标识');
     console.log();
     console.log(chalk.white('配置文件:'));
     console.log(`  ${chalk.gray('~/.claude/api_configs.json')}    API配置文件（包含当前激活配置）`);
@@ -130,33 +130,42 @@ class ApiCommand {
    * 显示交互式API菜单
    */
   async showInteractiveMenu() {
-    try {
-      const choice = await showApiMenu();
+    const inquirer = require('inquirer');
 
-      switch (choice) {
-        case 'switch':
-          await this.subCommands.switch.execute([]);
-          break;
-        case 'list':
-          await this.subCommands.list.execute([]);
-          break;
-        case 'add':
-          await this.subCommands.add.execute([]);
-          break;
-        case 'edit':
-          await this.subCommands.edit.execute([]);
-          break;
-        case 'delete':
-          await this.subCommands.delete.execute([]);
-          break;
-        case 'back':
-          return;
-        default:
-          console.log(chalk.red('❌ 无效选择'));
+    while (true) {
+      try {
+        const choice = await showApiMenu();
+
+        if (choice === 'back') {
+          return; // 返回主菜单
+        }
+
+        switch (choice) {
+          case 'switch':
+            await this.subCommands.switch.execute([]);
+            break;
+          case 'list':
+            await this.subCommands.list.execute([]);
+            break;
+          case 'add':
+            await this.subCommands.add.execute([]);
+            break;
+          case 'edit':
+            await this.subCommands.edit.execute([]);
+            break;
+          case 'delete':
+            await this.subCommands.delete.execute([]);
+            break;
+          default:
+            console.log(chalk.red('❌ 无效选择'));
+            continue;
+        }
+
+        // 操作完成后直接回到菜单循环
+      } catch (error) {
+        console.error(chalk.red('❌ API菜单操作失败:'), error.message);
+        // 发生错误后也直接回到菜单循环，不询问
       }
-    } catch (error) {
-      console.error(chalk.red('❌ API菜单操作失败:'), error.message);
-      throw error;
     }
   }
 

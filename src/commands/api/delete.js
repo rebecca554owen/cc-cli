@@ -9,6 +9,7 @@ const {
   showSuccess,
   showInfo,
   showWarning,
+  createBackChoice,
 } = require("../../utils/ui");
 const { formatError, getSiteIcon } = require("../../utils/formatter");
 
@@ -72,11 +73,7 @@ class DeleteCommand {
         short: "删除Token",
       },
       new inquirer.Separator(),
-      {
-        name: "⬅️  返回",
-        value: "back",
-        short: "返回",
-      },
+      createBackChoice("back"),
     ];
 
     const { action } = await inquirer.prompt([

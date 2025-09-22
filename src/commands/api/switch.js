@@ -26,7 +26,7 @@ class SwitchCommand {
         spinner.fail();
         showError('配置文件不存在');
         showInfo('请确保 ~/.claude/api_configs.json 文件存在');
-        return;
+        return false; // 配置文件不存在，操作未完成
       }
 
       // 读取所有配置
@@ -35,13 +35,19 @@ class SwitchCommand {
       if (!this.configManager.validateConfig(allConfigs)) {
         spinner.fail();
         showError('配置文件格式无效');
-        return;
+        return false; // 配置格式无效，操作未完成
       }
 
       spinner.succeed('配置加载完成');
 
       // 1. 选择站点
       const selectedSite = await selectSite(allConfigs.sites);
+
+      // 检查是否选择返回
+      if (selectedSite === '__back__') {
+        return false; // 用户选择返回，操作被取消
+      }
+
       const siteConfig = allConfigs.sites[selectedSite];
 
       console.log(chalk.gray(`✓ 选择站点: ${selectedSite}`));
@@ -50,13 +56,19 @@ class SwitchCommand {
       // 2. 智能选择Token
       let selectedToken;
       const tokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
-      
+
       if (Object.keys(tokens).length === 1) {
         selectedToken = Object.values(tokens)[0];
         const tokenName = Object.keys(tokens)[0];
         console.log(chalk.gray(`✓ Token自动选择: ${tokenName} (${selectedToken.substring(0, 10)}...)`));
       } else {
         selectedToken = await selectToken(tokens);
+
+        // 检查是否选择返回
+        if (selectedToken === '__back__') {
+          return false; // 用户选择返回，操作被取消
+        }
+
         const tokenName = Object.keys(tokens).find(key => tokens[key] === selectedToken);
         console.log(chalk.gray(`✓ 选择Token: ${tokenName}`));
       }
@@ -74,7 +86,7 @@ class SwitchCommand {
       
       if (!confirmed) {
         showInfo('取消切换配置');
-        return;
+        return false; // 用户取消确认，操作被取消
       }
 
       // 4. 保存配置
@@ -83,24 +95,29 @@ class SwitchCommand {
       try {
         await this.configManager.switchConfig(selectedSite, selectedToken, siteConfig);
         saveSpinner.succeed('配置保存成功');
-        
+
         // 显示成功信息
         console.log(formatSwitchSuccess(config));
         showSuccess('配置切换完成！');
-        
+
+        return true; // 操作成功完成
+
       } catch (error) {
         saveSpinner.fail();
         showError(`保存配置失败: ${error.message}`);
+        return false; // 保存配置失败
       }
 
     } catch (error) {
       spinner.fail();
       showError(`配置切换失败: ${error.message}`);
-      
+
       if (error.message.includes('配置文件不存在')) {
         showInfo('请确保以下文件存在：');
         console.log(chalk.gray('  ~/.claude/api_configs.json'));
       }
+
+      return false; // 操作失败
     }
   }
 }

@@ -49,7 +49,7 @@ function formatStatus(currentConfig, allConfigs = null) {
     `${chalk.white("站点：")} ${chalk.cyan(currentConfig.siteName)}\n` +
     `${chalk.white("ANTHROPIC_BASE_URL：")} ${chalk.cyan(url)}\n` +
     `${chalk.white("Token：")} ${chalk.cyan(
-      currentConfig.token.substring(0, 20) + "..."
+      formatToken(currentConfig.token)
     )}\n` +
     `${chalk.white("Token名称：")} ${chalk.gray(currentConfig.tokenName)}\n` +
     `${chalk.white("更新时间：")} ${chalk.gray(
@@ -74,42 +74,26 @@ function formatStatus(currentConfig, allConfigs = null) {
  */
 function formatConfigList(allConfigs, currentConfig) {
   let output = chalk.cyan.bold("📋 Claude API配置列表\n");
-  output += chalk.gray("═".repeat(40)) + "\n";
-
-  // 当前配置信息显示在顶部
-  if (currentConfig) {
-    // 构建显示文本，处理undefined
-    let url = currentConfig.ANTHROPIC_BASE_URL || currentConfig.url;
-
-    // 如果当前配置没有URL信息，从站点配置中获取
-    if (
-      !url &&
-      currentConfig.site &&
-      allConfigs.sites &&
-      allConfigs.sites[currentConfig.site]
-    ) {
-      const siteConfig = allConfigs.sites[currentConfig.site];
-      url =
-        siteConfig.config?.env?.ANTHROPIC_BASE_URL ||
-        siteConfig.ANTHROPIC_BASE_URL;
-    }
-
-    url = url || "未知URL";
-    output += chalk.green.bold(
-      `⭐ 当前配置: ${currentConfig.siteName} > ${url} > ${currentConfig.tokenName}\n`
-    );
-  } else {
-    output += chalk.yellow("⚠️  当前没有激活的配置\n");
-  }
   output += chalk.gray("═".repeat(40)) + "\n\n";
 
   for (const [siteKey, siteConfig] of Object.entries(allConfigs.sites)) {
     const siteIcon = getSiteIcon(siteKey, siteConfig);
-    output += chalk.white.bold(`${siteIcon} ${siteKey}`);
+    const isCurrentSite = currentConfig && currentConfig.site === siteKey;
+
+    if (isCurrentSite) {
+      output += chalk.green.bold(`${siteIcon} ${siteKey}`);
+    } else {
+      output += chalk.white.bold(`${siteIcon} ${siteKey}`);
+    }
 
     if (siteConfig.description) {
       output += chalk.gray(` [${siteConfig.description}]`);
     }
+
+    if (isCurrentSite) {
+      output += chalk.yellow(" ⭐");
+    }
+
     output += "\n";
 
     // ANTHROPIC_BASE_URL
@@ -121,9 +105,10 @@ function formatConfigList(allConfigs, currentConfig) {
       currentConfig.site === siteKey &&
       currentConfig.ANTHROPIC_BASE_URL === baseUrl;
 
-    output += `├─ 📡 ANTHROPIC_BASE_URL: ${baseUrl}`;
     if (isCurrentUrl) {
-      output += chalk.yellow(" ⭐");
+      output += chalk.green(`├─ 📡 ANTHROPIC_BASE_URL: ${baseUrl}`);
+    } else {
+      output += `├─ 📡 ANTHROPIC_BASE_URL: ${baseUrl}`;
     }
     output += "\n";
 
@@ -142,9 +127,10 @@ function formatConfigList(allConfigs, currentConfig) {
         currentConfig.site === siteKey &&
         currentConfig.token === tokenValue;
 
-      output += `${prefix} ${tokenName}: ${tokenValue.substring(0, 10)}...`;
       if (isCurrentToken) {
-        output += chalk.yellow(" ⭐");
+        output += chalk.green(`${prefix} ${tokenName}: ${formatToken(tokenValue)}`);
+      } else {
+        output += `${prefix} ${tokenName}: ${formatToken(tokenValue)}`;
       }
       output += "\n";
     });
@@ -167,7 +153,7 @@ function formatSwitchSuccess(config) {
       config.ANTHROPIC_BASE_URL
     )}\n` +
     `${chalk.white("Token: ")} ${chalk.cyan(
-      config.token.substring(0, 15) + "..."
+      formatToken(config.token)
     )}`;
 
   return boxen(successContent, {
@@ -178,6 +164,16 @@ function formatSwitchSuccess(config) {
     title: "✨ 配置切换成功！！！！",
     titleAlignment: "center",
   });
+}
+
+/**
+ * 格式化Token显示（前7位 + ... + 后6位）
+ * @param {string} token Token字符串
+ * @returns {string} 格式化后的Token
+ */
+function formatToken(token) {
+  if (!token || token.length <= 13) return token;
+  return token.substring(0, 7) + '...' + token.substring(token.length - 6);
 }
 
 /**
@@ -246,7 +242,7 @@ ${chalk.white("功能:")}
 ${chalk.white("智能选择:")}
   • 当URL只有1个时，自动选择
   • 当Token只有1个时，自动选择
-  • 当前配置会用 ⭐ 标识
+  • 当前配置会用绿色标识，当前站点用⭐标识
 
 ${chalk.white("配置文件:")}
   ~/.claude/api_configs.json    API配置文件（包含当前激活配置）
@@ -299,5 +295,6 @@ module.exports = {
   formatWarning,
   formatApiHelp,
   formatMainHelp,
+  formatToken,
   getSiteIcon,
 };

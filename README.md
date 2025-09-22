@@ -12,6 +12,7 @@
 - 📋 **配置管理** - 查看、添加、删除 API 配置
 - 🔗 **智能合并** - 自动与 Claude Code 配置文件同步
 - ⚙️ **完整支持** - 支持所有 Claude Code 配置项
+- 💻 **Codex支持** - 管理 Claude Code Codex 配置（仅支持Claude模型）
 
 ## 📦 安装使用
 
@@ -46,7 +47,8 @@ cc --help
 **⚠️ 命令冲突解决**：如果遇到 `clang: error` 错误，说明 `cc` 命令与系统的C编译器冲突，请使用 `cc-cli` 命令
 
 运行 `cc` 后会显示交互式菜单，按方向键选择功能：
-- 📡 API配置管理 - 切换/查看/添加/删除配置
+- 📡 Claude Code API - 切换/查看/添加/删除 Claude Code API 配置
+- 💻 Codex API - 管理 Claude Code Codex 配置（切换配置、YOLO模式）
 - 📊 状态查看 - 查看当前使用的配置
 - ❓ 帮助文档 - 显示帮助信息
 
@@ -60,6 +62,8 @@ cc --help
 
 - `~/.claude/api_configs.json` - 存储API配置
 - `~/.claude/settings.json` - Claude Code主配置文件
+- `~/.codex/config.toml` - Codex主配置文件
+- `~/.codex/auth.json` - Codex认证文件
 
 ### 配置格式示例
 
@@ -68,22 +72,45 @@ cc --help
   "sites": {
     "XX公益站": {
       "url": "https://api.example.com",// 站点的地址 免得忘记公益站点，后期会支持一键打开
-      "description": "站点描述",// 随意 可不填
-      // 支持claude code所有配置，与cc原有配置文件进行合并，实现不同站点不同配置和模型设置
+      "description": "同时支持Claude Code和Codex",// 随意 可不填
+      // Claude Code API配置 (兼容旧版本)
       "config": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
           "ANTHROPIC_AUTH_TOKEN": {
-            "Token1": "sk-xxxxxxxxxxxxxx",// 支持多个token 
+            "Token1": "sk-xxxxxxxxxxxxxx",// 支持多个token
             "Token2": "sk-yyyyyyyyyyyyyy"
           }
         },
         "model": "claude-3-5-sonnet-20241022"
+      },
+      // Codex API配置 (新增支持，仅支持Claude模型)
+      "codex": {
+        "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
+        "model": "gpt-5",
+        "model_providers": {
+          "provider1": {
+            "name": "服务商1",
+            "base_url": "https://api.provider1.com",
+            "wire_api": "responses"
+          },
+          "provider2": {
+            "name": "服务商2",
+            "base_url": "https://api.provider2.com",
+            "wire_api": "openai"
+          }
+        }
       }
     }
   }
 }
 ```
+
+> **⚠️ 重要说明**：
+> - `config` 字段：用于 Claude Code API 配置（兼容旧版本）
+> - `codex` 字段：用于 Codex API 配置，仅支持 Claude 模型
+> - 两种配置可在同一站点中共存，实现双重支持
+> - YOLO模式：自动开启 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
 
 ## 📸 界面预览
 ![CC CLI 界面预览](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/1758509266008.png)
@@ -95,9 +122,16 @@ cc --help
 
 ## 🔄 工作原理
 
+### Claude Code API 配置流程
 1. **选择配置** - 从列表中选择API站点和Token
 2. **智能合并** - 自动与现有Claude Code配置合并
 3. **立即生效** - 无需重启，Claude Code立即使用新配置
+
+### Codex API 配置流程
+1. **选择站点** - 从支持Codex的站点中选择
+2. **选择提供商** - 从model_providers中选择服务提供商
+3. **生成配置** - 自动生成config.toml和auth.json文件
+4. **YOLO模式** - 可选开启最宽松配置模式
 
 ## 📄 许可证
 

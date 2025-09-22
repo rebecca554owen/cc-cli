@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 
 const ConfigManager = require('../../core/ConfigManager');
-const { showError, showSuccess, showInfo, showWarning } = require('../../utils/ui');
+const { showError, showSuccess, showInfo, showWarning, waitForBackConfirm } = require('../../utils/ui');
 
 /**
  * API配置编辑命令
@@ -32,6 +32,9 @@ class EditCommand {
 
       // 打开配置文件
       await this.openConfigFile();
+
+      // 等待用户确认后返回
+      await waitForBackConfirm('编辑操作完成');
 
     } catch (error) {
       showError(`编辑配置文件失败: ${error.message}`);

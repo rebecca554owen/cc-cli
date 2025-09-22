@@ -23,6 +23,10 @@ class CommandRegistry {
       this.commands.set('api', apiCommand);
       await apiCommand.register(program);
 
+      // 注册Codex命令（仅用于交互式菜单，不注册独立命令）
+      const codexCommand = require('./codex');
+      this.commands.set('codexapi', codexCommand);
+
       // 注册状态命令
       program
         .command('status')

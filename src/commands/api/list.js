@@ -3,7 +3,7 @@ const ora = require('ora');
 
 const ConfigManager = require('../../core/ConfigManager');
 const { formatConfigList, formatError } = require('../../utils/formatter');
-const { showError, showInfo } = require('../../utils/ui');
+const { showError, showInfo, waitForBackConfirm } = require('../../utils/ui');
 
 /**
  * API配置列表显示命令
@@ -54,27 +54,8 @@ class ListCommand {
       const configList = formatConfigList(allConfigs, currentConfig);
       console.log(configList);
 
-      // 显示统计信息
-      const siteCount = Object.keys(allConfigs.sites).length;
-      let totalUrls = 0;
-      let totalTokens = 0;
-
-      Object.values(allConfigs.sites).forEach(site => {
-        totalUrls += 1; // 每个站点只有一个ANTHROPIC_BASE_URL
-        const authTokens = site.config?.env?.ANTHROPIC_AUTH_TOKEN || site.ANTHROPIC_AUTH_TOKEN;
-        if (authTokens) {
-          totalTokens += Object.keys(authTokens).length;
-        }
-      });
-
-      console.log(chalk.blue('📊 统计信息:'));
-      console.log(chalk.gray(`  站点数量: ${siteCount}`));
-      console.log(chalk.gray(`  URL总数: ${totalUrls}`));
-      console.log(chalk.gray(`  Token总数: ${totalTokens}`));
-
-      if (currentConfig) {
-        console.log(chalk.gray(`  当前配置更新时间: ${new Date(currentConfig.updatedAt).toLocaleString()}`));
-      }
+      // 等待用户确认后返回
+      await waitForBackConfirm('配置信息显示完成');
 
     } catch (error) {
       spinner.fail();
