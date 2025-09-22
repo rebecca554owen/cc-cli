@@ -89,8 +89,8 @@ class EditCommand {
     const platform = process.platform;
 
     if (platform === 'win32') {
-      // Windows: 优先尝试记事本，确保兼容性
-      command = `notepad "${configPath}"`;
+      // Windows: 使用默认程序打开
+      command = `start "" "${configPath}"`;
     } else if (platform === 'darwin') {
       // macOS: 使用 open 命令
       command = `open "${configPath}"`;
