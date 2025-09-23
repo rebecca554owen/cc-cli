@@ -1,3 +1,9 @@
+## [2.2.3](https://github.com/cjh-store/cc/compare/v2.2.2...v2.2.3) (2025-09-23)
+
+### Bug Fixes
+
+* **项目:** 版本更新修复 ([d58324b](https://github.com/cjh-store/cc/commit/d58324b07548469412469f541273a79b551659d9))
+
 ## [2.2.2](https://github.com/cjh-store/cc/compare/v2.2.1...v2.2.2) (2025-09-23)
 
 ## [2.2.1](https://github.com/cjh-store/cc/compare/v2.2.0...v2.2.1) (2025-09-23)
