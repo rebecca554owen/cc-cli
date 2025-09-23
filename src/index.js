@@ -148,6 +148,11 @@ function checkForUpdates() {
     });
 
     if (notifier.update) {
+      // 如果版本号相同，不返回更新信息
+      if (notifier.update.current === notifier.update.latest) {
+        return null;
+      }
+
       return {
         current: notifier.update.current,
         latest: notifier.update.latest,
