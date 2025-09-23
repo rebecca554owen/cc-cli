@@ -12,7 +12,7 @@
 - 📋 **配置管理** - 查看、添加、删除 API 配置
 - 🔗 **智能合并** - 自动与 Claude Code 配置文件同步
 - ⚙️ **完整支持** - 支持所有 Claude Code 配置项
-- 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型）
+- 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭yolo模式
 
 ## 📦 安装使用
 
@@ -72,7 +72,7 @@ cc --help
 {
   "sites": {
     "XX公益站": {
-      "url": "https://api.example.com", // 站点的地址 免得忘记公益站点，后期会支持一键打开
+      "url": "https://api.example.com", // （可选）站点的地址 免得忘记公益站点，后期会支持一键打开
       "description": "同时支持Claude Code和Codex", // 随意 可不填
       // Claude Code API配置（最简配置，兼容官方大部分配置，会覆盖配置文件）
       "claude": {
