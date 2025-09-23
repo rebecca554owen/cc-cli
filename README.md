@@ -74,7 +74,7 @@ cc --help
     "XX公益站": {
       "url": "https://api.example.com", // 站点的地址 免得忘记公益站点，后期会支持一键打开
       "description": "同时支持Claude Code和Codex", // 随意 可不填
-      // Claude Code API配置
+      // Claude Code API配置（最简配置，兼容官方大部分配置，会覆盖配置文件）
       "claude": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
@@ -83,9 +83,8 @@ cc --help
             "Token2": "sk-yyyyyyyyyyyyyy"
           }
         },
-        "model": "claude-3-5-sonnet-20241022"
       },
-      // Codex API配置
+      // Codex API配置(最简配置，兼容官方大部分配置)
       "codex": {
         "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
         "model": "gpt-5",
@@ -96,6 +95,9 @@ cc --help
           }
         }
       }
+    }
+    "XX公益站2": {
+      ...
     }
   }
 }
