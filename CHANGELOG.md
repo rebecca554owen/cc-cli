@@ -1,3 +1,9 @@
+## [2.3.0](https://github.com/cjh-store/cc/compare/v2.2.3...v2.3.0) (2025-09-24)
+
+### Features
+
+* **backup:** 添加WebDAV备份与恢复功能 ([f63016d](https://github.com/cjh-store/cc/commit/f63016de4003d346761fa2939521bc4d80332796))
+
 ## [2.2.3](https://github.com/cjh-store/cc/compare/v2.2.2...v2.2.3) (2025-09-23)
 
 ### Bug Fixes
