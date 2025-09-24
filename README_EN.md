@@ -6,7 +6,7 @@
 [![Downloads](https://img.shields.io/npm/dm/@cjh0/cc-cli.svg)](https://www.npmjs.com/package/@cjh0/cc-cli)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-A command-line tool for one-click switching of Claude Code API configurations. Supports multi-site, multi-token management, intelligent configuration merging, and no manual file editing required.
+A command-line tool for one-click switching of Claude Code API configurations. Supports multi-site, multi-token management, intelligent configuration merging, WebDAV cloud backup, and no manual file editing required.
 
 ## ✨ Core Features
 
@@ -18,7 +18,7 @@ A command-line tool for one-click switching of Claude Code API configurations. S
 - ☁️ **WebDAV Backup** - Support cloud backup and restore of configuration files (Nutstore, other standard WebDAV, etc.)
   - **CC-CLI Configuration Backup** - API site configurations, token management files
   - **Claude Code Configuration Backup** - settings.json, CLAUDE.md, .claude.json and other core configurations
-  - **Extended Directory Backup** - agents/, commands/ directories and Codex configuration files
+  - **Codex Backup** - agents/, commands/ directories and Codex configuration files
 
 ## 📦 Installation
 
@@ -161,4 +161,10 @@ This project is open source under the MIT License.
 
 ---
 
-**CC CLI** - Making Claude Code configuration management simple! 🚀
+---
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=cjh-store/cc&type=Date)](https://star-history.com/#cjh-store/cc&Date)
+
+---

@@ -164,4 +164,10 @@ cc --help
 
 ---
 
-**CC CLI** - 让 Claude Code 配置管理变得简单！ 🚀
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=cjh-store/cc&type=Date)](https://star-history.com/#cjh-store/cc&Date)
+
+---
+
+
