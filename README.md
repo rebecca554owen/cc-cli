@@ -1,5 +1,7 @@
 # CC CLI - Claude Code 配置管理工具
 
+**Language**: [中文](README.md) | [English](README_EN.md)
+
 [![NPM版本](https://img.shields.io/npm/v/@cjh0/cc-cli.svg)](https://www.npmjs.com/package/@cjh0/cc-cli)
 [![下载量](https://img.shields.io/npm/dm/@cjh0/cc-cli.svg)](https://www.npmjs.com/package/@cjh0/cc-cli)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -108,13 +110,6 @@ cc --help
 > - 三种配置可在同一站点中共存，实现双重支持
 > - YOLO 模式：自动开启 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
 
-## 📸 界面预览
-
-![CC CLI 界面预览](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/1758509266008.png)
-
-#### 配置切换界面
-
-![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/switch-config.png)
 
 ## 🔄 工作原理
 
@@ -151,6 +146,14 @@ cc --help
 - 🕒 **自动清理** - 自动保留最新5个备份文件
 - 🔄 **完整恢复** - 支持选择备份文件和配置类别恢复
 - 📊 **状态监控** - 实时显示备份状态和云端连接情况
+
+## 📸 界面预览
+
+<img src="https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/1758509266008.png" alt="CC CLI 界面预览" width="50%">
+
+#### 配置切换界面
+
+![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/switch-config.png)
 
 ## 📄 许可证
 
