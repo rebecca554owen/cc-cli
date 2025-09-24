@@ -1,3 +1,9 @@
+## [2.3.5](https://github.com/cjh-store/cc/compare/v2.3.4...v2.3.5) (2025-09-24)
+
+### 🔧 Chore
+
+* **项目:** 更新发布配置和移除许可证信息 ([533295a](https://github.com/cjh-store/cc/commit/533295aa2de581a5edbe92f85e7c657c9ec320b3))
+
 ## [2.3.4](https://github.com/cjh-store/cc/compare/v2.3.3...v2.3.4) (2025-09-24)
 
 ## [2.3.3](https://github.com/cjh-store/cc/compare/v2.3.2...v2.3.3) (2025-09-24)
