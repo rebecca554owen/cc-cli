@@ -6,7 +6,7 @@
 [![下载量](https://img.shields.io/npm/dm/@cjh0/cc-cli.svg)](https://www.npmjs.com/package/@cjh0/cc-cli)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-一键切换 Claude Code API 配置的命令行工具。支持多站点、多 Token 管理，智能合并配置，无需手动修改文件。
+一键切换 claude code / codex 配置的命令行工具。支持多站点、多 Token 管理，智能合并配置，WebDAV 云端备份，无需手动修改配置文件。
 
 ## ✨ 核心功能
 
@@ -18,7 +18,7 @@
 - ☁️ **WebDAV 备份** - 支持配置文件云端备份与恢复（坚果云、其他标准WebDAV等）
   - **CC-CLI配置备份** - API站点配置、Token管理文件
   - **Claude Code配置备份** - settings.json、CLAUDE.md、.claude.json等核心配置
-  - **扩展目录备份** - agents/、commands/目录及Codex配置文件
+  - **Codex备份** - agents/、commands/目录及Codex配置文件
 
 ## 📦 安装使用
 
