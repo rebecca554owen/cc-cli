@@ -16,6 +16,9 @@ A command-line tool for one-click switching of Claude Code API configurations. S
 - ⚙️ **Full Support** - Supports all Claude Code configuration items
 - 💻 **Codex Support** - Manage Claude Code Codex configurations (Claude models only), support enabling/disabling yolo mode
 - ☁️ **WebDAV Backup** - Support cloud backup and restore of configuration files (Nutstore, other standard WebDAV, etc.)
+  - **CC-CLI Configuration Backup** - API site configurations, token management files
+  - **Claude Code Configuration Backup** - settings.json, CLAUDE.md, .claude.json and other core configurations
+  - **Extended Directory Backup** - agents/, commands/ directories and Codex configuration files
 
 ## 📦 Installation
 

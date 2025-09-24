@@ -16,6 +16,9 @@
 - ⚙️ **完整支持** - 支持所有 Claude Code 配置项
 - 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭yolo模式
 - ☁️ **WebDAV 备份** - 支持配置文件云端备份与恢复（坚果云、其他标准WebDAV等）
+  - **CC-CLI配置备份** - API站点配置、Token管理文件
+  - **Claude Code配置备份** - settings.json、CLAUDE.md、.claude.json等核心配置
+  - **扩展目录备份** - agents/、commands/目录及Codex配置文件
 
 ## 📦 安装使用
 
