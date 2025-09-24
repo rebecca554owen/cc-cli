@@ -158,11 +158,7 @@ cc --help
 
 ![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/switch-config.png)
 
-## 📄 许可证
 
-本项目基于 MIT 许可证开源。
-
----
 
 ## ⭐ Star History
 

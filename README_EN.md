@@ -155,11 +155,6 @@ Supports backing up configuration files to cloud storage to ensure configuration
 
 ![Configuration Switching Interface](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/switch-config.png)
 
-## 📄 License
-
-This project is open source under the MIT License.
-
----
 
 ---
 
