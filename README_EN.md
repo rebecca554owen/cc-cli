@@ -16,9 +16,9 @@ A command-line tool for one-click switching of Claude Code API configurations. S
 - ⚙️ **Full Support** - Supports all Claude Code configuration items
 - 💻 **Codex Support** - Manage Claude Code Codex configurations (Claude models only), support enabling/disabling yolo mode
 - ☁️ **WebDAV Backup** - Support cloud backup and restore of configuration files (Nutstore, other standard WebDAV, etc.)
-  - **CC-CLI Configuration Backup** - API site configurations, token management files
-  - **Claude Code Configuration Backup** - settings.json, CLAUDE.md, .claude.json and other core configurations
-  - **Codex Backup** - agents/, commands/ directories and Codex configuration files
+  - **CC-CLI Configuration Backup** - 📁.cc-cli下api_config.json etc.
+  - **Claude Code Configuration Backup** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
+  - **Codex Backup** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
 ## 📦 Installation
 
@@ -135,10 +135,9 @@ Supports backing up configuration files to cloud storage to ensure configuration
 - **Other WebDAV Services** - Any standard WebDAV protocol service
 
 #### Backup Content
-- **CC-CLI Configuration** - API configuration files
-- **Claude Code Configuration** - settings.json, CLAUDE.md, .claude.json
-- **Claude Code Directories** - agents/, commands/ directories (recursive backup)
-- **Codex Configuration** - config.toml, AGENTS.md
+- **CC-CLI Configuration** - 📁.cc-cli下api_config.json etc.
+- **Claude Code Configuration** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
+- **Codex Configuration** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
 #### Feature Characteristics
 - 🔐 **Secure Authentication** - Supports username and password authentication

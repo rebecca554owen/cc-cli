@@ -16,9 +16,9 @@
 - ⚙️ **完整支持** - 支持所有 Claude Code 配置项
 - 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭yolo模式
 - ☁️ **WebDAV 备份** - 支持配置文件云端备份与恢复（坚果云、其他标准WebDAV等）
-  - **CC-CLI配置备份** - API站点配置、Token管理文件
-  - **Claude Code配置备份** - settings.json、CLAUDE.md、.claude.json等核心配置
-  - **Codex备份** - agents/、commands/目录及Codex配置文件
+  - **CC-CLI配置备份** - 📁.cc-cli下api_config.json 等等
+  - **Claude Code配置备份** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
+  - **Codex备份** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
 ## 📦 安装使用
 
@@ -138,10 +138,9 @@ cc --help
 - **其他 WebDAV 服务** - 任何标准 WebDAV 协议服务
 
 #### 备份内容
-- **CC-CLI配置** - API 配置文件
-- **Claude Code配置** - settings.json、CLAUDE.md、.claude.json
-- **Claude Code目录** - agents/、commands/ 目录（递归备份）
-- **Codex配置** - config.toml、AGENTS.md
+- **CC-CLI配置** - 📁.cc-cli下api_config.json 等等
+- **Claude Code配置** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
+- **Codex配置** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
 #### 功能特性
 - 🔐 **安全认证** - 支持用户名密码认证
