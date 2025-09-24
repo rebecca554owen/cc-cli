@@ -70,6 +70,11 @@ async function showMainMenu() {
       short: 'CodexAPI'
     },
     {
+      name: '🔄 Backup - 备份与恢复',
+      value: 'backup',
+      short: 'Backup'
+    },
+    {
       name: '📊 Status - 查看当前状态',
       value: 'status',
       short: 'Status'

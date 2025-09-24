@@ -37,6 +37,10 @@ class CommandRegistry {
       const codexCommand = require('./codex');
       this.commands.set('codexapi', codexCommand);
 
+      // 注册备份命令（仅用于交互式菜单，不注册独立命令）
+      const backupCommand = require('./backup');
+      this.commands.set('backup', backupCommand);
+
       // 注册状态命令
       program
         .command('status')

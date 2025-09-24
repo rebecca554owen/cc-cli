@@ -13,6 +13,7 @@
 - 🔗 **智能合并** - 自动与 Claude Code 配置文件同步
 - ⚙️ **完整支持** - 支持所有 Claude Code 配置项
 - 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭yolo模式
+- ☁️ **WebDAV 备份** - 支持配置文件云端备份与恢复（坚果云、其他标准WebDAV等）
 
 ## 📦 安装使用
 
@@ -50,6 +51,7 @@ cc --help
 
 - 📡 Claude Code API - 切换/查看/添加/删除 Claude Code API 配置
 - 💻 Codex API - 管理 Claude Code Codex 配置（切换配置、YOLO 模式）
+- 🔄 Backup - 备份与恢复配置文件到WebDAV云端存储
 - 📊 状态查看 - 查看当前使用的配置
 - ❓ 帮助文档 - 显示帮助信息
 
@@ -59,12 +61,7 @@ cc --help
 
 工具会自动将你选择的 API 配置与现有的 Claude Code 设置合并，保留所有原有配置项，只更新 API 相关设置。
 
-### 配置文件位置
 
-- `~/.claude/api_configs.json` - 存储 API 配置
-- `~/.claude/settings.json` - Claude Code 主配置文件
-- `~/.codex/config.toml` - Codex 主配置文件
-- `~/.codex/auth.json` - Codex 认证文件
 
 ### 配置格式示例
 
@@ -133,6 +130,27 @@ cc --help
 2. **选择提供商** - 从 model_providers 中选择服务提供商
 3. **生成配置** - 自动生成 config.toml 和 auth.json 文件
 4. **YOLO 模式** - 可选开启最宽松配置模式
+
+### WebDAV 备份功能
+
+支持将配置文件备份到云端存储，确保配置安全：
+
+#### 支持的 WebDAV 服务
+- **坚果云** - `https://dav.jianguoyun.com/dav/`
+- **其他 WebDAV 服务** - 任何标准 WebDAV 协议服务
+
+#### 备份内容
+- **CC-CLI配置** - API 配置文件
+- **Claude Code配置** - settings.json、CLAUDE.md、.claude.json
+- **Claude Code目录** - agents/、commands/ 目录（递归备份）
+- **Codex配置** - config.toml、AGENTS.md
+
+#### 功能特性
+- 🔐 **安全认证** - 支持用户名密码认证
+- 📦 **选择性备份** - 可选择备份特定配置类别
+- 🕒 **自动清理** - 自动保留最新5个备份文件
+- 🔄 **完整恢复** - 支持选择备份文件和配置类别恢复
+- 📊 **状态监控** - 实时显示备份状态和云端连接情况
 
 ## 📄 许可证
 

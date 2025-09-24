@@ -9,10 +9,33 @@ const chalk = require('chalk');
  */
 class ConfigManager {
   constructor() {
-    this.claudeDir = path.join(os.homedir(), '.claude');
-    this.configPath = path.join(this.claudeDir, 'api_configs.json');
+    this.homeDir = os.homedir();
+    this.claudeDir = path.join(this.homeDir, '.claude');
+    this.ccCliDir = path.join(this.homeDir, '.cc-cli');
     this.settingsPath = path.join(this.claudeDir, 'settings.json');
-    this.historyPath = path.join(os.homedir(), '.cc', 'history.json');
+
+    // 查找配置文件路径，优先使用 .cc-cli，兼容 .claude
+    this.configPath = this.findConfigPath();
+  }
+
+  /**
+   * 查找API配置文件路径
+   * @returns {string} 配置文件路径
+   */
+  findConfigPath() {
+    const possiblePaths = [
+      path.join(this.ccCliDir, 'api_configs.json'),     // 首选：.cc-cli目录
+      path.join(this.claudeDir, 'api_configs.json'),    // 兼容：.claude目录
+    ];
+
+    for (const configPath of possiblePaths) {
+      if (fs.existsSync(configPath)) {
+        return configPath;
+      }
+    }
+
+    // 如果都不存在，返回默认路径（.cc-cli目录）
+    return path.join(this.ccCliDir, 'api_configs.json');
   }
 
   /**
@@ -21,7 +44,7 @@ class ConfigManager {
   async ensureConfigDir() {
     try {
       await fs.ensureDir(this.claudeDir);
-      await fs.ensureDir(path.join(os.homedir(), '.cc'));
+      await fs.ensureDir(this.ccCliDir);
     } catch (error) {
       throw new Error(`创建配置目录失败: ${error.message}`);
     }
@@ -102,54 +125,12 @@ class ConfigManager {
       // 保存到 api_configs.json
       await fs.writeFile(this.configPath, JSON.stringify(allConfigs, null, 2), 'utf8');
 
-      // 保存到历史记录
-      await this.saveToHistory(configToSave);
-
     } catch (error) {
       throw new Error(`保存当前配置失败: ${error.message}`);
     }
   }
 
-  /**
-   * 保存配置到历史记录
-   * @param {Object} config 配置对象
-   */
-  async saveToHistory(config) {
-    try {
-      let history = [];
-      
-      if (await fs.pathExists(this.historyPath)) {
-        const historyContent = await fs.readFile(this.historyPath, 'utf8');
-        history = JSON.parse(historyContent);
-      }
 
-      // 添加到历史记录，保持最近10条
-      history.unshift(config);
-      history = history.slice(0, 10);
-
-      await fs.writeFile(this.historyPath, JSON.stringify(history, null, 2), 'utf8');
-    } catch (error) {
-      console.warn(chalk.yellow('⚠️  保存历史记录失败:'), error.message);
-    }
-  }
-
-  /**
-   * 获取历史配置记录
-   * @returns {Array} 历史配置数组
-   */
-  async getHistory() {
-    try {
-      if (!await fs.pathExists(this.historyPath)) {
-        return [];
-      }
-
-      const historyContent = await fs.readFile(this.historyPath, 'utf8');
-      return JSON.parse(historyContent);
-    } catch (error) {
-      console.warn(chalk.yellow('⚠️  读取历史记录失败:'), error.message);
-      return [];
-    }
-  }
 
   /**
    * 读取settings.json配置

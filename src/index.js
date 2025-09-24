@@ -57,6 +57,9 @@ async function showInteractiveMenu(commandRegistry) {
       } else if (choice === "codexapi") {
         // 进入Codex子菜单（子菜单自己处理循环）
         await commandRegistry.executeCommand("codexapi", []);
+      } else if (choice === "backup") {
+        // 进入备份子菜单（子菜单自己处理循环）
+        await commandRegistry.executeCommand("backup", []);
       } else if (choice === "status") {
         await commandRegistry.executeCommand("status", []);
 
