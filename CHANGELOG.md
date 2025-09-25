@@ -1,3 +1,13 @@
+## [2.4.0](https://github.com/cjh-store/cc-cli/compare/v2.3.5...v2.4.0) (2025-09-25)
+
+### ✨ Features
+
+* **claude:** 添加YOLO模式支持 ([c82deda](https://github.com/cjh-store/cc-cli/commit/c82dedaa383965fde41ea7a4697ff1230b2cfefd))
+
+### 🔧 Chore
+
+* **项目:** 更新仓库URL为cc-cli ([5f021b9](https://github.com/cjh-store/cc-cli/commit/5f021b92a3d8eb54f21a2b6490183282a849916b))
+
 ## [2.3.5](https://github.com/cjh-store/cc-cli/compare/v2.3.4...v2.3.5) (2025-09-24)
 
 ### 🔧 Chore
