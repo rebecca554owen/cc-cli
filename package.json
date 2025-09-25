@@ -52,11 +52,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cjh-store/cc.git"
+    "url": "https://github.com/cjh-store/cc-cli.git"
   },
-  "homepage": "https://github.com/cjh-store/cc#readme",
+  "homepage": "https://github.com/cjh-store/cc-cli#readme",
   "bugs": {
-    "url": "https://github.com/cjh-store/cc/issues"
+    "url": "https://github.com/cjh-store/cc-cli/issues"
   },
   "preferGlobal": true,
   "devDependencies": {
