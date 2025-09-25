@@ -6,7 +6,8 @@ const listCommand = require('./list');
 const addCommand = require('./add');
 const editCommand = require('./edit');
 const deleteCommand = require('./delete');
-const { showApiMenu } = require('../../utils/ui');
+const { showApiMenu, waitForBackConfirm } = require('../../utils/ui');
+const yoloManager = require('../../utils/yolo');
 
 /**
  * API命令模块
@@ -78,11 +79,14 @@ class ApiCommand {
 
 配置文件位置:
   ~/.claude/api_configs.json    API配置文件（包含当前激活配置）
+  ~/.claude/settings.json       Claude Code全局配置文件
+  ~/.claude/hooks/              YOLO模式脚本目录
 
 注意:
   - 如果URL或Token只有一个选项，会自动选择
   - 当前使用的配置会用绿色标识，当前站点用⭐标识
   - 所有操作都会实时更新Claude Code配置
+  - YOLO模式会自动批准所有工具使用，请谨慎启用
 `);
   }
 
@@ -108,6 +112,7 @@ class ApiCommand {
     console.log('  ➕ 添加配置    添加新的API配置项');
     console.log('  ✏️  编辑配置    打开配置文件进行编辑');
     console.log('  🗑️  删除配置    删除不需要的配置');
+    console.log('  🚀 YOLO模式    开启/关闭Claude Code最宽松配置模式（无条件批准所有工具使用）');
     console.log();
     console.log(chalk.white('智能选择:'));
     console.log('  - 当URL只有1个时，自动选择，不显示选择界面');
@@ -116,6 +121,8 @@ class ApiCommand {
     console.log();
     console.log(chalk.white('配置文件:'));
     console.log(`  ${chalk.gray('~/.claude/api_configs.json')}    API配置文件（包含当前激活配置）`);
+    console.log(`  ${chalk.gray('~/.claude/settings.json')}       Claude Code全局配置文件`);
+    console.log(`  ${chalk.gray('~/.claude/hooks/')}              YOLO模式脚本目录`);
     console.log();
     console.log(chalk.white('示例:'));
     console.log(`  ${chalk.green('cc api')}           # 显示交互式菜单`);
@@ -134,7 +141,10 @@ class ApiCommand {
 
     while (true) {
       try {
-        const choice = await showApiMenu();
+        // 检查当前YOLO模式状态
+        const yoloStatus = await yoloManager.checkYoloModeStatus();
+
+        const choice = await showApiMenu({ yoloStatus });
 
         if (choice === 'back') {
           return; // 返回主菜单
@@ -155,6 +165,9 @@ class ApiCommand {
             break;
           case 'delete':
             await this.subCommands.delete.execute([]);
+            break;
+          case 'yolo':
+            await yoloManager.toggleYoloMode();
             break;
           default:
             console.log(chalk.red('❌ 无效选择'));

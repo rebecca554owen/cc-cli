@@ -107,11 +107,21 @@ async function showMainMenu() {
 
 /**
  * 显示API菜单
+ * @param {Object} options 选项参数
+ * @param {boolean} options.yoloStatus YOLO模式状态
  * @returns {string} 用户选择
  */
-async function showApiMenu() {
+async function showApiMenu(options = {}) {
   console.log(chalk.cyan.bold('\n📡 API配置管理'));
   console.log(chalk.gray('═'.repeat(40)));
+
+  // 构建YOLO模式菜单项
+  const yoloActionText = options.yoloStatus ?
+    '🛑 关闭YOLO模式 - 禁用最宽松配置模式' :
+    '🚀 开启YOLO模式 - 启用最宽松配置模式';
+  const yoloStatusText = options.yoloStatus ?
+    chalk.green('[已开启]') :
+    chalk.gray('[已关闭]');
 
   const choices = [
     {
@@ -138,6 +148,11 @@ async function showApiMenu() {
       name: '🗑️  删除配置 - 删除API配置',
       value: 'delete',
       short: '删除配置'
+    },
+    {
+      name: `${yoloActionText} ${yoloStatusText}`,
+      value: 'yolo',
+      short: 'YOLO模式'
     },
     new inquirer.Separator(),
     createBackChoice('back')

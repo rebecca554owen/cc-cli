@@ -14,7 +14,8 @@
 - 📋 **配置管理** - 查看、添加、删除 API 配置
 - 🔗 **智能合并** - 自动与 Claude Code 配置文件同步
 - ⚙️ **完整支持** - 支持所有 Claude Code 配置项
-- 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭yolo模式
+- 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭YOLO模式
+- 🚀 **YOLO 模式** - 为Claude Code API和Codex提供最宽松配置模式，无条件批准所有工具使用请求
 - ☁️ **WebDAV 备份** - 支持配置文件云端备份与恢复（坚果云、其他标准WebDAV等）
   - **CC-CLI配置备份** - 📁.cc-cli下api_config.json 等等
   - **Claude Code配置备份** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
@@ -54,7 +55,7 @@ cc --help
 
 运行 `cc` 后会显示交互式菜单，按方向键选择功能：
 
-- 📡 Claude Code API - 切换/查看/添加/删除 Claude Code API 配置
+- 📡 Claude Code API - 切换/查看/添加/删除 Claude Code API 配置（支持YOLO模式）
 - 💻 Codex API - 管理 Claude Code Codex 配置（切换配置、YOLO 模式）
 - 🔄 Backup - 备份与恢复配置文件到WebDAV云端存储
 - 📊 状态查看 - 查看当前使用的配置
@@ -111,7 +112,7 @@ cc --help
 > - `config` 字段：用于 Claude Code API 配置（向后兼容）
 > - `codex` 字段：用于 Codex API 配置，仅支持 Claude 模型
 > - 三种配置可在同一站点中共存，实现双重支持
-> - YOLO 模式：自动开启 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
+> - YOLO 模式：Claude Code API使用 `cc claude-yolo` 命令无条件批准所有工具；Codex使用 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
 
 
 ## 🔄 工作原理
@@ -121,6 +122,7 @@ cc --help
 1. **选择配置** - 从列表中选择 API 站点和 Token
 2. **智能合并** - 自动与现有 Claude Code 配置合并
 3. **立即生效** - 无需重启，Claude Code 立即使用新配置
+4. **YOLO 模式** - 可选开启最宽松配置模式，使用内置 `cc claude-yolo` 命令处理PreToolUse hooks
 
 ### Codex API 配置流程
 

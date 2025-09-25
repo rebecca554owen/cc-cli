@@ -14,7 +14,8 @@ A command-line tool for one-click switching of Claude Code API configurations. S
 - 📋 **Configuration Management** - View, add, and delete API configurations
 - 🔗 **Intelligent Merging** - Automatically sync with Claude Code configuration files
 - ⚙️ **Full Support** - Supports all Claude Code configuration items
-- 💻 **Codex Support** - Manage Claude Code Codex configurations (Claude models only), support enabling/disabling yolo mode
+- 💻 **Codex Support** - Manage Claude Code Codex configurations (Claude models only), support enabling/disabling YOLO mode
+- 🚀 **YOLO Mode** - Provides the most permissive configuration mode for Claude Code API and Codex, unconditionally approves all tool usage requests
 - ☁️ **WebDAV Backup** - Support cloud backup and restore of configuration files (Nutstore, other standard WebDAV, etc.)
   - **CC-CLI Configuration Backup** - 📁.cc-cli下api_config.json etc.
   - **Claude Code Configuration Backup** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
@@ -54,7 +55,7 @@ cc --help
 
 Running `cc` will display an interactive menu, use arrow keys to select features:
 
-- 📡 Claude Code API - Switch/view/add/delete Claude Code API configurations
+- 📡 Claude Code API - Switch/view/add/delete Claude Code API configurations (supports YOLO mode)
 - 💻 Codex API - Manage Claude Code Codex configurations (switch configurations, YOLO mode)
 - 🔄 Backup - Backup and restore configuration files to/from WebDAV cloud storage
 - 📊 Status View - View currently used configurations
@@ -109,7 +110,7 @@ The tool will automatically merge your selected API configuration with existing 
 > - `config` field: For Claude Code API configuration (backward compatibility)
 > - `codex` field: For Codex API configuration, only supports Claude models
 > - All three configurations can coexist in the same site for dual support
-> - YOLO mode: Automatically enables `approval_policy=never` and `sandbox_mode=danger-full-access`
+> - YOLO mode: Claude Code API uses `cc claude-yolo` command to unconditionally approve all tools; Codex uses `approval_policy=never` and `sandbox_mode=danger-full-access`
 
 ## 🔄 Working Principle
 
@@ -118,6 +119,7 @@ The tool will automatically merge your selected API configuration with existing 
 1. **Select Configuration** - Choose API site and token from the list
 2. **Intelligent Merging** - Automatically merge with existing Claude Code configuration
 3. **Immediate Effect** - No restart required, Claude Code uses new configuration immediately
+4. **YOLO Mode** - Optionally enable the most permissive configuration mode, using built-in `cc claude-yolo` command to handle PreToolUse hooks
 
 ### Codex API Configuration Process
 

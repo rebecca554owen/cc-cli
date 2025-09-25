@@ -19,12 +19,12 @@ class CommandRegistry {
   async registerCommands(program) {
     try {
       // 注册API命令
-      const apiCommand = require('./api');
+      const apiCommand = require('./claude');
       this.commands.set('api', apiCommand);
       await apiCommand.register(program);
 
       // 注册API快速使用命令
-      const apiUseCommand = require('./api/apiuse');
+      const apiUseCommand = require('./claude/apiuse');
       this.commands.set('apiuse', apiUseCommand);
       program
         .command('apiuse')
@@ -47,6 +47,20 @@ class CommandRegistry {
         .description('查看当前配置状态')
         .action(async () => {
           await this.executeCommand('status', []);
+        });
+
+      // 注册Claude YOLO Hook命令（供Claude Code hooks内部调用）
+      const claudeYoloCommand = require('./claude/yolo');
+      program
+        .command('claude-yolo')
+        .description('Claude Code YOLO模式钩子处理器（内部使用）')
+        .option('-h, --help', '显示帮助信息')
+        .action(async (options) => {
+          if (options.help) {
+            claudeYoloCommand.showHelp();
+            return;
+          }
+          await claudeYoloCommand.execute();
         });
 
       // 注册帮助命令
