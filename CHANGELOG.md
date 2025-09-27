@@ -1,3 +1,9 @@
+## [2.4.1](https://github.com/cjh-store/cc-cli/compare/v2.4.0...v2.4.1) (2025-09-27)
+
+### ⚡ Performance
+
+* **token:** 增强Token配置支持，兼容字符串和对象格式 ([d2b742f](https://github.com/cjh-store/cc-cli/commit/d2b742fb84e26a7a0dc973d0bb9077089305f8ec))
+
 ## [2.4.0](https://github.com/cjh-store/cc-cli/compare/v2.3.5...v2.4.0) (2025-09-25)
 
 ### ✨ Features
