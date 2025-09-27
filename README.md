@@ -81,15 +81,26 @@ cc --help
       "claude": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
+          // Token支持两种格式：
+          // 1. 对象格式（支持多个token）
           "ANTHROPIC_AUTH_TOKEN": {
-            "Token1": "sk-xxxxxxxxxxxxxx", // 支持多个token
-            "Token2": "sk-yyyyyyyyyyyyyy"
+            "主力Token": "sk-xxxxxxxxxxxxxx",
+            "备用Token": "sk-yyyyyyyyyyyyyy"
           }
-        },
+          // 2. 字符串格式（单个token，自动命名为"默认Token"）
+          // "ANTHROPIC_AUTH_TOKEN": "sk-xxxxxxxxxxxxxx"
+        }
       },
       // Codex API配置(最简配置，兼容官方大部分配置)
       "codex": {
+        // API Key同样支持两种格式：
+        // 1. 字符串格式（单个API Key，自动命名为"默认API Key"）
         "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
+        // 2. 对象格式（支持多个API Key）
+        // "OPENAI_API_KEY": {
+        //   "主力API Key": "sk-xxxxxxxxxxxxxx",
+        //   "备用API Key": "sk-yyyyyyyyyyyyyy"
+        // },
         "model": "gpt-5",
         "model_providers": {
           "duckcoding": {

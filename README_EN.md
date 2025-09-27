@@ -79,15 +79,26 @@ The tool will automatically merge your selected API configuration with existing 
       "claude": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
+          // Token supports two formats:
+          // 1. Object format (supports multiple tokens)
           "ANTHROPIC_AUTH_TOKEN": {
-            "Token1": "sk-xxxxxxxxxxxxxx", // Supports multiple tokens
-            "Token2": "sk-yyyyyyyyyyyyyy"
+            "Primary Token": "sk-xxxxxxxxxxxxxx",
+            "Backup Token": "sk-yyyyyyyyyyyyyy"
           }
-        },
+          // 2. String format (single token, automatically named "Default Token")
+          // "ANTHROPIC_AUTH_TOKEN": "sk-xxxxxxxxxxxxxx"
+        }
       },
       // Codex API configuration (minimal config, compatible with most official configurations)
       "codex": {
+        // API Key also supports two formats:
+        // 1. String format (single API Key, automatically named "Default API Key")
         "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
+        // 2. Object format (supports multiple API Keys)
+        // "OPENAI_API_KEY": {
+        //   "Primary API Key": "sk-xxxxxxxxxxxxxx",
+        //   "Backup API Key": "sk-yyyyyyyyyyyyyy"
+        // },
         "model": "gpt-5",
         "model_providers": {
           "duckcoding": {

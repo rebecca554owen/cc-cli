@@ -56,11 +56,19 @@ class CodexSwitchCommand {
         return false; // 操作被取消
       }
 
-      // 5. 生成并写入配置文件
+      // 5. 选择API Key
+      const selectedApiKey = await this.selectApiKey(codexConfig.OPENAI_API_KEY);
+
+      // 检查是否选择返回
+      if (selectedApiKey === '__back__') {
+        return false; // 操作被取消
+      }
+
+      // 6. 生成并写入配置文件
       await this.writeCodexConfig(selectedSite, codexConfig, selectedProvider);
 
-      // 使用OPENAI_API_KEY字段
-      await this.writeAuthConfig(codexConfig.OPENAI_API_KEY);
+      // 使用选择的API Key
+      await this.writeAuthConfig(selectedApiKey);
 
       showSuccess(`✅ Codex配置切换成功！`);
       showInfo(`站点: ${chalk.cyan(selectedSite)}`);
@@ -411,6 +419,39 @@ class CodexSwitchCommand {
 
     } catch (error) {
       throw new Error(`写入认证配置失败: ${error.message}`);
+    }
+  }
+
+  /**
+   * 选择API Key（支持字符串和对象格式）
+   * @param {string|object} apiKey API Key配置
+   * @returns {string} 选择的API Key
+   */
+  async selectApiKey(apiKey) {
+    // 转换为统一的对象格式
+    const rawApiKey = apiKey;
+    const apiKeys = typeof rawApiKey === 'string' ? { '默认API Key': rawApiKey } : rawApiKey;
+
+    // 智能选择逻辑
+    if (Object.keys(apiKeys).length === 1) {
+      const selectedKey = Object.values(apiKeys)[0];
+      const keyName = Object.keys(apiKeys)[0];
+      console.log(chalk.gray(`✓ API Key自动选择: ${keyName} (${selectedKey.substring(0, 10)}...)`));
+      return selectedKey;
+    } else {
+      // 多个API Key时显示选择界面
+      const { selectToken } = require('../../utils/ui');
+      console.log(chalk.white('\n🔑 请选择 API Key:'));
+      const selectedKey = await selectToken(apiKeys);
+
+      // 检查是否选择返回
+      if (selectedKey === '__back__') {
+        return '__back__';
+      }
+
+      const keyName = Object.keys(apiKeys).find(key => apiKeys[key] === selectedKey);
+      console.log(chalk.gray(`✓ 选择API Key: ${keyName}`));
+      return selectedKey;
     }
   }
 }

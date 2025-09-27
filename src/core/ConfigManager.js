@@ -193,7 +193,9 @@ class ConfigManager {
   async switchConfig(site, token, siteConfig) {
     try {
       // 找到Token的名称
-      const tokenName = Object.keys(siteConfig.config.env.ANTHROPIC_AUTH_TOKEN).find(key => siteConfig.config.env.ANTHROPIC_AUTH_TOKEN[key] === token);
+      const rawTokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
+      const tokens = typeof rawTokens === 'string' ? { '默认Token': rawTokens } : rawTokens;
+      const tokenName = Object.keys(tokens).find(key => tokens[key] === token);
 
       const config = {
         site,
@@ -254,11 +256,16 @@ class ConfigManager {
         return false;
       }
 
-      if (typeof actualConfig.env.ANTHROPIC_BASE_URL !== 'string' || typeof actualConfig.env.ANTHROPIC_AUTH_TOKEN !== 'object') {
+      if (typeof actualConfig.env.ANTHROPIC_BASE_URL !== 'string') {
         return false;
       }
 
-      if (Object.keys(actualConfig.env.ANTHROPIC_AUTH_TOKEN).length === 0) {
+      const authToken = actualConfig.env.ANTHROPIC_AUTH_TOKEN;
+      if (typeof authToken === 'string') {
+        if (!authToken.trim()) return false;
+      } else if (typeof authToken === 'object' && authToken !== null) {
+        if (Object.keys(authToken).length === 0) return false;
+      } else {
         return false;
       }
     }

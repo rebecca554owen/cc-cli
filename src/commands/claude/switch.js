@@ -55,7 +55,8 @@ class SwitchCommand {
 
       // 2. 智能选择Token
       let selectedToken;
-      const tokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
+      const rawTokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
+      const tokens = typeof rawTokens === 'string' ? { '默认Token': rawTokens } : rawTokens;
 
       if (Object.keys(tokens).length === 1) {
         selectedToken = Object.values(tokens)[0];

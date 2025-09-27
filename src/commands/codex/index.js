@@ -72,8 +72,18 @@ class CodexCommand {
           console.log(chalk.cyan(`   📡 Model: ${siteConfig.codex.model || 'gpt-5'}`));
           // 使用与Claude Code API相同的token显示格式
           const { formatToken } = require('../../utils/formatter');
-          const tokenDisplay = siteConfig.codex.OPENAI_API_KEY ?
-            formatToken(siteConfig.codex.OPENAI_API_KEY) : '未配置';
+          let tokenDisplay = '未配置';
+
+          if (siteConfig.codex.OPENAI_API_KEY) {
+            const rawApiKey = siteConfig.codex.OPENAI_API_KEY;
+            if (typeof rawApiKey === 'string') {
+              tokenDisplay = formatToken(rawApiKey);
+            } else if (typeof rawApiKey === 'object') {
+              const keyCount = Object.keys(rawApiKey).length;
+              const firstKey = Object.values(rawApiKey)[0];
+              tokenDisplay = `${formatToken(firstKey)} 等${keyCount}个`;
+            }
+          }
           console.log(chalk.green(`   🔑 Token: ${tokenDisplay}`));
 
           if (siteConfig.codex.model_providers) {
