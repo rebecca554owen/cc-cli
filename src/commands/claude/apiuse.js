@@ -1,9 +1,9 @@
-const chalk = require('chalk');
-const ora = require('ora');
+import chalk from 'chalk';
+import ora from 'ora';
 
-const ConfigManager = require('../../core/ConfigManager');
-const { selectSite, selectToken, confirmSwitch, showSuccess, showError, showInfo } = require('../../utils/ui');
-const { formatSwitchSuccess } = require('../../utils/formatter');
+import ConfigManager from '../../core/ConfigManager.js';
+import { selectSite, selectToken, confirmSwitch, showSuccess, showError, showInfo } from '../../utils/ui.js';
+import { formatSwitchSuccess } from '../../utils/formatter.js';
 
 /**
  * API快速使用命令
@@ -135,4 +135,4 @@ class ApiUseCommand {
   }
 }
 
-module.exports = new ApiUseCommand();
+export default new ApiUseCommand();

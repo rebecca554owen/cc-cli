@@ -1,9 +1,9 @@
-const chalk = require('chalk');
-const { program } = require('commander');
+import chalk from 'chalk';
+import { program } from 'commander';
 
-const switchCommand = require('./switch');
-const editCommand = require('./edit');
-const { showCodexMenu, waitForBackConfirm, createBackChoice } = require('../../utils/ui');
+import switchCommand from './switch.js';
+import editCommand from './edit.js';
+import { showApiMenu, waitForBackConfirm, createBackChoice } from '../../utils/ui.js';
 
 /**
  * Codex命令模块
@@ -52,7 +52,7 @@ class CodexCommand {
    */
   async listCodexConfigs() {
     try {
-      const ConfigManager = require('../../core/ConfigManager');
+      const { default: ConfigManager } = await import('../../core/ConfigManager.js');
       const configManager = new ConfigManager();
       const allConfigs = await configManager.getAllConfigs();
 
@@ -71,7 +71,7 @@ class CodexCommand {
           }
           console.log(chalk.cyan(`   📡 Model: ${siteConfig.codex.model || 'gpt-5'}`));
           // 使用与Claude Code API相同的token显示格式
-          const { formatToken } = require('../../utils/formatter');
+          const { formatToken } = await import('../../utils/formatter.js');
           let tokenDisplay = '未配置';
 
           if (siteConfig.codex.OPENAI_API_KEY) {
@@ -116,7 +116,7 @@ class CodexCommand {
    * 显示交互式Codex菜单
    */
   async showInteractiveMenu() {
-    const inquirer = require('inquirer');
+    const inquirer = (await import('inquirer')).default;
 
     while (true) {
       try {
@@ -202,9 +202,9 @@ class CodexCommand {
    */
   async checkYoloModeStatus() {
     try {
-      const fs = require('fs-extra');
-      const path = require('path');
-      const os = require('os');
+      const fs = (await import('fs-extra')).default;
+      const path = (await import('path')).default;
+      const os = (await import('os')).default;
 
       const codexConfigFile = path.join(os.homedir(), '.codex', 'config.toml');
 
@@ -245,9 +245,9 @@ class CodexCommand {
    */
   async toggleYoloMode() {
     try {
-      const fs = require('fs-extra');
-      const path = require('path');
-      const os = require('os');
+      const fs = (await import('fs-extra')).default;
+      const path = (await import('path')).default;
+      const os = (await import('os')).default;
 
       const codexConfigDir = path.join(os.homedir(), '.codex');
       const codexConfigFile = path.join(codexConfigDir, 'config.toml');
@@ -384,4 +384,4 @@ class CodexCommand {
   }
 }
 
-module.exports = new CodexCommand();
+export default new CodexCommand();

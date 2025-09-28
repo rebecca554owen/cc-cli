@@ -3,6 +3,7 @@
   "version": "2.4.2",
   "description": "Claude Code配置管理CLI工具",
   "main": "src/index.js",
+  "type": "module",
   "bin": {
     "cc": "./bin/cc.js",
     "cc-cli": "./bin/cc.js"

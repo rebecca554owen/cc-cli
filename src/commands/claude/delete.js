@@ -1,17 +1,17 @@
-const chalk = require("chalk");
-const inquirer = require("inquirer");
-const ora = require("ora");
-const fs = require("fs-extra");
+import chalk from "chalk";
+import inquirer from "inquirer";
+import ora from "ora";
+import fs from "fs-extra";
 
-const ConfigManager = require("../../core/ConfigManager");
-const {
+import ConfigManager from "../../core/ConfigManager.js";
+import {
   showError,
   showSuccess,
   showInfo,
   showWarning,
   createBackChoice,
-} = require("../../utils/ui");
-const { formatError, getSiteIcon } = require("../../utils/formatter");
+} from "../../utils/ui.js";
+import { formatError, getSiteIcon } from "../../utils/formatter.js";
 
 /**
  * API配置删除命令
@@ -355,4 +355,4 @@ class DeleteCommand {
   }
 }
 
-module.exports = new DeleteCommand();
+export default new DeleteCommand();

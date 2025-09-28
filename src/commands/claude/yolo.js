@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+import chalk from 'chalk';
 
 /**
  * Claude Code YOLO模式钩子处理器
@@ -95,4 +95,4 @@ class ClaudeYoloHook {
   }
 }
 
-module.exports = new ClaudeYoloHook();
+export default new ClaudeYoloHook();

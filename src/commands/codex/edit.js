@@ -1,10 +1,10 @@
-const chalk = require('chalk');
-const { exec } = require('child_process');
-const fs = require('fs-extra');
-const path = require('path');
+import chalk from 'chalk';
+import { exec } from 'child_process';
+import fs from 'fs-extra';
+import path from 'path';
 
-const ConfigManager = require('../../core/ConfigManager');
-const { showError, showSuccess, showInfo, showWarning, waitForBackConfirm } = require('../../utils/ui');
+import ConfigManager from '../../core/ConfigManager.js';
+import { showError, showSuccess, showInfo, showWarning, waitForBackConfirm } from '../../utils/ui.js';
 
 /**
  * Codex配置编辑命令
@@ -162,4 +162,4 @@ class CodexEditCommand {
   }
 }
 
-module.exports = new CodexEditCommand();
+export default new CodexEditCommand();

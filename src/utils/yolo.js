@@ -1,8 +1,8 @@
-const chalk = require('chalk');
-const fs = require('fs-extra');
-const path = require('path');
-const os = require('os');
-const { waitForBackConfirm } = require('./ui');
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import path from 'path';
+import os from 'os';
+import { waitForBackConfirm } from './ui.js';
 
 /**
  * YOLO模式管理工具类
@@ -208,4 +208,4 @@ class YoloManager {
 }
 
 // 导出单例实例
-module.exports = new YoloManager();
+export default new YoloManager();

@@ -1,11 +1,11 @@
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const ora = require('ora');
-const fs = require('fs-extra');
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import ora from 'ora';
+import fs from 'fs-extra';
 
-const ConfigManager = require('../../core/ConfigManager');
-const { showError, showSuccess, showInfo, showWarning } = require('../../utils/ui');
-const { formatError } = require('../../utils/formatter');
+import ConfigManager from '../../core/ConfigManager.js';
+import { showError, showSuccess, showInfo, showWarning } from '../../utils/ui.js';
+import { formatError } from '../../utils/formatter.js';
 
 /**
  * API配置添加命令
@@ -338,4 +338,4 @@ class AddCommand {
   }
 }
 
-module.exports = new AddCommand();
+export default new AddCommand();

@@ -1,11 +1,11 @@
-const chalk = require('chalk');
-const fs = require('fs-extra');
-const path = require('path');
-const os = require('os');
-const inquirer = require('inquirer');
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import path from 'path';
+import os from 'os';
+import inquirer from 'inquirer';
 
-const ConfigManager = require('../../core/ConfigManager');
-const { showSuccess, showError, showInfo, showWarning, createBackChoice } = require('../../utils/ui');
+import ConfigManager from '../../core/ConfigManager.js';
+import { showSuccess, showError, showInfo, showWarning, createBackChoice } from '../../utils/ui.js';
 
 /**
  * Codex配置切换命令
@@ -440,7 +440,7 @@ class CodexSwitchCommand {
       return selectedKey;
     } else {
       // 多个API Key时显示选择界面
-      const { selectToken } = require('../../utils/ui');
+      const { selectToken } = await import('../../utils/ui.js');
       console.log(chalk.white('\n🔑 请选择 API Key:'));
       const selectedKey = await selectToken(apiKeys);
 
@@ -456,4 +456,4 @@ class CodexSwitchCommand {
   }
 }
 
-module.exports = new CodexSwitchCommand();
+export default new CodexSwitchCommand();

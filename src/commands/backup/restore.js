@@ -1,10 +1,10 @@
-const fs = require("fs-extra");
-const path = require("path");
-const chalk = require("chalk");
-const inquirer = require("inquirer");
-const ora = require("ora");
-const FileManager = require("./file-manager");
-const WebDAVClient = require("./webdav-client");
+import fs from "fs-extra";
+import path from "path";
+import chalk from "chalk";
+import inquirer from "inquirer";
+import ora from "ora";
+import FileManager from "./file-manager.js";
+import WebDAVClient from "./webdav-client.js";
 
 /**
  * 恢复功能实现
@@ -459,4 +459,4 @@ class RestoreManager {
   }
 }
 
-module.exports = RestoreManager;
+export default RestoreManager;

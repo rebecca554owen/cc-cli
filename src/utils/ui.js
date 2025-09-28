@@ -1,14 +1,20 @@
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const boxen = require('boxen');
-const figlet = require('figlet');
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import boxen from 'boxen';
+import figlet from 'figlet';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf8'));
 
 /**
  * 显示启动Banner
  * @param {Object} updateInfo 更新信息（可选）
  */
 function showBanner(updateInfo = null) {
-  const packageJson = require('../../package.json');
 
   const banner = figlet.textSync('CC CLI', {
     font: 'Small',
@@ -362,7 +368,6 @@ function getTokenIcon(tokenName) {
  * @returns {Promise<void>} 等待用户确认返回
  */
 async function waitForBackConfirm(message = '操作完成') {
-  const inquirer = require('inquirer');
   await inquirer.prompt([
     {
       type: 'list',
@@ -388,7 +393,7 @@ function createBackChoice(value = 'back') {
   };
 }
 
-module.exports = {
+export {
   showBanner,
   showMainMenu,
   showApiMenu,

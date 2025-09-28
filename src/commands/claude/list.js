@@ -1,9 +1,9 @@
-const chalk = require('chalk');
-const ora = require('ora');
+import chalk from 'chalk';
+import ora from 'ora';
 
-const ConfigManager = require('../../core/ConfigManager');
-const { formatConfigList, formatError } = require('../../utils/formatter');
-const { showError, showInfo, waitForBackConfirm } = require('../../utils/ui');
+import ConfigManager from '../../core/ConfigManager.js';
+import { formatConfigList, formatError } from '../../utils/formatter.js';
+import { showError, showInfo, waitForBackConfirm } from '../../utils/ui.js';
 
 /**
  * API配置列表显示命令
@@ -74,4 +74,4 @@ class ListCommand {
   }
 }
 
-module.exports = new ListCommand();
+export default new ListCommand();

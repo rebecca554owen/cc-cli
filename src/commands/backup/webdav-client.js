@@ -1,9 +1,9 @@
-const { createClient } = require('webdav');
-const fs = require('fs-extra');
-const path = require('path');
-const os = require('os');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
+import { createClient } from 'webdav';
+import fs from 'fs-extra';
+import path from 'path';
+import os from 'os';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
 
 /**
  * WebDAV客户端管理器
@@ -405,4 +405,4 @@ class WebDAVClient {
   }
 }
 
-module.exports = WebDAVClient;
+export default WebDAVClient;

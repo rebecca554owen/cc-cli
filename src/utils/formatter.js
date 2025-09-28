@@ -1,5 +1,5 @@
-const chalk = require("chalk");
-const boxen = require("boxen");
+import chalk from "chalk";
+import boxen from "boxen";
 
 /**
  * 格式化当前状态显示
@@ -287,7 +287,7 @@ ${chalk.white("使用示例:")}
 `;
 }
 
-module.exports = {
+export {
   formatStatus,
   formatConfigList,
   formatSwitchSuccess,

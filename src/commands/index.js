@@ -1,6 +1,10 @@
-const path = require('path');
-const fs = require('fs-extra');
-const chalk = require('chalk');
+import path from 'path';
+import fs from 'fs-extra';
+import chalk from 'chalk';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * 命令注册中心
@@ -19,12 +23,12 @@ class CommandRegistry {
   async registerCommands(program) {
     try {
       // 注册API命令
-      const apiCommand = require('./claude');
+      const { default: apiCommand } = await import('./claude/index.js');
       this.commands.set('api', apiCommand);
       await apiCommand.register(program);
 
       // 注册API快速使用命令
-      const apiUseCommand = require('./claude/apiuse');
+      const { default: apiUseCommand } = await import('./claude/apiuse.js');
       this.commands.set('apiuse', apiUseCommand);
       program
         .command('apiuse')
@@ -34,11 +38,11 @@ class CommandRegistry {
         });
 
       // 注册Codex命令（仅用于交互式菜单，不注册独立命令）
-      const codexCommand = require('./codex');
+      const { default: codexCommand } = await import('./codex/index.js');
       this.commands.set('codexapi', codexCommand);
 
       // 注册备份命令（仅用于交互式菜单，不注册独立命令）
-      const backupCommand = require('./backup');
+      const { default: backupCommand } = await import('./backup/index.js');
       this.commands.set('backup', backupCommand);
 
       // 注册状态命令
@@ -50,7 +54,7 @@ class CommandRegistry {
         });
 
       // 注册Claude YOLO Hook命令（供Claude Code hooks内部调用）
-      const claudeYoloCommand = require('./claude/yolo');
+      const { default: claudeYoloCommand } = await import('./claude/yolo.js');
       program
         .command('claude-yolo')
         .description('Claude Code YOLO模式钩子处理器（内部使用）')
@@ -120,7 +124,7 @@ class CommandRegistry {
    * 显示帮助信息
    */
   async showHelp() {
-    const { formatMainHelp } = require('../utils/formatter');
+    const { formatMainHelp } = await import('../utils/formatter.js');
     console.log(formatMainHelp());
   }
 
@@ -128,7 +132,7 @@ class CommandRegistry {
    * 显示当前状态
    */
   async showStatus() {
-    const ConfigManager = require('../core/ConfigManager');
+    const { default: ConfigManager } = await import('../core/ConfigManager.js');
     const configManager = new ConfigManager();
     
     try {
@@ -142,7 +146,7 @@ class CommandRegistry {
         // 忽略错误，继续显示基本状态
       }
       
-      const { formatStatus } = require('../utils/formatter');
+      const { formatStatus } = await import('../utils/formatter.js');
       
       console.log(formatStatus(currentConfig, allConfigs));
     } catch (error) {
@@ -158,4 +162,4 @@ class CommandRegistry {
   }
 }
 
-module.exports = CommandRegistry;
+export default CommandRegistry;

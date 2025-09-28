@@ -1,12 +1,18 @@
-const chalk = require("chalk");
-const figlet = require("figlet");
-const inquirer = require("inquirer");
-const boxen = require("boxen");
-const updateNotifier = require("update-notifier");
+import chalk from "chalk";
+import figlet from "figlet";
+import inquirer from "inquirer";
+import boxen from "boxen";
+import updateNotifier from "update-notifier";
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-const CommandRegistry = require("./commands");
-const { showBanner, showMainMenu } = require("./utils/ui");
-const pkg = require("../package.json");
+import CommandRegistry from "./commands/index.js";
+import { showBanner, showMainMenu } from "./utils/ui.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const pkg = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
 
 /**
  * 主程序入口
@@ -170,4 +176,4 @@ function checkForUpdates() {
   }
 }
 
-module.exports = main;
+export default main;

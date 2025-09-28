@@ -1,9 +1,9 @@
-const chalk = require('chalk');
-const ora = require('ora');
+import chalk from 'chalk';
+import ora from 'ora';
 
-const ConfigManager = require('../../core/ConfigManager');
-const { selectSite, selectToken, confirmSwitch, showSuccess, showError, showInfo } = require('../../utils/ui');
-const { formatSwitchSuccess } = require('../../utils/formatter');
+import ConfigManager from '../../core/ConfigManager.js';
+import { selectSite, selectToken, confirmSwitch, showSuccess, showError, showInfo } from '../../utils/ui.js';
+import { formatSwitchSuccess } from '../../utils/formatter.js';
 
 /**
  * API配置切换命令
@@ -123,4 +123,4 @@ class SwitchCommand {
   }
 }
 
-module.exports = new SwitchCommand();
+export default new SwitchCommand();

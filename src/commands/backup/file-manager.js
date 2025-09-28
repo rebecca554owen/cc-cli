@@ -1,7 +1,11 @@
-const path = require('path');
-const os = require('os');
-const fs = require('fs-extra');
-const chalk = require('chalk');
+import path from 'path';
+import os from 'os';
+import fs from 'fs-extra';
+import chalk from 'chalk';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * 文件路径管理器
@@ -245,4 +249,4 @@ class FileManager {
   }
 }
 
-module.exports = FileManager;
+export default FileManager;

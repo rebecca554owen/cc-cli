@@ -1,13 +1,13 @@
-const chalk = require('chalk');
-const { program } = require('commander');
+import chalk from 'chalk';
+import { program } from 'commander';
 
-const switchCommand = require('./switch');
-const listCommand = require('./list');
-const addCommand = require('./add');
-const editCommand = require('./edit');
-const deleteCommand = require('./delete');
-const { showApiMenu, waitForBackConfirm } = require('../../utils/ui');
-const yoloManager = require('../../utils/yolo');
+import switchCommand from './switch.js';
+import listCommand from './list.js';
+import addCommand from './add.js';
+import editCommand from './edit.js';
+import deleteCommand from './delete.js';
+import { showApiMenu, waitForBackConfirm } from '../../utils/ui.js';
+import yoloManager from '../../utils/yolo.js';
 
 /**
  * API命令模块
@@ -137,7 +137,7 @@ class ApiCommand {
    * 显示交互式API菜单
    */
   async showInteractiveMenu() {
-    const inquirer = require('inquirer');
+    const inquirer = (await import('inquirer')).default;
 
     while (true) {
       try {
@@ -191,4 +191,4 @@ class ApiCommand {
   }
 }
 
-module.exports = new ApiCommand();
+export default new ApiCommand();

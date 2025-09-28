@@ -1,6 +1,6 @@
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const { createBackChoice } = require('../../utils/ui');
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import { createBackChoice } from '../../utils/ui.js';
 
 /**
  * 备份命令主控制器
@@ -103,7 +103,7 @@ class BackupCommand {
    */
   async handleBackup() {
     try {
-      const BackupManager = require('./backup');
+      const { default: BackupManager } = await import('./backup.js');
       const backupManager = new BackupManager();
 
       await backupManager.performBackup();
@@ -119,7 +119,7 @@ class BackupCommand {
    */
   async handleRestore() {
     try {
-      const RestoreManager = require('./restore');
+      const { default: RestoreManager } = await import('./restore.js');
       const restoreManager = new RestoreManager();
 
       await restoreManager.performRestore();
@@ -147,9 +147,9 @@ class BackupCommand {
    * 显示备份状态
    */
   async showBackupStatus() {
-    const ora = require('ora');
-    const FileManager = require('./file-manager');
-    const WebDAVClient = require('./webdav-client');
+    const ora = (await import('ora')).default;
+    const { default: FileManager } = await import('./file-manager.js');
+    const { default: WebDAVClient } = await import('./webdav-client.js');
 
     console.log(chalk.cyan.bold('\n📊 备份状态报告\n'));
 
@@ -232,4 +232,4 @@ class BackupCommand {
   }
 }
 
-module.exports = new BackupCommand();
+export default new BackupCommand();

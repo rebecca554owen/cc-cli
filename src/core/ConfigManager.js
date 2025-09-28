@@ -1,7 +1,7 @@
-const fs = require('fs-extra');
-const path = require('path');
-const os = require('os');
-const chalk = require('chalk');
+import fs from 'fs-extra';
+import path from 'path';
+import os from 'os';
+import chalk from 'chalk';
 
 /**
  * 配置管理器
@@ -282,4 +282,4 @@ class ConfigManager {
   }
 }
 
-module.exports = ConfigManager;
+export default ConfigManager;

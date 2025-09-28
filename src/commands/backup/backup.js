@@ -1,11 +1,11 @@
-const fs = require("fs-extra");
-const path = require("path");
-const os = require("os");
-const chalk = require("chalk");
-const inquirer = require("inquirer");
-const ora = require("ora");
-const FileManager = require("./file-manager");
-const WebDAVClient = require("./webdav-client");
+import fs from "fs-extra";
+import path from "path";
+import os from "os";
+import chalk from "chalk";
+import inquirer from "inquirer";
+import ora from "ora";
+import FileManager from "./file-manager.js";
+import WebDAVClient from "./webdav-client.js";
 
 /**
  * 备份功能实现
@@ -609,7 +609,7 @@ class BackupManager {
    * @returns {boolean} 是否继续备份流程
    */
   async performMigration(oldConfigPath) {
-    const ora = require("ora");
+    const ora = (await import("ora")).default;
     const newConfigDir = path.join(os.homedir(), ".cc-cli");
     const newConfigPath = path.join(newConfigDir, "api_configs.json");
 
@@ -793,4 +793,4 @@ class BackupManager {
   }
 }
 
-module.exports = BackupManager;
+export default BackupManager;
