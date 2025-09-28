@@ -1,3 +1,9 @@
+## [2.4.2](https://github.com/cjh-store/cc-cli/compare/v2.4.1...v2.4.2) (2025-09-28)
+
+### 🔧 Chore
+
+* **项目:** 更新项目版本号并优化备份模块代码 ([0e2d8d3](https://github.com/cjh-store/cc-cli/commit/0e2d8d355434183797387f6d59d4a251e9a101ae))
+
 ## [2.4.1](https://github.com/cjh-store/cc-cli/compare/v2.4.0...v2.4.1) (2025-09-27)
 
 ### ⚡ Performance
