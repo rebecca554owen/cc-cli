@@ -1,3 +1,9 @@
+## [2.4.3](https://github.com/cjh-store/cc-cli/compare/v2.4.2...v2.4.3) (2025-09-28)
+
+### ⚡ Performance
+
+* **项目:** 优化写法 ([9b289f4](https://github.com/cjh-store/cc-cli/commit/9b289f477202a96211e4480e839784f03de5ee9b))
+
 ## [2.4.2](https://github.com/cjh-store/cc-cli/compare/v2.4.1...v2.4.2) (2025-09-28)
 
 ### 🔧 Chore
