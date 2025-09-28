@@ -253,7 +253,7 @@ class CodexSwitchCommand {
     // 获取新配置中的所有顶级配置项（排除OPENAI_API_KEY和model_providers）
     const newTopLevelKeys = [];
     Object.keys(codexConfig).forEach(key => {
-      if (key !== 'OPENAI_API_KEY' && key !== 'model_providers') {
+      if (key !== 'OPENAI_API_KEY' && key !== 'model_providers' && key !== 'requires_openai_auth') {
         newTopLevelKeys.push(key);
       }
     });
@@ -391,6 +391,8 @@ class CodexSwitchCommand {
     // wire_api 是必要参数，如果没有配置则默认为 "responses"
     const wireApi = providerConfig.wire_api || "responses";
     newConfig.push(`wire_api = "${wireApi}"`);
+    const requires_openai_auth = providerConfig.requires_openai_auth || true
+    newConfig.push(`requires_openai_auth = ${requires_openai_auth}`)
 
     // 6. 添加其他section配置
     if (sectionConfigs.length > 0) {
