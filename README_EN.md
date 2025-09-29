@@ -8,6 +8,13 @@
 
 A command-line tool for one-click switching of Claude Code API configurations. Supports multi-site, multi-token management, intelligent configuration merging, WebDAV cloud backup, and no manual file editing required.
 
+## 📑 Table of Contents
+
+- [✨ Core Features](#-core-features)
+- [📦 Installation](#-installation)
+- [🚀 Usage](#-usage)
+- [📋 Configuration File Description](#-configuration-file-description)
+
 ## ✨ Core Features
 
 - 🔄 **One-Click Switching** - Quickly switch between different API sites and tokens
@@ -52,6 +59,55 @@ cc --help
 ```
 
 **⚠️ Command Conflict Resolution**: If you encounter `clang: error` errors, it means the `cc` command conflicts with the system's C compiler, please use the `cc-cli` command
+
+### 📸 Interface Preview
+
+#### Configuration Switching Interface
+
+```
+
+   ╭─────────────────────────────────╮
+   │                                 │
+   │      ___ ___    ___ _    ___    │
+   │     / __/ __|  / __| |  |_ _|   │
+   │    | (_| (__  | (__| |__ | |    │
+   │     \___\___|  \___|____|___|   │
+   │                                 │
+   │   Claude Code Configuration CLI │
+   │          v2.6.0 (Latest)        │
+   │                                 │
+   ╰─────────────────────────────────╯
+
+? Select function module: (Use arrow keys)
+> 📡 Claude Code API - Claude Code API configuration management
+  💻 Codex API - Codex configuration management
+  🔄 Backup - Backup and restore
+  📊 Status - View current status
+  ❓ Help - Help documentation
+  ──────────────
+  🚪 Exit - Exit
+
+
+? Select function module: Status
+
+   ╭───────── 📊 Current Configuration Status ─────────╮
+   │                                                   │
+   │   🤖 Claude Code API Configuration                │
+   │   Site: xxAPI Site                              │
+   │   Token Name: claude code                         │
+   │   Update Time: 2025/9/29 19:22:10               │
+   │                                                   │
+   │   💻 Codex API Configuration                      │
+   │   Site: xxAPI Site                              │
+   │   Token Name: Default API Key                     │
+   │   Update Time: 2025/9/29 19:33:40               │
+   │                                                   │
+   ╰───────────────────────────────────────────────────╯
+
+? Select next operation: (Use arrow keys)
+> 🔄 Continue using
+  🚪 Exit program
+```
 
 Running `cc` will display an interactive menu, use arrow keys to select features:
 
@@ -160,16 +216,6 @@ Supports backing up configuration files to cloud storage to ensure configuration
 - 🔄 **Complete Recovery** - Supports selecting backup files and configuration categories for recovery
 - 📊 **Status Monitoring** - Real-time display of backup status and cloud connectivity
 
-## 📸 Interface Preview
-
-<img src="https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/1758509266008.png" alt="CC CLI Interface Preview" width="50%">
-
-#### Configuration Switching Interface
-
-![Configuration Switching Interface](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/switch-config.png)
-
-
----
 
 ## ⭐ Star History
 
