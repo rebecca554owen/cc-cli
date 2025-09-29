@@ -14,12 +14,12 @@
 - 📋 **配置管理** - 查看、添加、删除 API 配置
 - 🔗 **智能合并** - 自动与 Claude Code 配置文件同步
 - ⚙️ **完整支持** - 支持所有 Claude Code 配置项
-- 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭YOLO模式
-- 🚀 **YOLO 模式** - 为Claude Code API和Codex提供最宽松配置模式，无条件批准所有工具使用请求
-- ☁️ **WebDAV 备份** - 支持配置文件云端备份与恢复（坚果云、其他标准WebDAV等）
-  - **CC-CLI配置备份** - 📁.cc-cli下api_config.json 等等
-  - **Claude Code配置备份** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
-  - **Codex备份** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
+- 💻 **Codex 支持** - 管理 Claude Code Codex 配置（仅支持 Claude 模型），支持开启/关闭 YOLO 模式
+- 🚀 **YOLO 模式** - 为 Claude Code API 和 Codex 提供最宽松配置模式，无条件批准所有工具使用请求
+- ☁️ **WebDAV 备份** - 支持配置文件云端备份与恢复（坚果云、其他标准 WebDAV 等）
+  - **CC-CLI 配置备份** - 📁.cc-cli 下 api_config.json 等等
+  - **Claude Code 配置备份** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
+  - **Codex 备份** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
 ## 📦 安装使用
 
@@ -55,9 +55,9 @@ cc --help
 
 运行 `cc` 后会显示交互式菜单，按方向键选择功能：
 
-- 📡 Claude Code API - 切换/查看/添加/删除 Claude Code API 配置（支持YOLO模式）
+- 📡 Claude Code API - 切换/查看/添加/删除 Claude Code API 配置（支持 YOLO 模式）
 - 💻 Codex API - 管理 Claude Code Codex 配置（切换配置、YOLO 模式）
-- 🔄 Backup - 备份与恢复配置文件到WebDAV云端存储
+- 🔄 Backup - 备份与恢复配置文件到 WebDAV 云端存储
 - 📊 状态查看 - 查看当前使用的配置
 - ❓ 帮助文档 - 显示帮助信息
 
@@ -66,8 +66,6 @@ cc --help
 ### 智能配置合并
 
 工具会自动将你选择的 API 配置与现有的 Claude Code 设置合并，保留所有原有配置项，只更新 API 相关设置。
-
-
 
 ### 配置格式示例
 
@@ -124,8 +122,7 @@ cc --help
 > - `config` 字段：用于 Claude Code API 配置（向后兼容）
 > - `codex` 字段：用于 Codex API 配置，仅支持 Claude 模型
 > - 三种配置可在同一站点中共存，实现双重支持
-> - YOLO 模式：Claude Code API使用 `cc claude-yolo` 命令无条件批准所有工具；Codex使用 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
-
+> - YOLO 模式：Claude Code API 使用 `cc claude-yolo` 命令无条件批准所有工具；Codex 使用 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
 
 ## 🔄 工作原理
 
@@ -134,7 +131,7 @@ cc --help
 1. **选择配置** - 从列表中选择 API 站点和 Token
 2. **智能合并** - 自动与现有 Claude Code 配置合并
 3. **立即生效** - 无需重启，Claude Code 立即使用新配置
-4. **YOLO 模式** - 可选开启最宽松配置模式，使用内置 `cc claude-yolo` 命令处理PreToolUse hooks
+4. **YOLO 模式** - 可选开启最宽松配置模式，使用内置 `cc claude-yolo` 命令处理 PreToolUse hooks
 
 ### Codex API 配置流程
 
@@ -148,35 +145,75 @@ cc --help
 支持将配置文件备份到云端存储，确保配置安全：
 
 #### 支持的 WebDAV 服务
+
 - **坚果云** - `https://dav.jianguoyun.com/dav/`
 - **其他 WebDAV 服务** - 任何标准 WebDAV 协议服务
 
 #### 备份内容
-- **CC-CLI配置** - 📁.cc-cli下api_config.json 等等
-- **Claude Code配置** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
-- **Codex配置** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
+
+- **CC-CLI 配置** - 📁.cc-cli 下 api_config.json 等等
+- **Claude Code 配置** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
+- **Codex 配置** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
 #### 功能特性
+
 - 🔐 **安全认证** - 支持用户名密码认证
 - 📦 **选择性备份** - 可选择备份特定配置类别
-- 🕒 **自动清理** - 自动保留最新5个备份文件
+- 🕒 **自动清理** - 自动保留最新 5 个备份文件
 - 🔄 **完整恢复** - 支持选择备份文件和配置类别恢复
 - 📊 **状态监控** - 实时显示备份状态和云端连接情况
 
 ## 📸 界面预览
 
-<img src="https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/1758509266008.png" alt="CC CLI 界面预览" width="50%">
-
 #### 配置切换界面
 
-![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/switch-config.png)
+```
+
+   ╭─────────────────────────────────╮
+   │                                 │
+   │      ___ ___    ___ _    ___    │
+   │     / __/ __|  / __| |  |_ _|   │
+   │    | (_| (__  | (__| |__ | |    │
+   │     \___\___|  \___|____|___|   │
+   │                                 │
+   │   Claude Code配置管理CLI工具    │
+   │          v2.6.0 (最新)          │
+   │                                 │
+   ╰─────────────────────────────────╯
+
+? 请选择功能模块： (Use arrow keys)
+> 📡 Claude Code API - Claude Code API配置管理
+  💻 Codex API - Codex配置管理
+  🔄 Backup - 备份与恢复
+  📊 Status - 查看当前状态
+  ❓ Help - 帮助文档
+  ──────────────
+  🚪 Exit - 退出
 
 
+? 请选择功能模块： Status
+
+   ╭───────── 📊 当前配置状态 ─────────╮
+   │                                   │
+   │   🤖 Claude Code API 配置         │
+   │   站点： xxAPI站点              │
+   │   Token名称： claude code         │
+   │   更新时间： 2025/9/29 19:22:10   │
+   │                                   │
+   │   💻 Codex API 配置               │
+   │   站点： xxAPI站点              │
+   │   Token名称： 默认API Key         │
+   │   更新时间： 2025/9/29 19:33:40   │
+   │                                   │
+   ╰───────────────────────────────────╯
+
+? 请选择下一步操作： (Use arrow keys)
+> 🔄 继续使用
+  🚪 退出程序
+```
 
 ## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=cjh-store/cc&type=Date)](https://star-history.com/#cjh-store/cc&Date)
 
 ---
-
-
