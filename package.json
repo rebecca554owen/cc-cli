@@ -45,11 +45,11 @@
     "fs-extra": "^11.1.0",
     "inquirer": "^8.2.0",
     "ora": "^5.4.1",
-    "update-notifier": "^5.1.0",
+    "update-notifier": "^7.3.1",
     "webdav": "^5.3.1"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
