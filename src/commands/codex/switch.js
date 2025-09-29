@@ -83,7 +83,7 @@ class CodexSwitchCommand {
         apiKey: selectedApiKey,
         apiKeyName: apiKeyName,
         provider: selectedProvider,
-        providerName: selectedProviderConfig.name,
+        providerName: selectedProviderConfig.name || selectedProvider,
         baseUrl: selectedProviderConfig.base_url
       };
 
@@ -193,10 +193,11 @@ class CodexSwitchCommand {
     }
 
     const choices = Object.entries(modelProviders).map(([key, provider]) => {
+      const providerName = provider.name || key;
       return {
-        name: `💻 ${provider.name} (${provider.base_url})`,
+        name: `💻 ${providerName} (${provider.base_url})`,
         value: key,
-        short: provider.name
+        short: providerName
       };
     });
 
@@ -405,7 +406,8 @@ class CodexSwitchCommand {
 
     // 5. 添加model_providers作为第一个table section
     newConfig.push(`[model_providers.${providerKey}]`);
-    newConfig.push(`name = "${providerConfig.name}"`);
+    const providerName = providerConfig.name || providerKey;
+    newConfig.push(`name = "${providerName}"`);
     newConfig.push(`base_url = "${providerConfig.base_url}"`);
     // wire_api 是必要参数，如果没有配置则默认为 "responses"
     const wireApi = providerConfig.wire_api || "responses";

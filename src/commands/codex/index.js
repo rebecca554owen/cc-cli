@@ -89,7 +89,8 @@ class CodexCommand {
           if (siteConfig.codex.model_providers) {
             console.log(chalk.yellow('   📋 服务提供商:'));
             for (const [providerKey, provider] of Object.entries(siteConfig.codex.model_providers)) {
-              console.log(chalk.gray(`      └─ ${provider.name}: ${provider.base_url}`));
+              const providerName = provider.name || providerKey;
+              console.log(chalk.gray(`      └─ ${providerName}: ${provider.base_url}`));
             }
           }
           console.log();
