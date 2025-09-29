@@ -1,3 +1,9 @@
+## [2.5.0](https://github.com/cjh-store/cc-cli/compare/v2.4.3...v2.5.0) (2025-09-29)
+
+### ✨ Features
+
+* **codex:** 支持保存和读取当前Codex配置 ([ed8d9c7](https://github.com/cjh-store/cc-cli/commit/ed8d9c7a4a13f813b6addea1347d642594ea5bcc))
+
 ## [2.4.3](https://github.com/cjh-store/cc-cli/compare/v2.4.2...v2.4.3) (2025-09-28)
 
 ### ⚡ Performance
