@@ -1,3 +1,9 @@
+## [2.6.0](https://github.com/cjh-store/cc-cli/compare/v2.5.1...v2.6.0) (2025-09-29)
+
+### ✨ Features
+
+* **项目:** 新增 model_reasoning_effort 配置项支持 ([8507105](https://github.com/cjh-store/cc-cli/commit/8507105d7597d265b23b7ac4748546d46ba27ddc))
+
 ## [2.5.1](https://github.com/cjh-store/cc-cli/compare/v2.5.0...v2.5.1) (2025-09-29)
 
 ### ⚡ Performance
