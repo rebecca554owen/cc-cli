@@ -129,17 +129,42 @@ The tool will automatically merge your selected API configuration with existing 
 {
   "sites": {
     "XX Public Site": {
-      "url": "https://api.example.com", // (Optional) Site address to remember public sites, will support one-click opening later
-      "description": "Supports both Claude Code and Codex", // Optional, can be left empty
-      // Claude Code API configuration (minimal config, compatible with most official configurations, will override config file)
+      "url": "https://api.example.com",
+      "description": "Supports both Claude Code and Codex",
       "claude": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
-          // Token supports two formats:
-          // 1. Object format (supports multiple tokens)
           "ANTHROPIC_AUTH_TOKEN": {
             "Primary Token": "sk-xxxxxxxxxxxxxx",
             "Backup Token": "sk-yyyyyyyyyyyyyy"
+          }
+        }
+      },
+      "codex": {
+        "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
+        "model": "gpt-5",
+        "model_reasoning_effort": "high",
+        "model_providers": {
+          "duckcoding": {
+            "name": "duckcoding",
+            "base_url": "https://jp.duckcoding.com/v1"
+          }
+        }
+      }
+    },
+    "XX Public Site 2": {
+      "url": "https://api.demo.com", // (Optional) Site address to remember public sites, will support one-click opening later
+      "description": "Claude Code API only", // Optional, can be left empty
+      // Claude Code API configuration (minimal config, compatible with most official configurations, will override config file)
+      "claude": {
+        "env": {
+          "ANTHROPIC_BASE_URL": "https://api.demo.com",
+          // Token supports two formats:
+          // 1. Object format (supports multiple tokens)
+          "ANTHROPIC_AUTH_TOKEN": {
+            "Token1": "sk-aaaaaaaaaaaaaaa",
+            "Token2": "sk-bbbbbbbbbbbbbbb",
+            "Token3": "sk-ccccccccccccccc"
           }
           // 2. String format (single token, automatically named "Default Token")
           // "ANTHROPIC_AUTH_TOKEN": "sk-xxxxxxxxxxxxxx"
@@ -148,25 +173,23 @@ The tool will automatically merge your selected API configuration with existing 
       // Codex API configuration (minimal config, compatible with most official configurations)
       "codex": {
         // API Key also supports two formats:
-        // 1. String format (single API Key, automatically named "Default API Key")
-        "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
-        // 2. Object format (supports multiple API Keys)
-        // "OPENAI_API_KEY": {
-        //   "Primary API Key": "sk-xxxxxxxxxxxxxx",
-        //   "Backup API Key": "sk-yyyyyyyyyyyyyy"
-        // },
-        "model": "gpt-5",
-        "model_reasoning_effort": "high",  // supports the default configuration of codex and can also add other configurations
+        // 1. Object format (supports multiple API Keys)
+        "OPENAI_API_KEY": {
+          "Primary Key": "sk-xxxxxxxxxxxxxx",
+          "Backup Key": "sk-yyyyyyyyyyyyyy",
+          "Test Key": "sk-zzzzzzzzzzzzzzz"
+        },
+        // 2. String format (single API Key, automatically named "Default API Key")
+        // "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
+        "model": "claude-3-5-sonnet-20241022", // Use Claude model
+        "model_reasoning_effort": "medium",  // Reasoning intensity: low/medium/high
         "model_providers": {
-          "duckcoding": {
-            "name": "duckcoding",
-            "base_url": "https://jp.duckcoding.com/v1"
+          "custom_provider": {
+            "name": "custom_provider",
+            "base_url": "https://api.demo.com/v1"
           }
         }
       }
-    }
-    "XX Public Site 2": {
-      ...
     }
   }
 }

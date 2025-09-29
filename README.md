@@ -129,17 +129,42 @@ cc --help
 {
   "sites": {
     "XX公益站": {
-      "url": "https://api.example.com", // （可选）站点的地址 免得忘记公益站点，后期会支持一键打开
-      "description": "同时支持Claude Code和Codex", // 随意 可不填
-      // Claude Code API配置（最简配置，兼容官方大部分配置，会覆盖配置文件）
+      "url": "https://api.example.com",
+      "description": "同时支持Claude Code和Codex",
       "claude": {
         "env": {
           "ANTHROPIC_BASE_URL": "https://api.example.com",
-          // Token支持两种格式：
-          // 1. 对象格式（支持多个token）
           "ANTHROPIC_AUTH_TOKEN": {
             "主力Token": "sk-xxxxxxxxxxxxxx",
             "备用Token": "sk-yyyyyyyyyyyyyy"
+          }
+        }
+      },
+      "codex": {
+        "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
+        "model": "gpt-5",
+        "model_reasoning_effort": "high",
+        "model_providers": {
+          "duckcoding": {
+            "name": "duckcoding",
+            "base_url": "https://jp.duckcoding.com/v1"
+          }
+        }
+      }
+    },
+    // 具体看注释
+    "XX公益站2": {
+      "url": "https://api.demo.com", // （可选）站点的地址 免得忘记公益站点，后期会支持一键打开
+      "description": "仅支持Claude Code API", // 随意 可不填
+      // Claude Code API配置（最简配置，兼容官方大部分配置，会覆盖配置文件）
+      "claude": {
+        "env": {
+          "ANTHROPIC_BASE_URL": "https://api.demo.com",
+          // Token支持两种格式：
+          // 1. 对象格式（支持多个token）
+          "ANTHROPIC_AUTH_TOKEN": {
+            "Token1": "sk-aaaaaaaaaaaaaaa",
+            "Token2": "sk-bbbbbbbbbbbbbbb"
           }
           // 2. 字符串格式（单个token，自动命名为"默认Token"）
           // "ANTHROPIC_AUTH_TOKEN": "sk-xxxxxxxxxxxxxx"
@@ -148,25 +173,22 @@ cc --help
       // Codex API配置(最简配置，兼容官方大部分配置)
       "codex": {
         // API Key同样支持两种格式：
-        // 1. 字符串格式（单个API Key，自动命名为"默认API Key"）
-        "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
-        // 2. 对象格式（支持多个API Key）
-        // "OPENAI_API_KEY": {
-        //   "主力API Key": "sk-xxxxxxxxxxxxxx",
-        //   "备用API Key": "sk-yyyyyyyyyyyyyy"
-        // },
-        "model": "gpt-5",
-        "model_reasoning_effort": "high",  // 支持codex默认的配置，并还可以增加其他配置
+        // 1. 对象格式（支持多个API Key）
+        "OPENAI_API_KEY": {
+          "主要Key": "sk-xxxxxxxxxxxxxx",
+          "测试Key": "sk-zzzzzzzzzzzzzzz"
+        },
+        // 2. 字符串格式（单个API Key，自动命名为"默认API Key"）
+        // "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
+        "model": "gpt-5-code", // 使用Claude模型
+        "model_reasoning_effort": "medium", // 推理强度：low/medium/high
         "model_providers": {
-          "duckcoding": {
-            "name": "duckcoding",
-            "base_url": "https://jp.duckcoding.com/v1"
+          "custom_provider": {
+            "name": "custom_provider",
+            "base_url": "https://api.demo.com/v1"
           }
         }
       }
-    }
-    "XX公益站2": {
-      ...
     }
   }
 }
