@@ -1,3 +1,9 @@
+## [2.6.1](https://github.com/cjh-store/cc-cli/compare/v2.6.0...v2.6.1) (2025-09-29)
+
+### 🔧 Chore
+
+* **项目:** 新增手动发布工作流并更新README文档 ([ffc140e](https://github.com/cjh-store/cc-cli/commit/ffc140ea5112571546db1233312cc61f05d7fe74))
+
 ## [2.6.0](https://github.com/cjh-store/cc-cli/compare/v2.5.1...v2.6.0) (2025-09-29)
 
 ### ✨ Features
