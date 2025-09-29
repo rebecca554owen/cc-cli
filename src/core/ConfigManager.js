@@ -1,7 +1,7 @@
-import fs from 'fs-extra';
-import path from 'path';
-import os from 'os';
-import chalk from 'chalk';
+import fs from "fs-extra";
+import path from "path";
+import os from "os";
+import chalk from "chalk";
 
 /**
  * 配置管理器
@@ -10,9 +10,9 @@ import chalk from 'chalk';
 class ConfigManager {
   constructor() {
     this.homeDir = os.homedir();
-    this.claudeDir = path.join(this.homeDir, '.claude');
-    this.ccCliDir = path.join(this.homeDir, '.cc-cli');
-    this.settingsPath = path.join(this.claudeDir, 'settings.json');
+    this.claudeDir = path.join(this.homeDir, ".claude");
+    this.ccCliDir = path.join(this.homeDir, ".cc-cli");
+    this.settingsPath = path.join(this.claudeDir, "settings.json");
 
     // 查找配置文件路径，优先使用 .cc-cli，兼容 .claude
     this.configPath = this.findConfigPath();
@@ -24,8 +24,8 @@ class ConfigManager {
    */
   findConfigPath() {
     const possiblePaths = [
-      path.join(this.ccCliDir, 'api_configs.json'),     // 首选：.cc-cli目录
-      path.join(this.claudeDir, 'api_configs.json'),    // 兼容：.claude目录
+      path.join(this.ccCliDir, "api_configs.json"), // 首选：.cc-cli目录
+      path.join(this.claudeDir, "api_configs.json"), // 兼容：.claude目录
     ];
 
     for (const configPath of possiblePaths) {
@@ -35,7 +35,7 @@ class ConfigManager {
     }
 
     // 如果都不存在，返回默认路径（.cc-cli目录）
-    return path.join(this.ccCliDir, 'api_configs.json');
+    return path.join(this.ccCliDir, "api_configs.json");
   }
 
   /**
@@ -57,12 +57,12 @@ class ConfigManager {
   async getAllConfigs() {
     try {
       await this.ensureConfigDir();
-      
-      if (!await fs.pathExists(this.configPath)) {
-        throw new Error('API配置文件不存在，请检查 ~/.claude/api_configs.json');
+
+      if (!(await fs.pathExists(this.configPath))) {
+        throw new Error("API配置文件不存在，请检查 ~/.claude/api_configs.json");
       }
 
-      const configContent = await fs.readFile(this.configPath, 'utf8');
+      const configContent = await fs.readFile(this.configPath, "utf8");
       const config = JSON.parse(configContent);
 
       // 支持claude别名：自动将claude字段映射为config字段
@@ -77,7 +77,7 @@ class ConfigManager {
 
       return config;
     } catch (error) {
-      if (error.message.includes('API配置文件不存在')) {
+      if (error.message.includes("API配置文件不存在")) {
         throw error;
       }
       throw new Error(`读取配置文件失败: ${error.message}`);
@@ -93,7 +93,7 @@ class ConfigManager {
       const allConfigs = await this.getAllConfigs();
       return allConfigs.currentConfig || null;
     } catch (error) {
-      console.warn(chalk.yellow('⚠️  读取当前配置失败:'), error.message);
+      console.warn(chalk.yellow("⚠️  读取当前配置失败:"), error.message);
       return null;
     }
   }
@@ -107,7 +107,7 @@ class ConfigManager {
       const allConfigs = await this.getAllConfigs();
       return allConfigs.currentCodexConfig || null;
     } catch (error) {
-      console.warn(chalk.yellow('⚠️  读取当前Codex配置失败:'), error.message);
+      console.warn(chalk.yellow("⚠️  读取当前Codex配置失败:"), error.message);
       return null;
     }
   }
@@ -127,7 +127,7 @@ class ConfigManager {
         urlName: config.urlName,
         token: config.token,
         tokenName: config.tokenName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       // 读取现有配置
@@ -137,8 +137,11 @@ class ConfigManager {
       allConfigs.currentConfig = configToSave;
 
       // 保存到 api_configs.json
-      await fs.writeFile(this.configPath, JSON.stringify(allConfigs, null, 2), 'utf8');
-
+      await fs.writeFile(
+        this.configPath,
+        JSON.stringify(allConfigs, null, 2),
+        "utf8"
+      );
     } catch (error) {
       throw new Error(`保存当前配置失败: ${error.message}`);
     }
@@ -161,7 +164,7 @@ class ConfigManager {
         provider: config.provider,
         providerName: config.providerName,
         baseUrl: config.baseUrl,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       // 读取现有配置
@@ -171,14 +174,15 @@ class ConfigManager {
       allConfigs.currentCodexConfig = configToSave;
 
       // 保存到 api_configs.json
-      await fs.writeFile(this.configPath, JSON.stringify(allConfigs, null, 2), 'utf8');
-
+      await fs.writeFile(
+        this.configPath,
+        JSON.stringify(allConfigs, null, 2),
+        "utf8"
+      );
     } catch (error) {
       throw new Error(`保存当前Codex配置失败: ${error.message}`);
     }
   }
-
-
 
   /**
    * 读取settings.json配置
@@ -186,13 +190,13 @@ class ConfigManager {
    */
   async getSettings() {
     try {
-      if (!await fs.pathExists(this.settingsPath)) {
+      if (!(await fs.pathExists(this.settingsPath))) {
         return {};
       }
-      const settingsContent = await fs.readFile(this.settingsPath, 'utf8');
+      const settingsContent = await fs.readFile(this.settingsPath, "utf8");
       return JSON.parse(settingsContent);
     } catch (error) {
-      console.warn(chalk.yellow('⚠️  读取settings.json失败:'), error.message);
+      console.warn(chalk.yellow("⚠️  读取settings.json失败:"), error.message);
       return {};
     }
   }
@@ -204,7 +208,11 @@ class ConfigManager {
   async saveSettings(settings) {
     try {
       await this.ensureConfigDir();
-      await fs.writeFile(this.settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+      await fs.writeFile(
+        this.settingsPath,
+        JSON.stringify(settings, null, 2),
+        "utf8"
+      );
     } catch (error) {
       throw new Error(`保存settings.json失败: ${error.message}`);
     }
@@ -218,17 +226,21 @@ class ConfigManager {
    */
   deepMerge(target, source) {
     const result = { ...target };
-    
+
     for (const key in source) {
       if (source.hasOwnProperty(key)) {
-        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+        if (
+          typeof source[key] === "object" &&
+          source[key] !== null &&
+          !Array.isArray(source[key])
+        ) {
           result[key] = this.deepMerge(result[key] || {}, source[key]);
         } else {
           result[key] = source[key];
         }
       }
     }
-    
+
     return result;
   }
 
@@ -242,36 +254,46 @@ class ConfigManager {
     try {
       // 找到Token的名称
       const rawTokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
-      const tokens = typeof rawTokens === 'string' ? { '默认Token': rawTokens } : rawTokens;
-      const tokenName = Object.keys(tokens).find(key => tokens[key] === token);
+      const tokens =
+        typeof rawTokens === "string" ? { 默认Token: rawTokens } : rawTokens;
+      const tokenName = Object.keys(tokens).find(
+        (key) => tokens[key] === token
+      );
 
       const config = {
         site,
         siteName: site,
         ANTHROPIC_BASE_URL: siteConfig.config.env.ANTHROPIC_BASE_URL,
         token,
-        tokenName
+        tokenName,
       };
 
       await this.saveCurrentConfig(config);
-      
+
       // 读取当前settings.json
       const currentSettings = await this.getSettings();
-      
+
+      // 在合并前先删除可能冲突的认证字段
+      if (currentSettings.env) {
+        delete currentSettings.env.ANTHROPIC_AUTH_TOKEN;
+        delete currentSettings.env.ANTHROPIC_AUTH_KEY;
+        delete currentSettings.env.ANTHROPIC_API_KEY;
+      }
+
       // 准备合并的配置
       const configToMerge = { ...siteConfig.config };
-      
+
       // 特殊处理：ANTHROPIC_AUTH_TOKEN使用选中的具体token值
       if (configToMerge.env && configToMerge.env.ANTHROPIC_AUTH_TOKEN) {
         configToMerge.env.ANTHROPIC_AUTH_TOKEN = token;
       }
-      
+
       // 深度合并配置
       const mergedSettings = this.deepMerge(currentSettings, configToMerge);
-      
+
       // 保存合并后的settings.json
       await this.saveSettings(mergedSettings);
-      
+
       return config;
     } catch (error) {
       throw new Error(`切换配置失败: ${error.message}`);
@@ -284,11 +306,11 @@ class ConfigManager {
    * @returns {boolean} 是否有效
    */
   validateConfig(config) {
-    if (!config || typeof config !== 'object') {
+    if (!config || typeof config !== "object") {
       return false;
     }
 
-    if (!config.sites || typeof config.sites !== 'object') {
+    if (!config.sites || typeof config.sites !== "object") {
       return false;
     }
 
@@ -300,18 +322,22 @@ class ConfigManager {
       // 获取实际的配置对象（支持claude别名）
       const actualConfig = siteConfig.config || siteConfig.claude;
 
-      if (!actualConfig.env || !actualConfig.env.ANTHROPIC_BASE_URL || !actualConfig.env.ANTHROPIC_AUTH_TOKEN) {
+      if (
+        !actualConfig.env ||
+        !actualConfig.env.ANTHROPIC_BASE_URL ||
+        !actualConfig.env.ANTHROPIC_AUTH_TOKEN
+      ) {
         return false;
       }
 
-      if (typeof actualConfig.env.ANTHROPIC_BASE_URL !== 'string') {
+      if (typeof actualConfig.env.ANTHROPIC_BASE_URL !== "string") {
         return false;
       }
 
       const authToken = actualConfig.env.ANTHROPIC_AUTH_TOKEN;
-      if (typeof authToken === 'string') {
+      if (typeof authToken === "string") {
         if (!authToken.trim()) return false;
-      } else if (typeof authToken === 'object' && authToken !== null) {
+      } else if (typeof authToken === "object" && authToken !== null) {
         if (Object.keys(authToken).length === 0) return false;
       } else {
         return false;
