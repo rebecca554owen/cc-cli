@@ -100,6 +100,7 @@ The tool will automatically merge your selected API configuration with existing 
         //   "Backup API Key": "sk-yyyyyyyyyyyyyy"
         // },
         "model": "gpt-5",
+        "model_reasoning_effort": "high",  // supports the default configuration of codex and can also add other configurations
         "model_providers": {
           "duckcoding": {
             "name": "duckcoding",

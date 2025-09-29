@@ -102,6 +102,7 @@ cc --help
         //   "备用API Key": "sk-yyyyyyyyyyyyyy"
         // },
         "model": "gpt-5",
+        "model_reasoning_effort": "high",  // 支持codex默认的配置，并还可以增加其他配置
         "model_providers": {
           "duckcoding": {
             "name": "duckcoding",
