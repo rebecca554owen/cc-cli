@@ -1,3 +1,9 @@
+## [2.6.2](https://github.com/cjh-store/cc-cli/compare/v2.6.1...v2.6.2) (2025-09-29)
+
+### 🐛 Bug Fixes
+
+* **安全:** 修复安全漏洞并升级依赖 ([dd7362c](https://github.com/cjh-store/cc-cli/commit/dd7362cc39ab0f38f07fa67ce259e64989d20678))
+
 ## [2.6.1](https://github.com/cjh-store/cc-cli/compare/v2.6.0...v2.6.1) (2025-09-29)
 
 ### 🔧 Chore
