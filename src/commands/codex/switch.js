@@ -70,6 +70,25 @@ class CodexSwitchCommand {
       // 使用选择的API Key
       await this.writeAuthConfig(selectedApiKey);
 
+      // 7. 保存当前Codex配置到api_configs.json
+      const selectedProviderConfig = codexConfig.model_providers[selectedProvider];
+      const apiKeyName = typeof codexConfig.OPENAI_API_KEY === 'object'
+        ? Object.keys(codexConfig.OPENAI_API_KEY).find(key => codexConfig.OPENAI_API_KEY[key] === selectedApiKey)
+        : '默认API Key';
+
+      const currentCodexConfig = {
+        site: selectedSite,
+        siteName: selectedSite,
+        model: codexConfig.model || 'gpt-5',
+        apiKey: selectedApiKey,
+        apiKeyName: apiKeyName,
+        provider: selectedProvider,
+        providerName: selectedProviderConfig.name,
+        baseUrl: selectedProviderConfig.base_url
+      };
+
+      await this.configManager.saveCurrentCodexConfig(currentCodexConfig);
+
       showSuccess(`✅ Codex配置切换成功！`);
       showInfo(`站点: ${chalk.cyan(selectedSite)}`);
       showInfo(`服务商: ${chalk.cyan(selectedProvider)}`);

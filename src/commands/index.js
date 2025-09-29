@@ -134,21 +134,13 @@ class CommandRegistry {
   async showStatus() {
     const { default: ConfigManager } = await import('../core/ConfigManager.js');
     const configManager = new ConfigManager();
-    
+
     try {
       const currentConfig = await configManager.getCurrentConfig();
-      let allConfigs = null;
-      
-      // 尝试获取所有配置，用于解析URL
-      try {
-        allConfigs = await configManager.getAllConfigs();
-      } catch (error) {
-        // 忽略错误，继续显示基本状态
-      }
-      
+      const currentCodexConfig = await configManager.getCurrentCodexConfig();
       const { formatStatus } = await import('../utils/formatter.js');
-      
-      console.log(formatStatus(currentConfig, allConfigs));
+
+      console.log(formatStatus(currentConfig, currentCodexConfig));
     } catch (error) {
       console.log(chalk.yellow('⚠️  当前没有配置或配置文件不存在'));
     }

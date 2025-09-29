@@ -99,6 +99,20 @@ class ConfigManager {
   }
 
   /**
+   * 获取当前使用的Codex配置
+   * @returns {Object} 当前Codex配置
+   */
+  async getCurrentCodexConfig() {
+    try {
+      const allConfigs = await this.getAllConfigs();
+      return allConfigs.currentCodexConfig || null;
+    } catch (error) {
+      console.warn(chalk.yellow('⚠️  读取当前Codex配置失败:'), error.message);
+      return null;
+    }
+  }
+
+  /**
    * 保存当前配置
    * @param {Object} config 配置对象
    */
@@ -127,6 +141,40 @@ class ConfigManager {
 
     } catch (error) {
       throw new Error(`保存当前配置失败: ${error.message}`);
+    }
+  }
+
+  /**
+   * 保存当前Codex配置
+   * @param {Object} config Codex配置对象
+   */
+  async saveCurrentCodexConfig(config) {
+    try {
+      await this.ensureConfigDir();
+
+      const configToSave = {
+        site: config.site,
+        siteName: config.siteName,
+        model: config.model,
+        apiKey: config.apiKey,
+        apiKeyName: config.apiKeyName,
+        provider: config.provider,
+        providerName: config.providerName,
+        baseUrl: config.baseUrl,
+        updatedAt: new Date().toISOString()
+      };
+
+      // 读取现有配置
+      const allConfigs = await this.getAllConfigs();
+
+      // 更新当前Codex配置
+      allConfigs.currentCodexConfig = configToSave;
+
+      // 保存到 api_configs.json
+      await fs.writeFile(this.configPath, JSON.stringify(allConfigs, null, 2), 'utf8');
+
+    } catch (error) {
+      throw new Error(`保存当前Codex配置失败: ${error.message}`);
     }
   }
 

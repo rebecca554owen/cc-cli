@@ -2,18 +2,39 @@ import chalk from "chalk";
 import boxen from "boxen";
 
 /**
+ * 格式化配置项显示
+ * @param {Object} config 配置对象
+ * @param {string} title 标题
+ * @param {string} titleColor 标题颜色
+ * @param {string} tokenKey Token字段名
+ * @returns {string} 格式化后的配置信息
+ */
+function formatConfigItem(config, title, titleColor, tokenKey, setupCommand) {
+  if (!config) {
+    return chalk.yellow(title + "\n") + chalk.gray(`   未配置，请使用 ${setupCommand} 设置`);
+  }
+
+  return titleColor(title + "\n") +
+    `${chalk.white("站点：")} ${chalk.cyan(config.siteName)}\n` +
+    `${chalk.white("Token名称：")} ${chalk.gray(config[tokenKey])}\n` +
+    `${chalk.white("更新时间：")} ${chalk.gray(new Date(config.updatedAt).toLocaleString())}`;
+}
+
+/**
  * 格式化当前状态显示
- * @param {Object} currentConfig 当前配置
- * @param {Object} allConfigs 所有配置（用于获取URL）
+ * @param {Object} currentConfig 当前Claude配置
+ * @param {Object} currentCodexConfig 当前Codex配置
  * @returns {string} 格式化后的状态信息
  */
-function formatStatus(currentConfig, allConfigs = null) {
-  if (!currentConfig) {
+function formatStatus(currentConfig, currentCodexConfig = null) {
+  if (!currentConfig && !currentCodexConfig) {
     return boxen(
       chalk.yellow("⚠️  当前没有配置\n\n") +
         chalk.white("请使用 ") +
         chalk.cyan("cc api") +
-        chalk.white(" 来设置API配置"),
+        chalk.white(" 或 ") +
+        chalk.cyan("cc codexapi") +
+        chalk.white(" 来设置配置"),
       {
         padding: 1,
         margin: 1,
@@ -25,36 +46,28 @@ function formatStatus(currentConfig, allConfigs = null) {
     );
   }
 
-  // 处理URL显示，兼容新旧格式
-  let url = currentConfig.ANTHROPIC_BASE_URL || currentConfig.url;
+  let statusContent = "";
 
-  // 如果当前配置没有URL信息，从站点配置中获取
-  if (
-    !url &&
-    currentConfig.site &&
-    allConfigs &&
-    allConfigs.sites &&
-    allConfigs.sites[currentConfig.site]
-  ) {
-    const siteConfig = allConfigs.sites[currentConfig.site];
-    url =
-      siteConfig.config?.env?.ANTHROPIC_BASE_URL ||
-      siteConfig.ANTHROPIC_BASE_URL ||
-      (siteConfig.urls && Object.values(siteConfig.urls)[0]);
+  // Claude配置
+  statusContent += formatConfigItem(
+    currentConfig,
+    "🤖 Claude Code API 配置",
+    chalk.blue.bold,
+    "tokenName",
+    "cc api"
+  );
+
+  // Codex配置
+  if (currentCodexConfig || currentConfig) {
+    statusContent += "\n\n";
+    statusContent += formatConfigItem(
+      currentCodexConfig,
+      "💻 Codex API 配置",
+      chalk.magenta.bold,
+      "apiKeyName",
+      "cc codexapi"
+    );
   }
-
-  url = url || "未知URL";
-
-  const statusContent =
-    `${chalk.white("站点：")} ${chalk.cyan(currentConfig.siteName)}\n` +
-    `${chalk.white("ANTHROPIC_BASE_URL：")} ${chalk.cyan(url)}\n` +
-    `${chalk.white("Token：")} ${chalk.cyan(
-      formatToken(currentConfig.token)
-    )}\n` +
-    `${chalk.white("Token名称：")} ${chalk.gray(currentConfig.tokenName)}\n` +
-    `${chalk.white("更新时间：")} ${chalk.gray(
-      new Date(currentConfig.updatedAt).toLocaleString()
-    )}`;
 
   return boxen(statusContent, {
     padding: 1,
