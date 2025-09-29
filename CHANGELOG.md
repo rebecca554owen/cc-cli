@@ -1,3 +1,9 @@
+## [2.5.1](https://github.com/cjh-store/cc-cli/compare/v2.5.0...v2.5.1) (2025-09-29)
+
+### ⚡ Performance
+
+* **codex:** 优化模型提供商名称显示逻辑 ([0cf63ae](https://github.com/cjh-store/cc-cli/commit/0cf63aed404eecc6ded5dd50e593c0069d6b7ab2))
+
 ## [2.5.0](https://github.com/cjh-store/cc-cli/compare/v2.4.3...v2.5.0) (2025-09-29)
 
 ### ✨ Features
