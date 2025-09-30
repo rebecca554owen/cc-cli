@@ -1,3 +1,9 @@
+## [2.8.0](https://github.com/cjh-store/cc-cli/compare/v2.7.0...v2.8.0) (2025-09-30)
+
+### ✨ Features
+
+* **codex:** 新增Codex配置切换成功信息格式化功能 ([539869d](https://github.com/cjh-store/cc-cli/commit/539869d85452fe2f0f970e92432c1692ff21371c))
+
 ## [2.7.0](https://github.com/cjh-store/cc-cli/compare/v2.6.4...v2.7.0) (2025-09-30)
 
 ### ✨ Features
