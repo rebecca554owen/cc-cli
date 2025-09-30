@@ -273,12 +273,14 @@ class ConfigManager {
       // 读取当前settings.json
       const currentSettings = await this.getSettings();
 
-      // 在合并前先删除可能冲突的认证字段
+      // 需要删除重置的配置项
       if (currentSettings.env) {
         delete currentSettings.env.ANTHROPIC_AUTH_TOKEN;
         delete currentSettings.env.ANTHROPIC_AUTH_KEY;
         delete currentSettings.env.ANTHROPIC_API_KEY;
       }
+      // 重置模型配置
+      delete currentSettings.model;
 
       // 准备合并的配置
       const configToMerge = { ...siteConfig.config };
