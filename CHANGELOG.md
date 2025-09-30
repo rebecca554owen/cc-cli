@@ -1,3 +1,9 @@
+## [2.6.3](https://github.com/cjh-store/cc-cli/compare/v2.6.2...v2.6.3) (2025-09-30)
+
+### ⚡ Performance
+
+* **项目:** 优化配置管理中的认证字段清理逻辑 ([859de51](https://github.com/cjh-store/cc-cli/commit/859de51f26599babbcf341e48f6f182f037b1051))
+
 ## [2.6.2](https://github.com/cjh-store/cc-cli/compare/v2.6.1...v2.6.2) (2025-09-29)
 
 ### 🐛 Bug Fixes
