@@ -141,14 +141,6 @@ cc --help
 }
 ```
 
-> **⚠️ 重要说明**：
->
-> - `claude` 字段：用于 Claude Code API 配置（推荐使用）
-> - `config` 字段：用于 Claude Code API 配置（向后兼容）
-> - `codex` 字段：用于 Codex API 配置，仅支持 Claude 模型
-> - 三种配置可在同一站点中共存，实现双重支持
-> - YOLO 模式：Claude Code API 使用 `cc claude-yolo` 命令无条件批准所有工具；Codex 使用 `approval_policy=never` 和 `sandbox_mode=danger-full-access`
-
 ## 🔄 工作原理
 
 ### WebDAV 备份功能

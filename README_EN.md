@@ -28,7 +28,7 @@ A command-line tool for one-click switching of Claude Code API configurations. S
 - 💻 **Codex Support** - Manage Claude Code Codex configurations (Claude models only), support enabling/disabling YOLO mode
 - 🚀 **YOLO Mode** - Provides the most permissive configuration mode for Claude Code API and Codex, unconditionally approves all tool usage requests
 - ☁️ **WebDAV Backup** - Support cloud backup and restore of configuration files (Nutstore, other standard WebDAV, etc.)
-  - **CC-CLI Configuration Backup** - 📁.cc-cli下api_config.json etc.
+  - **CC-CLI Configuration Backup** - 📁.cc-cli 下 api_config.json etc.
   - **Claude Code Configuration Backup** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
   - **Codex Backup** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
@@ -129,7 +129,7 @@ The tool will automatically merge your selected API configuration with existing 
         // 2. String format (single API Key, automatically named "Default API Key")
         // "OPENAI_API_KEY": "sk-xxxxxxxxxxxxxx",
         "model": "claude-3-5-sonnet-20241022", // Use Claude model
-        "model_reasoning_effort": "medium",  // Reasoning intensity: low/medium/high
+        "model_reasoning_effort": "medium", // Reasoning intensity: low/medium/high
         "model_providers": {
           "custom_provider": {
             "name": "custom_provider",
@@ -142,14 +142,6 @@ The tool will automatically merge your selected API configuration with existing 
 }
 ```
 
-> **⚠️ Important Notes**:
->
-> - `claude` field: For Claude Code API configuration (recommended)
-> - `config` field: For Claude Code API configuration (backward compatibility)
-> - `codex` field: For Codex API configuration, only supports Claude models
-> - All three configurations can coexist in the same site for dual support
-> - YOLO mode: Claude Code API uses `cc claude-yolo` command to unconditionally approve all tools; Codex uses `approval_policy=never` and `sandbox_mode=danger-full-access`
-
 ## 🔄 Working Principle
 
 ### WebDAV Backup Feature
@@ -157,21 +149,23 @@ The tool will automatically merge your selected API configuration with existing 
 Supports backing up configuration files to cloud storage to ensure configuration security:
 
 #### Supported WebDAV Services
+
 - **Nutstore** - `https://dav.jianguoyun.com/dav/`
 - **Other WebDAV Services** - Any standard WebDAV protocol service
 
 #### Backup Content
-- **CC-CLI Configuration** - 📁.cc-cli下api_config.json etc.
+
+- **CC-CLI Configuration** - 📁.cc-cli 下 api_config.json etc.
 - **Claude Code Configuration** - 📄 settings.json 📄 CLAUDE.md 📁 agents/ 📁 commands/
 - **Codex Configuration** - 📄 config.toml 📄 auth.json 📄 AGENTS.md
 
 #### Feature Characteristics
+
 - 🔐 **Secure Authentication** - Supports username and password authentication
 - 📦 **Selective Backup** - Can choose to backup specific configuration categories
 - 🕒 **Automatic Cleanup** - Automatically keeps the latest 5 backup files
 - 🔄 **Complete Recovery** - Supports selecting backup files and configuration categories for recovery
 - 📊 **Status Monitoring** - Real-time display of backup status and cloud connectivity
-
 
 ## ⭐ Star History
 
