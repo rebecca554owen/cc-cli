@@ -1,3 +1,9 @@
+## [2.7.0](https://github.com/cjh-store/cc-cli/compare/v2.6.4...v2.7.0) (2025-09-30)
+
+### ✨ Features
+
+* **claude:** 统一使用 claude 字段并兼容老格式配置 ([29a2ddf](https://github.com/cjh-store/cc-cli/commit/29a2ddfc8c925d28217e5042b6a30b81fc0f4dd4))
+
 ## [2.6.4](https://github.com/cjh-store/cc-cli/compare/v2.6.3...v2.6.4) (2025-09-30)
 
 ### ⚡ Performance
