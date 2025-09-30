@@ -101,7 +101,8 @@ class SwitchCommand {
         console.log(formatSwitchSuccess(config));
         showSuccess('配置切换完成！');
 
-        return true; // 操作成功完成
+        // 退出程序
+        process.exit(0);
 
       } catch (error) {
         saveSpinner.fail();

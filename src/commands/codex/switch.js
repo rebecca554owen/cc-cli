@@ -96,7 +96,8 @@ class CodexSwitchCommand {
       showInfo(`配置文件: ${chalk.gray(this.codexConfigFile)}`);
       showInfo(`认证文件: ${chalk.gray(this.codexAuthFile)}`);
 
-      return true; // 操作成功完成
+      // 退出程序
+      process.exit(0);
 
     } catch (error) {
       showError(`切换Codex配置失败: ${error.message}`);
