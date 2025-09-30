@@ -45,7 +45,7 @@ cc
 # 如果遇到命令冲突，使用备用命令
 cc-cli
 
-# API配置管理
+# Claude配置管理
 cc api
 
 # 快速切换 API 配置
@@ -62,60 +62,7 @@ cc --help
 
 ### 📸 界面预览
 
-#### 配置切换界面
-
-```
-
-   ╭─────────────────────────────────╮
-   │                                 │
-   │      ___ ___    ___ _    ___    │
-   │     / __/ __|  / __| |  |_ _|   │
-   │    | (_| (__  | (__| |__ | |    │
-   │     \___\___|  \___|____|___|   │
-   │                                 │
-   │   Claude Code配置管理CLI工具    │
-   │          v2.6.0 (最新)          │
-   │                                 │
-   ╰─────────────────────────────────╯
-
-? 请选择功能模块： (Use arrow keys)
-> 📡 Claude Code API - Claude Code API配置管理
-  💻 Codex API - Codex配置管理
-  🔄 Backup - 备份与恢复
-  📊 Status - 查看当前状态
-  ❓ Help - 帮助文档
-  ──────────────
-  🚪 Exit - 退出
-
-
-? 请选择功能模块： Status
-
-   ╭───────── 📊 当前配置状态 ─────────╮
-   │                                   │
-   │   🤖 Claude Code API 配置         │
-   │   站点： xxAPI站点                │
-   │   Token名称： claude code         │
-   │   更新时间： 2025/9/29 19:22:10   │
-   │                                   │
-   │   💻 Codex API 配置               │
-   │   站点： xxAPI站点                │
-   │   Token名称： 默认API Key         │
-   │   更新时间： 2025/9/29 19:33:40   │
-   │                                   │
-   │   ╰───────────────────────────────╯
-
-? 请选择下一步操作： (Use arrow keys)
-> 🔄 继续使用
-  🚪 退出程序
-```
-
-运行 `cc` 后会显示交互式菜单，按方向键选择功能：
-
-- 📡 Claude Code API - 切换/查看/添加/删除 Claude Code API 配置（支持 YOLO 模式）
-- 💻 Codex API - 管理 Claude Code Codex 配置（切换配置、YOLO 模式）
-- 🔄 Backup - 备份与恢复配置文件到 WebDAV 云端存储
-- 📊 状态查看 - 查看当前使用的配置
-- ❓ 帮助文档 - 显示帮助信息
+![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/PixPin_2025-09-30_08-42-40.png)
 
 ## 📋 配置文件说明
 

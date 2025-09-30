@@ -275,14 +275,14 @@ function formatMainHelp() {
 ${chalk.cyan.bold('CC CLI - Claude Code 配置管理工具')}
 
 ${chalk.white("主要功能:")}
-  📡 API配置管理     切换、查看、添加、删除API配置
+  📡 Claude配置管理     切换、查看、添加、删除API配置
   📊 状态查看       查看当前使用的配置信息
   ❓ 帮助文档       显示详细使用说明
 
 ${chalk.white("基本命令:")}
   cc              启动交互式界面
   cc-cli          备用命令（避免与系统命令冲突）
-  cc api          API配置管理
+  cc api          Claude配置管理
   cc status       查看当前状态
   cc --version    查看版本信息
   cc --help       显示帮助信息

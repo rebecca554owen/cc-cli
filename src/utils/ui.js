@@ -66,7 +66,7 @@ function showBanner(updateInfo = null) {
 async function showMainMenu() {
   const choices = [
     {
-      name: '📡 Claude Code API - Claude Code API配置管理',
+      name: '📡 Claude Code API - Claude Code Claude配置管理',
       value: 'api',
       short: 'Claude Code API'
     },
@@ -118,7 +118,7 @@ async function showMainMenu() {
  * @returns {string} 用户选择
  */
 async function showApiMenu(options = {}) {
-  console.log(chalk.cyan.bold('\n📡 API配置管理'));
+  console.log(chalk.cyan.bold('\n📡 Claude配置管理'));
   console.log(chalk.gray('═'.repeat(40)));
 
   // 构建YOLO模式菜单项

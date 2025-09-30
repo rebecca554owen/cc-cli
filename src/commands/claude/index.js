@@ -30,7 +30,7 @@ class ApiCommand {
   async register(program) {
     const apiCommand = program
       .command('api')
-      .description('API配置管理')
+      .description('Claude配置管理')
       .option('-l, --list', '列出所有配置')
       .option('-a, --add', '添加新配置')
       .option('-e, --edit', '编辑配置文件')

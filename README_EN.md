@@ -62,60 +62,7 @@ cc --help
 
 ### 📸 Interface Preview
 
-#### Configuration Switching Interface
-
-```
-
-   ╭─────────────────────────────────╮
-   │                                 │
-   │      ___ ___    ___ _    ___    │
-   │     / __/ __|  / __| |  |_ _|   │
-   │    | (_| (__  | (__| |__ | |    │
-   │     \___\___|  \___|____|___|   │
-   │                                 │
-   │   Claude Code Configuration CLI │
-   │          v2.6.0 (Latest)        │
-   │                                 │
-   ╰─────────────────────────────────╯
-
-? Select function module: (Use arrow keys)
-> 📡 Claude Code API - Claude Code API configuration management
-  💻 Codex API - Codex configuration management
-  🔄 Backup - Backup and restore
-  📊 Status - View current status
-  ❓ Help - Help documentation
-  ──────────────
-  🚪 Exit - Exit
-
-
-? Select function module: Status
-
-   ╭───────── 📊 Current Configuration Status ─────────╮
-   │                                                   │
-   │   🤖 Claude Code API Configuration                │
-   │   Site: xxAPI Site                              │
-   │   Token Name: claude code                         │
-   │   Update Time: 2025/9/29 19:22:10               │
-   │                                                   │
-   │   💻 Codex API Configuration                      │
-   │   Site: xxAPI Site                              │
-   │   Token Name: Default API Key                     │
-   │   Update Time: 2025/9/29 19:33:40               │
-   │                                                   │
-   ╰───────────────────────────────────────────────────╯
-
-? Select next operation: (Use arrow keys)
-> 🔄 Continue using
-  🚪 Exit program
-```
-
-Running `cc` will display an interactive menu, use arrow keys to select features:
-
-- 📡 Claude Code API - Switch/view/add/delete Claude Code API configurations (supports YOLO mode)
-- 💻 Codex API - Manage Claude Code Codex configurations (switch configurations, YOLO mode)
-- 🔄 Backup - Backup and restore configuration files to/from WebDAV cloud storage
-- 📊 Status View - View currently used configurations
-- ❓ Help Documentation - Display help information
+![Configuration Switching Interface](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/PixPin_2025-09-30_08-42-40.png)
 
 ## 📋 Configuration File Description
 
