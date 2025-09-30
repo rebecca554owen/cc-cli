@@ -152,20 +152,6 @@ The tool will automatically merge your selected API configuration with existing 
 
 ## 🔄 Working Principle
 
-### Claude Code API Configuration Process
-
-1. **Select Configuration** - Choose API site and token from the list
-2. **Intelligent Merging** - Automatically merge with existing Claude Code configuration
-3. **Immediate Effect** - No restart required, Claude Code uses new configuration immediately
-4. **YOLO Mode** - Optionally enable the most permissive configuration mode, using built-in `cc claude-yolo` command to handle PreToolUse hooks
-
-### Codex API Configuration Process
-
-1. **Select Site** - Choose from sites that support Codex
-2. **Select Provider** - Choose service provider from model_providers
-3. **Generate Configuration** - Automatically generate config.toml and auth.json files
-4. **YOLO Mode** - Optionally enable the most permissive configuration mode
-
 ### WebDAV Backup Feature
 
 Supports backing up configuration files to cloud storage to ensure configuration security:

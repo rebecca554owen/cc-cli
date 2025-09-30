@@ -151,20 +151,6 @@ cc --help
 
 ## 🔄 工作原理
 
-### Claude Code API 配置流程
-
-1. **选择配置** - 从列表中选择 API 站点和 Token
-2. **智能合并** - 自动与现有 Claude Code 配置合并
-3. **立即生效** - 无需重启，Claude Code 立即使用新配置
-4. **YOLO 模式** - 可选开启最宽松配置模式，使用内置 `cc claude-yolo` 命令处理 PreToolUse hooks
-
-### Codex API 配置流程
-
-1. **选择站点** - 从支持 Codex 的站点中选择
-2. **选择提供商** - 从 model_providers 中选择服务提供商
-3. **生成配置** - 自动生成 config.toml 和 auth.json 文件
-4. **YOLO 模式** - 可选开启最宽松配置模式
-
 ### WebDAV 备份功能
 
 支持将配置文件备份到云端存储，确保配置安全：
