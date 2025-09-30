@@ -8,6 +8,10 @@
 
 一键切换 claude code / codex 配置的命令行工具。支持多站点、多 Token 管理，智能合并配置，WebDAV 云端备份，无需手动修改配置文件。
 
+## 📸 界面预览
+
+![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/PixPin_2025-09-30_08-42-40.png)
+
 ## 📑 目录
 
 - [✨ 核心功能](#-核心功能)
@@ -59,10 +63,6 @@ cc --help
 ```
 
 **⚠️ 命令冲突解决**：如果遇到 `clang: error` 错误，说明 `cc` 命令与系统的 C 编译器冲突，请使用 `cc-cli` 命令
-
-### 📸 界面预览
-
-![配置切换界面](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/PixPin_2025-09-30_08-42-40.png)
 
 ## 📋 配置文件说明
 

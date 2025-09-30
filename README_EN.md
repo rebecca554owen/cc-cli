@@ -8,6 +8,10 @@
 
 A command-line tool for one-click switching of Claude Code API configurations. Supports multi-site, multi-token management, intelligent configuration merging, WebDAV cloud backup, and no manual file editing required.
 
+## 📸 Interface Preview
+
+![Configuration Switching Interface](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/PixPin_2025-09-30_08-42-40.png)
+
 ## 📑 Table of Contents
 
 - [✨ Core Features](#-core-features)
@@ -59,10 +63,6 @@ cc --help
 ```
 
 **⚠️ Command Conflict Resolution**: If you encounter `clang: error` errors, it means the `cc` command conflicts with the system's C compiler, please use the `cc-cli` command
-
-### 📸 Interface Preview
-
-![Configuration Switching Interface](https://qm-cloud.oss-cn-chengdu.aliyuncs.com/test/otherType/PixPin_2025-09-30_08-42-40.png)
 
 ## 📋 Configuration File Description
 
