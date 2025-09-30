@@ -1,3 +1,9 @@
+## [2.6.4](https://github.com/cjh-store/cc-cli/compare/v2.6.3...v2.6.4) (2025-09-30)
+
+### ⚡ Performance
+
+* **项目:** 优化命令执行完成后主动退出进程 ([4c0752a](https://github.com/cjh-store/cc-cli/commit/4c0752a9cfb403881805af70099bd6acf0a0f724))
+
 ## [2.6.3](https://github.com/cjh-store/cc-cli/compare/v2.6.2...v2.6.3) (2025-09-30)
 
 ### ⚡ Performance
