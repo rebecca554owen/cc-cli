@@ -6,6 +6,7 @@ import inquirer from 'inquirer';
 
 import ConfigManager from '../../core/ConfigManager.js';
 import { showSuccess, showError, showInfo, showWarning, createBackChoice } from '../../utils/ui.js';
+import { formatCodexSwitchSuccess } from '../../utils/formatter.js';
 
 /**
  * Codex配置切换命令
@@ -89,12 +90,9 @@ class CodexSwitchCommand {
 
       await this.configManager.saveCurrentCodexConfig(currentCodexConfig);
 
-      showSuccess(`✅ Codex配置切换成功！`);
-      showInfo(`站点: ${chalk.cyan(selectedSite)}`);
-      showInfo(`服务商: ${chalk.cyan(selectedProvider)}`);
-      showInfo(`Model: ${chalk.cyan(codexConfig.model || 'gpt-5')}`);
-      showInfo(`配置文件: ${chalk.gray(this.codexConfigFile)}`);
-      showInfo(`认证文件: ${chalk.gray(this.codexAuthFile)}`);
+      // 输出美化的配置切换成功信息
+      console.log(formatCodexSwitchSuccess(currentCodexConfig));
+      showSuccess('配置切换完成！');
 
       // 退出程序
       process.exit(0);

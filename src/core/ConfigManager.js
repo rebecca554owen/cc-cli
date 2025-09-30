@@ -408,24 +408,12 @@ class ConfigManager {
       if (site.config && !site.claude) {
         site.claude = site.config;
         delete site.config;
-        console.log(
-          chalk.gray(`  ✓ 已自动迁移 ${siteKey}: config -> claude`)
-        );
       }
 
       // 情况2：同时存在claude和config，且内容相同 -> 删除冗余config
       else if (site.claude && site.config) {
         if (JSON.stringify(site.claude) === JSON.stringify(site.config)) {
           delete site.config;
-          console.log(chalk.gray(`  ✓ 已清理 ${siteKey} 的冗余config字段`));
-        }
-        // 情况3：内容不同，保留两者（可能是特殊配置）
-        else {
-          console.log(
-            chalk.yellow(
-              `  ⚠️  ${siteKey} 的claude和config内容不同，已保留两者`
-            )
-          );
         }
       }
 

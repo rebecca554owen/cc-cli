@@ -177,6 +177,28 @@ function formatSwitchSuccess(config) {
 }
 
 /**
+ * 格式化Codex配置切换成功信息
+ * @param {Object} config 配置信息
+ * @returns {string} 格式化后的成功信息
+ */
+function formatCodexSwitchSuccess(config) {
+  const successContent =
+    `${chalk.white("站点: ")} ${chalk.cyan(config.siteName)}\n` +
+    `${chalk.white("服务商: ")} ${chalk.cyan(config.providerName)}\n` +
+    `${chalk.white("Model: ")} ${chalk.cyan(config.model)}\n` +
+    `${chalk.white("API Key: ")} ${chalk.cyan(formatToken(config.apiKey))}`;
+
+  return boxen(successContent, {
+    padding: 1,
+    margin: { top: 1, bottom: 0, left: 0, right: 0 },
+    borderStyle: "round",
+    borderColor: "green",
+    title: "✨ 配置切换成功！！！！",
+    titleAlignment: "center",
+  });
+}
+
+/**
  * 格式化Token显示（前7位 + ... + 后6位）
  * @param {string} token Token字符串
  * @returns {string} 格式化后的Token
@@ -301,6 +323,7 @@ export {
   formatStatus,
   formatConfigList,
   formatSwitchSuccess,
+  formatCodexSwitchSuccess,
   formatError,
   formatWarning,
   formatApiHelp,
