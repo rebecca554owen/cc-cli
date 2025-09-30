@@ -109,10 +109,9 @@ function formatConfigList(allConfigs, currentConfig) {
 
     output += "\n";
 
-    // ANTHROPIC_BASE_URL
-    const baseUrl =
-      siteConfig.config?.env?.ANTHROPIC_BASE_URL ||
-      siteConfig.ANTHROPIC_BASE_URL;
+    // ANTHROPIC_BASE_URL - 兼容老格式
+    const claudeConfig = siteConfig.claude || siteConfig.config;
+    const baseUrl = claudeConfig?.env?.ANTHROPIC_BASE_URL || siteConfig.ANTHROPIC_BASE_URL;
     const isCurrentUrl =
       currentConfig &&
       currentConfig.site === siteKey &&
@@ -125,10 +124,8 @@ function formatConfigList(allConfigs, currentConfig) {
     }
     output += "\n";
 
-    // ANTHROPIC_AUTH_TOKEN
-    const authTokens =
-      siteConfig.config?.env?.ANTHROPIC_AUTH_TOKEN ||
-      siteConfig.ANTHROPIC_AUTH_TOKEN;
+    // ANTHROPIC_AUTH_TOKEN - 兼容老格式
+    const authTokens = claudeConfig?.env?.ANTHROPIC_AUTH_TOKEN || siteConfig.ANTHROPIC_AUTH_TOKEN;
     const tokens = Object.entries(authTokens);
     output += `└─ 🔑 ANTHROPIC_AUTH_TOKEN (${tokens.length}个):\n`;
 

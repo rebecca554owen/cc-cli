@@ -53,7 +53,7 @@ class EditCommand {
           "示例站点": {
             "description": "这是一个示例配置，请根据需要修改",
             "url": "https://api.example.com",
-            "config": {
+            "claude": {
               "env": {
                 "ANTHROPIC_BASE_URL": "https://api.example.com",
                 "ANTHROPIC_AUTH_TOKEN": {

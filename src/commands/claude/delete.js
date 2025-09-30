@@ -133,18 +133,21 @@ class DeleteCommand {
 
     const siteConfig = allConfigs.sites[selectedSite];
 
+    // 获取Claude配置（兼容老格式）
+    const claudeConfig = this.configManager.getClaudeConfig(siteConfig);
+
     // 显示站点信息
     console.log(chalk.white("\n📋 即将删除的站点信息："));
     console.log(chalk.gray(`站点标识: ${selectedSite}`));
     console.log(
       chalk.gray(
-        `ANTHROPIC_BASE_URL: ${siteConfig.config?.env?.ANTHROPIC_BASE_URL}`
+        `ANTHROPIC_BASE_URL: ${claudeConfig?.env?.ANTHROPIC_BASE_URL}`
       )
     );
     console.log(
       chalk.gray(
         `Token数量: ${
-          Object.keys(siteConfig.config?.env?.ANTHROPIC_AUTH_TOKEN || {}).length
+          Object.keys(claudeConfig?.env?.ANTHROPIC_AUTH_TOKEN || {}).length
         }个`
       )
     );
@@ -239,7 +242,10 @@ class DeleteCommand {
     ]);
 
     const siteConfig = allConfigs.sites[selectedSite];
-    const tokens = siteConfig.config?.env?.ANTHROPIC_AUTH_TOKEN || {};
+
+    // 获取Claude配置（兼容老格式）
+    const claudeConfig = this.configManager.getClaudeConfig(siteConfig);
+    const tokens = claudeConfig?.env?.ANTHROPIC_AUTH_TOKEN || {};
 
     // 检查Token数量
     if (Object.keys(tokens).length === 0) {
@@ -322,8 +328,12 @@ class DeleteCommand {
     const spinner = ora("正在删除Token...").start();
 
     try {
+      // 获取Claude配置字段（需要直接操作原对象）
+      const siteConfig = allConfigs.sites[selectedSite];
+      const claudeConfigField = siteConfig.claude ? 'claude' : 'config';
+
       // 删除Token
-      delete allConfigs.sites[selectedSite].config.env.ANTHROPIC_AUTH_TOKEN[
+      delete allConfigs.sites[selectedSite][claudeConfigField].env.ANTHROPIC_AUTH_TOKEN[
         selectedToken
       ];
 

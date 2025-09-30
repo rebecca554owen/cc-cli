@@ -301,10 +301,10 @@ class AddCommand {
         allConfigs = { sites: {} };
       }
 
-      // 添加新配置
+      // 添加新配置（使用标准的claude字段）
       allConfigs.sites[basicInfo.siteKey] = {
         url: url, // 站点URL
-        config: {
+        claude: {
           env: {
             ANTHROPIC_BASE_URL: url,
             ANTHROPIC_AUTH_TOKEN: tokens

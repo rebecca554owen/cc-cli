@@ -136,10 +136,13 @@ class ConfigManager {
       // 更新当前配置
       allConfigs.currentConfig = configToSave;
 
+      // 规范化配置（清理冗余 + 迁移老格式）
+      const normalizedConfig = this.normalizeConfig(allConfigs);
+
       // 保存到 api_configs.json
       await fs.writeFile(
         this.configPath,
-        JSON.stringify(allConfigs, null, 2),
+        JSON.stringify(normalizedConfig, null, 2),
         "utf8"
       );
     } catch (error) {
@@ -173,10 +176,13 @@ class ConfigManager {
       // 更新当前Codex配置
       allConfigs.currentCodexConfig = configToSave;
 
+      // 规范化配置（清理冗余 + 迁移老格式）
+      const normalizedConfig = this.normalizeConfig(allConfigs);
+
       // 保存到 api_configs.json
       await fs.writeFile(
         this.configPath,
-        JSON.stringify(allConfigs, null, 2),
+        JSON.stringify(normalizedConfig, null, 2),
         "utf8"
       );
     } catch (error) {
@@ -252,8 +258,11 @@ class ConfigManager {
    */
   async switchConfig(site, token, siteConfig) {
     try {
+      // 获取Claude配置（兼容老格式）
+      const claudeConfig = this.getClaudeConfig(siteConfig);
+
       // 找到Token的名称
-      const rawTokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
+      const rawTokens = claudeConfig.env.ANTHROPIC_AUTH_TOKEN;
       const tokens =
         typeof rawTokens === "string" ? { 默认Token: rawTokens } : rawTokens;
       const tokenName = Object.keys(tokens).find(
@@ -263,7 +272,7 @@ class ConfigManager {
       const config = {
         site,
         siteName: site,
-        ANTHROPIC_BASE_URL: siteConfig.config.env.ANTHROPIC_BASE_URL,
+        ANTHROPIC_BASE_URL: claudeConfig.env.ANTHROPIC_BASE_URL,
         token,
         tokenName,
       };
@@ -283,7 +292,7 @@ class ConfigManager {
       delete currentSettings.model;
 
       // 准备合并的配置
-      const configToMerge = { ...siteConfig.config };
+      const configToMerge = { ...claudeConfig };
 
       // 特殊处理：ANTHROPIC_AUTH_TOKEN使用选中的具体token值
       if (configToMerge.env && configToMerge.env.ANTHROPIC_AUTH_TOKEN) {
@@ -317,12 +326,17 @@ class ConfigManager {
     }
 
     for (const [siteKey, siteConfig] of Object.entries(config.sites)) {
-      if (!siteConfig.url || (!siteConfig.config && !siteConfig.claude)) {
+      if (!siteConfig.url) {
         return false;
       }
 
-      // 获取实际的配置对象（支持claude别名）
-      const actualConfig = siteConfig.config || siteConfig.claude;
+      // 尝试获取Claude配置
+      let actualConfig;
+      try {
+        actualConfig = this.getClaudeConfig(siteConfig);
+      } catch (error) {
+        return false; // 没有claude或config字段
+      }
 
       if (
         !actualConfig.env ||
@@ -355,6 +369,70 @@ class ConfigManager {
    */
   async configExists() {
     return await fs.pathExists(this.configPath);
+  }
+
+  /**
+   * 获取Claude配置（兼容老格式）
+   * @param {Object} siteConfig 站点配置对象
+   * @returns {Object} Claude配置对象
+   */
+  getClaudeConfig(siteConfig) {
+    // 优先使用新格式的claude字段
+    if (siteConfig.claude) {
+      return siteConfig.claude;
+    }
+
+    // 兼容老格式的config字段
+    if (siteConfig.config) {
+      return siteConfig.config;
+    }
+
+    // 都没有则抛出错误
+    throw new Error("站点配置缺少claude或config字段");
+  }
+
+  /**
+   * 规范化配置对象（清理冗余字段 + 迁移老格式）
+   * @param {Object} config 配置对象
+   * @returns {Object} 规范化后的配置对象
+   */
+  normalizeConfig(config) {
+    if (!config.sites) {
+      return config;
+    }
+
+    for (const siteKey in config.sites) {
+      const site = config.sites[siteKey];
+
+      // 情况1：只有config，没有claude -> 自动迁移为claude
+      if (site.config && !site.claude) {
+        site.claude = site.config;
+        delete site.config;
+        console.log(
+          chalk.gray(`  ✓ 已自动迁移 ${siteKey}: config -> claude`)
+        );
+      }
+
+      // 情况2：同时存在claude和config，且内容相同 -> 删除冗余config
+      else if (site.claude && site.config) {
+        if (JSON.stringify(site.claude) === JSON.stringify(site.config)) {
+          delete site.config;
+          console.log(chalk.gray(`  ✓ 已清理 ${siteKey} 的冗余config字段`));
+        }
+        // 情况3：内容不同，保留两者（可能是特殊配置）
+        else {
+          console.log(
+            chalk.yellow(
+              `  ⚠️  ${siteKey} 的claude和config内容不同，已保留两者`
+            )
+          );
+        }
+      }
+
+      // 情况4：只有claude -> 无需处理
+    }
+
+    return config;
   }
 }
 

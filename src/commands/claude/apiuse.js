@@ -58,12 +58,15 @@ class ApiUseCommand {
 
       const siteConfig = allConfigs.sites[selectedSite];
 
+      // 获取Claude配置（兼容老格式）
+      const claudeConfig = this.configManager.getClaudeConfig(siteConfig);
+
       console.log(chalk.gray(`✓ 选择站点: ${selectedSite}`));
-      console.log(chalk.gray(`✓ URL: ${siteConfig.config.env.ANTHROPIC_BASE_URL}`));
+      console.log(chalk.gray(`✓ URL: ${claudeConfig.env.ANTHROPIC_BASE_URL}`));
 
       // 2. 智能选择Token
       let selectedToken;
-      const rawTokens = siteConfig.config.env.ANTHROPIC_AUTH_TOKEN;
+      const rawTokens = claudeConfig.env.ANTHROPIC_AUTH_TOKEN;
       const tokens = typeof rawTokens === 'string' ? { '默认Token': rawTokens } : rawTokens;
 
       if (Object.keys(tokens).length === 1) {
@@ -88,7 +91,7 @@ class ApiUseCommand {
       const config = {
         site: selectedSite,
         siteName: selectedSite,
-        ANTHROPIC_BASE_URL: siteConfig.config.env.ANTHROPIC_BASE_URL,
+        ANTHROPIC_BASE_URL: claudeConfig.env.ANTHROPIC_BASE_URL,
         token: selectedToken,
         tokenName: Object.keys(tokens).find(key => tokens[key] === selectedToken)
       };
