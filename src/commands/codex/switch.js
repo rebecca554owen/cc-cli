@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
-import path from 'path';
-import os from 'os';
-import inquirer from 'inquirer';
 
-import ConfigManager from '../../core/ConfigManager.js';
-import { showSuccess, showError, showInfo, showWarning, createBackChoice } from '../../utils/ui.js';
+import ManagerConfig from '../../core/manager-config.js';
+import GenericSelector from '../../utils/selectors.js';
+import CodexConfigBuilder from '../../config/builder-codex-config.js';
+import configPaths from '../../config/paths-config.js';
+import { showSuccess, showError, showInfo, showWarning } from '../../utils/ui.js';
 import { formatCodexSwitchSuccess } from '../../utils/formatter.js';
 
 /**
@@ -13,10 +13,11 @@ import { formatCodexSwitchSuccess } from '../../utils/formatter.js';
  */
 class CodexSwitchCommand {
   constructor() {
-    this.configManager = new ConfigManager();
-    this.codexConfigDir = path.join(os.homedir(), '.codex');
-    this.codexConfigFile = path.join(this.codexConfigDir, 'config.toml');
-    this.codexAuthFile = path.join(this.codexConfigDir, 'auth.json');
+    this.configManager = new ManagerConfig();
+    // 使用统一的路径管理器
+    this.codexConfigDir = configPaths.codexDir;
+    this.codexConfigFile = configPaths.codexConfig;
+    this.codexAuthFile = configPaths.codexAuth;
   }
 
   /**
@@ -46,7 +47,7 @@ class CodexSwitchCommand {
 
       const siteConfig = codexSites[selectedSite];
 
-      // 3. 获取站点的codex配置（兼容老版本）
+      // 3. 获取站点的codex配置
       const codexConfig = this.getCodexConfig(siteConfig);
 
       // 4. 选择服务提供商
@@ -75,7 +76,7 @@ class CodexSwitchCommand {
       const selectedProviderConfig = codexConfig.model_providers[selectedProvider];
       const apiKeyName = typeof codexConfig.OPENAI_API_KEY === 'object'
         ? Object.keys(codexConfig.OPENAI_API_KEY).find(key => codexConfig.OPENAI_API_KEY[key] === selectedApiKey)
-        : '默认API Key';
+        : selectedSite;
 
       const currentCodexConfig = {
         site: selectedSite,
@@ -113,14 +114,9 @@ class CodexSwitchCommand {
       const codexSites = {};
 
       for (const [siteKey, siteConfig] of Object.entries(allConfigs.sites)) {
-        // 检查新格式（有codex字段）
+        // 检查是否有codex字段
         if (siteConfig.codex) {
           codexSites[siteKey] = siteConfig;
-        }
-        // 兼容老版本（config等于claudeCode配置）
-        else if (siteConfig.config && !siteConfig.claudeCode) {
-          // 老版本没有分离claudeCode和codex，默认作为claudeCode处理
-          // 这里不包含在codex列表中
         }
       }
 
@@ -131,17 +127,16 @@ class CodexSwitchCommand {
   }
 
   /**
-   * 获取站点的Codex配置（兼容老版本）
+   * 获取站点的Codex配置
    * @param {Object} siteConfig 站点配置
    * @returns {Object} Codex配置
    */
   getCodexConfig(siteConfig) {
-    // 新格式：直接返回codex配置
+    // 返回codex配置
     if (siteConfig.codex) {
       return siteConfig.codex;
     }
 
-    // 理论上这里不会到达，因为getCodexSites已经过滤了
     throw new Error('站点不支持Codex配置');
   }
 
@@ -151,34 +146,7 @@ class CodexSwitchCommand {
    * @returns {string} 选择的站点key
    */
   async selectSite(codexSites) {
-    const choices = Object.entries(codexSites).map(([key, config]) => {
-      return {
-        name: `🌐 ${key}${config.description ? ` [${config.description}]` : ''}`,
-        value: key,
-        short: key
-      };
-    });
-
-    // 添加返回选项
-    choices.push(createBackChoice('__back__'));
-
-    // 如果只有一个站点（不包括返回选项），自动选择
-    if (choices.length === 2) {
-      showInfo(`自动选择站点: ${chalk.cyan(choices[0].value)}`);
-      return choices[0].value;
-    }
-
-    const { site } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'site',
-        message: '选择Codex站点：',
-        choices,
-        pageSize: 10
-      }
-    ]);
-
-    return site;
+    return await GenericSelector.selectSite(codexSites);
   }
 
   /**
@@ -191,35 +159,7 @@ class CodexSwitchCommand {
       throw new Error('站点没有配置服务提供商');
     }
 
-    const choices = Object.entries(modelProviders).map(([key, provider]) => {
-      const providerName = provider.name || key;
-      return {
-        name: `💻 ${providerName} (${provider.base_url})`,
-        value: key,
-        short: providerName
-      };
-    });
-
-    // 添加返回选项
-    choices.push(createBackChoice('__back__'));
-
-    // 如果只有一个提供商（不包括返回选项），自动选择
-    if (choices.length === 2) {
-      showInfo(`自动选择服务商: ${chalk.cyan(choices[0].short)}`);
-      return choices[0].value;
-    }
-
-    const { provider } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'provider',
-        message: '选择服务提供商：',
-        choices,
-        pageSize: 10
-      }
-    ]);
-
-    return provider;
+    return await GenericSelector.selectProvider(modelProviders);
   }
 
   /**
@@ -262,165 +202,8 @@ class CodexSwitchCommand {
    * @returns {string} TOML配置内容
    */
   generateTomlConfig(codexConfig, providerKey, providerConfig, existingConfig) {
-    const lines = existingConfig.split('\n');
-    const topLevelConfig = []; // 顶级配置行
-    const sectionConfigs = []; // section配置行
-    let inModelProvidersSection = false;
-    let inOtherSection = false;
-    let currentSection = [];
-
-    // 获取新配置中的所有顶级配置项（排除OPENAI_API_KEY和model_providers）
-    const newTopLevelKeys = [];
-    Object.keys(codexConfig).forEach(key => {
-      if (key !== 'OPENAI_API_KEY' && key !== 'model_providers' && key !== 'requires_openai_auth') {
-        newTopLevelKeys.push(key);
-      }
-    });
-    newTopLevelKeys.push('model', 'model_provider'); // 始终包含这两个
-
-    // 添加必要的默认参数到覆盖列表
-    const requiredDefaults = ['model_reasoning_effort', 'disable_response_storage'];
-    requiredDefaults.forEach(key => {
-      if (!newTopLevelKeys.includes(key)) {
-        newTopLevelKeys.push(key);
-      }
-    });
-
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-
-      // 检查是否进入model_providers section
-      if (trimmedLine.startsWith('[model_providers')) {
-        inModelProvidersSection = true;
-        continue; // 跳过model_providers相关的所有内容
-      }
-
-      // 检查是否进入其他section
-      if (trimmedLine.startsWith('[') && !trimmedLine.startsWith('[model_providers')) {
-        // 保存之前的section
-        if (inOtherSection && currentSection.length > 0) {
-          sectionConfigs.push(...currentSection);
-          currentSection = [];
-        }
-        inModelProvidersSection = false;
-        inOtherSection = true;
-        currentSection.push(line);
-        continue;
-      }
-
-      // 在model_providers section内，跳过所有内容
-      if (inModelProvidersSection) {
-        continue;
-      }
-
-      // 在其他section内
-      if (inOtherSection) {
-        currentSection.push(line);
-        continue;
-      }
-
-      // 跳过OPENAI_API_KEY（它属于auth.json）
-      if (trimmedLine.startsWith('OPENAI_API_KEY =')) {
-        continue;
-      }
-
-      // 跳过所有与新配置同名的配置项（确保覆盖）
-      let shouldSkip = false;
-      for (const key of newTopLevelKeys) {
-        if (trimmedLine.startsWith(`${key} =`)) {
-          shouldSkip = true;
-          break;
-        }
-      }
-      if (shouldSkip) {
-        continue;
-      }
-
-      // 其他顶级配置
-      if (!trimmedLine.startsWith('[') && trimmedLine !== '') {
-        topLevelConfig.push(line);
-      }
-    }
-
-    // 保存最后一个section
-    if (inOtherSection && currentSection.length > 0) {
-      sectionConfigs.push(...currentSection);
-    }
-
-    // 移除末尾的空行
-    while (topLevelConfig.length > 0 && topLevelConfig[topLevelConfig.length - 1].trim() === '') {
-      topLevelConfig.pop();
-    }
-
-    // 构建新配置
-    const newConfig = [];
-
-    // 1. 添加model配置
-    newConfig.push(`model = "${codexConfig.model || 'gpt-5'}"`);
-    newConfig.push(`model_provider = "${providerKey}"`);
-
-    // 2. 添加codex配置中的其他顶级配置项（排除OPENAI_API_KEY和model_providers）
-    Object.entries(codexConfig).forEach(([key, value]) => {
-      if (key !== 'OPENAI_API_KEY' && key !== 'model_providers' && key !== 'model') {
-        if (typeof value === 'string') {
-          newConfig.push(`${key} = "${value}"`);
-        } else if (typeof value === 'number') {
-          newConfig.push(`${key} = ${value}`);
-        } else if (typeof value === 'boolean') {
-          newConfig.push(`${key} = ${value}`);
-        }
-      }
-    });
-
-    // 3. 确保必要的默认参数存在
-    const requiredDefaultValues = {
-      'model_reasoning_effort': 'high',
-      'disable_response_storage': true
-    };
-
-    // 检查现有配置和新配置中是否包含必要参数，如果没有则添加默认值
-    const allConfigLines = [...newConfig, ...topLevelConfig];
-    Object.entries(requiredDefaultValues).forEach(([key, defaultValue]) => {
-      const hasConfig = allConfigLines.some(line =>
-        line.trim().startsWith(`${key} =`)
-      );
-
-      if (!hasConfig) {
-        if (typeof defaultValue === 'string') {
-          newConfig.push(`${key} = "${defaultValue}"`);
-        } else if (typeof defaultValue === 'boolean') {
-          newConfig.push(`${key} = ${defaultValue}`);
-        } else if (typeof defaultValue === 'number') {
-          newConfig.push(`${key} = ${defaultValue}`);
-        }
-      }
-    });
-
-    // 4. 添加保留的其他顶级配置
-    if (topLevelConfig.length > 0) {
-      newConfig.push(...topLevelConfig);
-    }
-
-    newConfig.push(''); // 空行分隔
-
-    // 5. 添加model_providers作为第一个table section
-    newConfig.push(`[model_providers.${providerKey}]`);
-    const providerName = providerConfig.name || providerKey;
-    newConfig.push(`name = "${providerName}"`);
-    newConfig.push(`base_url = "${providerConfig.base_url}"`);
-    // wire_api 是必要参数，如果没有配置则默认为 "responses"
-    const wireApi = providerConfig.wire_api || "responses";
-    newConfig.push(`wire_api = "${wireApi}"`);
-    const requires_openai_auth = providerConfig.requires_openai_auth || true
-    newConfig.push(`requires_openai_auth = ${requires_openai_auth}`)
-
-    // 6. 添加其他section配置
-    if (sectionConfigs.length > 0) {
-      newConfig.push(''); // 空行分隔
-      newConfig.push(...sectionConfigs);
-    }
-
-    return newConfig.join('\n') + '\n';
+    const builder = new CodexConfigBuilder(existingConfig);
+    return builder.generate(codexConfig, providerKey, providerConfig);
   }
 
   /**
@@ -450,31 +233,8 @@ class CodexSwitchCommand {
    * @returns {string} 选择的API Key
    */
   async selectApiKey(apiKey) {
-    // 转换为统一的对象格式
-    const rawApiKey = apiKey;
-    const apiKeys = typeof rawApiKey === 'string' ? { '默认API Key': rawApiKey } : rawApiKey;
-
-    // 智能选择逻辑
-    if (Object.keys(apiKeys).length === 1) {
-      const selectedKey = Object.values(apiKeys)[0];
-      const keyName = Object.keys(apiKeys)[0];
-      console.log(chalk.gray(`✓ API Key自动选择: ${keyName} (${selectedKey.substring(0, 10)}...)`));
-      return selectedKey;
-    } else {
-      // 多个API Key时显示选择界面
-      const { selectToken } = await import('../../utils/ui.js');
-      console.log(chalk.white('\n🔑 请选择 API Key:'));
-      const selectedKey = await selectToken(apiKeys);
-
-      // 检查是否选择返回
-      if (selectedKey === '__back__') {
-        return '__back__';
-      }
-
-      const keyName = Object.keys(apiKeys).find(key => apiKeys[key] === selectedKey);
-      console.log(chalk.gray(`✓ 选择API Key: ${keyName}`));
-      return selectedKey;
-    }
+    console.log(chalk.white('\n🔑 请选择 API Key:'));
+    return await GenericSelector.selectCredential(apiKey, 'API Key');
   }
 }
 

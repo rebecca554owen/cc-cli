@@ -42,11 +42,24 @@ async function main(program) {
  * @param {CommandRegistry} commandRegistry 命令注册器
  */
 async function showInteractiveMenu(commandRegistry) {
+  // 清屏
+  console.clear();
+
   // 检查更新信息
   const updateInfo = checkForUpdates();
 
-  // 显示banner（如果有更新会一起显示）
-  showBanner(updateInfo);
+  // 检查是否为首次使用，如果是则自动初始化配置
+  const { default: ManagerConfig } = await import('./core/manager-config.js');
+  const configManager = new ManagerConfig();
+  
+  if (await configManager.isFirstUse()) {
+    await configManager.autoInitializeConfig();
+    console.log(''); // 添加空行
+  }
+
+  // 显示整合后的状态（包含banner信息）
+  await commandRegistry.showStatus();
+  console.log(''); // 添加空行
 
   while (true) {
     try {
@@ -60,9 +73,10 @@ async function showInteractiveMenu(commandRegistry) {
       if (choice === "api") {
         // 进入API子菜单（子菜单自己处理循环）
         await commandRegistry.executeCommand("api", []);
-      } else if (choice === "codexapi") {
+      } else if (choice === "apix") {
         // 进入Codex子菜单（子菜单自己处理循环）
-        await commandRegistry.executeCommand("codexapi", []);
+        await commandRegistry.executeCommand("apix", []);
+
       } else if (choice === "backup") {
         // 进入备份子菜单（子菜单自己处理循环）
         await commandRegistry.executeCommand("backup", []);

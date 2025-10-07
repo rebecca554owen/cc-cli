@@ -1,385 +1,162 @@
 import chalk from 'chalk';
-import { program } from 'commander';
 
 import switchCommand from './switch.js';
+import listCommand from './list.js';
+import addCommand from './add.js';
 import editCommand from './edit.js';
-import { showApiMenu, waitForBackConfirm, createBackChoice } from '../../utils/ui.js';
+import deleteCommand from './delete.js';
+import autoManager from '../../config/auto-manager-codex.js';
+import { BaseCommand } from '../../utils/base-command.js';
+import { createGenericMenu } from '../../utils/ui.js';
 
-/**
- * Codex命令模块
- */
-class CodexCommand {
+// Codex配置帮助信息
+function showCodexHelp() {
+  console.log(chalk.cyan.bold('💻 CC Codex 配置管理工具帮助'));
+  console.log();
+  console.log(chalk.white('用法:'));
+  console.log('  cc apix [选项]');
+  console.log();
+  console.log(chalk.white('选项:'));
+  console.log('  -a, --add        添加新Codex配置');
+  console.log('  -d, --delete     删除Codex配置');
+  console.log('  -e, --edit       编辑Codex配置文件');
+  console.log('  -h, --help       显示此帮助信息');
+  console.log('  -l, --list       列出所有Codex配置');
+  console.log('  -s, --switch     切换Codex配置');
+  console.log('  -y, --auto       开启或关闭自动模式');
+  console.log();
+  console.log(chalk.white('交互式功能:'));
+  console.log('  🔄 切换Codex配置    选择不同的Codex服务提供商');
+  console.log('  📋 查看配置    列出所有Codex配置');
+  console.log('  ➕ 添加配置    添加新的Codex配置项');
+  console.log('  📝 编辑配置    编辑Codex配置文件');
+  console.log('  🗑️ 删除配置    删除指定Codex配置');
+  console.log('  🚀 自动模式    开启/关闭Codex自动模式（approval_policy=never, sandbox_mode=danger-full-access）');
+  console.log();
+  console.log(chalk.white('智能选择:'));
+  console.log('  - 当站点只有1个时，自动选择，不显示选择界面');
+  console.log('  - 当服务商只有1个时，自动选择，不显示选择界面');
+  console.log('  - 当API Key只有1个时，自动选择，不显示选择界面');
+  console.log('  - 当前使用的配置会用绿色特殊标识，当前站点用⭐标识');
+  console.log();
+  console.log(chalk.white('配置文件:'));
+  console.log(`  ${chalk.gray('~/.cc-cli/api_configs.json')}    统一配置文件`);
+  console.log(`  ${chalk.gray('~/.codex/config.toml')}          Codex主配置文件`);
+  console.log(`  ${chalk.gray('~/.codex/auth.json')}            Codex认证文件`);
+  console.log(`  ${chalk.gray('~/.codex/hooks/')}               自动模式脚本目录`);
+  console.log();
+  console.log(chalk.white('示例:'));
+  console.log(`  ${chalk.green('cc apix')}             # 显示交互式菜单`);
+  console.log(`  ${chalk.green('cc apix --add')}       # 添加新配置`);
+  console.log(`  ${chalk.green('cc apix --auto')}      # 开启/关闭自动模式`);
+  console.log(`  ${chalk.green('cc apix --delete')}    # 删除配置`);
+  console.log(`  ${chalk.green('cc apix --edit')}      # 编辑配置文件`);
+  console.log(`  ${chalk.green('cc apix --help')}      # 显示帮助信息`);
+  console.log(`  ${chalk.green('cc apix --list')}      # 列出所有配置`);
+  console.log(`  ${chalk.green('cc apix --switch')}    # 切换Codex配置`);
+}
+
+// Codex命令类
+class CodexCommand extends BaseCommand {
   constructor() {
-    this.subCommands = {
-      switch: switchCommand,
-      edit: editCommand
+    // 先将选项配置好，避免在super()之前使用this
+    const options = {
+      commandName: 'apix',
+      description: 'Codex配置管理',
+      subCommands: {
+        switch: switchCommand,
+        list: listCommand,
+        add: addCommand,
+        edit: editCommand,
+        delete: deleteCommand
+      },
+      autoManager: autoManager,
+      helpFunc: showCodexHelp,
+      menuFunc: null, // 先设为null，后面再绑定
+      optionsConfig: {
+        list: { flag: '-l, --list', description: '列出所有Codex配置' },
+        switch: { flag: '-s, --switch', description: '切换Codex配置' },
+        add: { flag: '-a, --add', description: '添加新Codex配置' },
+        edit: { flag: '-e, --edit', description: '编辑Codex配置文件' },
+        delete: { flag: '-d, --delete', description: '删除Codex配置' },
+        auto: { flag: '-y, --auto', description: '开启或关闭自动模式' },
+        help: { flag: '-h, --help', description: '显示Codex命令帮助信息' }
+      }
     };
+
+    // 调用super()
+    super(options);
+
+    // 现在可以安全地设置menuFunc
+    this.menuFunc = this.showInteractiveMenu.bind(this);
   }
 
-  /**
-   * 注册方法已移除 - Codex功能只能通过主菜单 cc 进入
-   * 不支持独立命令行调用
-   */
-
-  /**
-   * 显示Codex命令帮助信息
-   */
-  showHelp() {
-    console.log(chalk.cyan.bold('💻 CC Codex 配置管理工具帮助'));
-    console.log();
-    console.log(chalk.white('访问方式:'));
-    console.log('  只能通过主菜单访问：运行 cc 选择 "💻 CodexAPI"');
-    console.log();
-    console.log(chalk.white('功能:'));
-    console.log('  🔄 切换配置    选择不同的Codex服务提供商');
-    console.log('  📋 查看配置    列出所有Codex配置');
-    console.log('  📝 编辑配置    编辑Codex配置文件');
-    console.log('  🚀 YOLO模式    开启/关闭最宽松配置模式（approval_policy=never, sandbox_mode=danger-full-access）');
-    console.log();
-    console.log(chalk.white('配置文件:'));
-    console.log(`  ${chalk.gray('~/.codex/config.toml')}     Codex主配置文件`);
-    console.log(`  ${chalk.gray('~/.codex/auth.json')}       Codex认证文件`);
-    console.log();
-    console.log(chalk.white('使用流程:'));
-    console.log(`  ${chalk.green('cc')}                     # 启动主菜单`);
-    console.log(`  ${chalk.green('选择 💻 CodexAPI')}         # 进入Codex管理`);
-    console.log(`  ${chalk.green('选择切换配置')}              # 配置Codex服务`);
-    console.log(`  ${chalk.green('选择YOLO模式')}              # 开启/关闭最宽松模式`);
-  }
-
-  /**
-   * 列出所有Codex配置
-   */
-  async listCodexConfigs() {
-    try {
-      const { default: ConfigManager } = await import('../../core/ConfigManager.js');
-      const configManager = new ConfigManager();
-      const allConfigs = await configManager.getAllConfigs();
-
-      console.log(chalk.cyan.bold('💻 Codex配置列表\n'));
-      console.log(chalk.gray('═'.repeat(40)));
-
-      let hasCodexConfigs = false;
-
-      for (const [siteKey, siteConfig] of Object.entries(allConfigs.sites)) {
-        // 检查是否有codex配置（新格式）
-        if (siteConfig.codex) {
-          hasCodexConfigs = true;
-          console.log(chalk.white.bold(`🌐 ${siteKey}`));
-          if (siteConfig.description) {
-            console.log(chalk.gray(`   ${siteConfig.description}`));
-          }
-          console.log(chalk.cyan(`   📡 Model: ${siteConfig.codex.model || 'gpt-5'}`));
-          // 使用与Claude Code API相同的token显示格式
-          const { formatToken } = await import('../../utils/formatter.js');
-          let tokenDisplay = '未配置';
-
-          if (siteConfig.codex.OPENAI_API_KEY) {
-            const rawApiKey = siteConfig.codex.OPENAI_API_KEY;
-            if (typeof rawApiKey === 'string') {
-              tokenDisplay = formatToken(rawApiKey);
-            } else if (typeof rawApiKey === 'object') {
-              const keyCount = Object.keys(rawApiKey).length;
-              const firstKey = Object.values(rawApiKey)[0];
-              tokenDisplay = `${formatToken(firstKey)} 等${keyCount}个`;
-            }
-          }
-          console.log(chalk.green(`   🔑 Token: ${tokenDisplay}`));
-
-          if (siteConfig.codex.model_providers) {
-            console.log(chalk.yellow('   📋 服务提供商:'));
-            for (const [providerKey, provider] of Object.entries(siteConfig.codex.model_providers)) {
-              const providerName = provider.name || providerKey;
-              console.log(chalk.gray(`      └─ ${providerName}: ${provider.base_url}`));
-            }
-          }
-          console.log();
-        }
-      }
-
-      if (!hasCodexConfigs) {
-        console.log(chalk.yellow('⚠️  没有找到Codex配置'));
-        console.log(chalk.gray('请在api_configs.json中添加带有"codex"字段的站点配置'));
-      }
-
-      // 等待用户确认后返回
-      await waitForBackConfirm('配置信息显示完成');
-
-    } catch (error) {
-      console.error(chalk.red('❌ 获取Codex配置失败:'), error.message);
-
-      // 错误情况下也等待用户确认
-      await waitForBackConfirm('操作完成');
-    }
-  }
-
-  /**
-   * 显示交互式Codex菜单
-   */
+  // 显示交互式Codex菜单
   async showInteractiveMenu() {
-    const inquirer = (await import('inquirer')).default;
-
-    while (true) {
-      try {
-        console.log(chalk.cyan.bold('\n💻 Codex配置管理'));
-        console.log(chalk.gray('═'.repeat(40)));
-
-        // 检查当前YOLO模式状态
-        const yoloStatus = await this.checkYoloModeStatus();
-        const yoloActionText = yoloStatus ?
-          '🛑 关闭YOLO模式 - 禁用最宽松配置模式' :
-          '🚀 开启YOLO模式 - 启用最宽松配置模式';
-        const yoloStatusText = yoloStatus ?
-          chalk.green('[已开启]') :
-          chalk.gray('[已关闭]');
-
-        const choices = [
-          {
-            name: '🔄 切换配置 - 切换Codex配置',
-            value: 'switch',
-            short: '切换配置'
-          },
-          {
-            name: '📋 查看配置 - 列出所有Codex配置',
-            value: 'list',
-            short: '查看配置'
-          },
-          {
-            name: '📝 编辑配置 - 编辑Codex配置文件',
-            value: 'edit',
-            short: '编辑配置'
-          },
-          {
-            name: `${yoloActionText} ${yoloStatusText}`,
-            value: 'yolo',
-            short: 'YOLO模式'
-          },
-          createBackChoice('back')
-        ];
-
-        const { choice } = await inquirer.prompt([
-          {
-            type: 'list',
-            name: 'choice',
-            message: '请选择操作：',
-            choices,
-            pageSize: 10
-          }
-        ]);
-
-        if (choice === 'back') {
-          return; // 返回主菜单
+    // 使用通用菜单组件创建Codex菜单
+    const menu = createGenericMenu({
+      title: '💻 Codex配置管理',
+      getAutoStatus: autoManager.checkAutoModeStatus.bind(autoManager),
+      autoManager: autoManager,
+      menuItems: [
+        {
+          name: '🔄 切换配置 - 切换到新Codex配置',
+          value: 'switch',
+          short: '切换配置',
+          command: this.subCommands.switch
+        },
+        {
+          name: '📋 查看配置 - 列出所有 Codex 配置',
+          value: 'list',
+          short: '查看配置',
+          command: this.subCommands.list
+        },
+        {
+          name: '➕ 添加配置 - 添加新的Codex配置',
+          value: 'add',
+          short: '添加配置',
+          command: this.subCommands.add
+        },
+        {
+          name: '📝 编辑配置 - 编辑当前 Codex 配置',
+          value: 'edit',
+          short: '编辑配置',
+          command: this.subCommands.edit
+        },
+        {
+          name: '🗑️ 删除配置 - 删除指定 Codex 配置',
+          value: 'delete',
+          short: '删除配置',
+          command: this.subCommands.delete
         }
+      ]
+    });
 
-        switch (choice) {
-          case 'switch':
-            await this.subCommands.switch.execute([]);
-            break;
-          case 'list':
-            await this.listCodexConfigs();
-            break;
-          case 'edit':
-            await this.subCommands.edit.execute([]);
-            break;
-          case 'yolo':
-            await this.toggleYoloMode();
-            break;
-          default:
-            console.log(chalk.red('❌ 无效选择'));
-            continue;
-        }
-
-        // 操作完成后直接回到菜单循环
-      } catch (error) {
-        console.error(chalk.red('❌ Codex菜单操作失败:'), error.message);
-        // 发生错误后也直接回到菜单循环，不询问
-      }
-    }
+    await menu();
   }
 
-  /**
-   * 检查YOLO模式状态
-   * @returns {boolean} true表示已开启，false表示未开启
-   */
-  async checkYoloModeStatus() {
-    try {
-      const fs = (await import('fs-extra')).default;
-      const path = (await import('path')).default;
-      const os = (await import('os')).default;
+  // 添加命令帮助文本
+  addHelpText(command) {
+    command.addHelpText('after', `
 
-      const codexConfigFile = path.join(os.homedir(), '.codex', 'config.toml');
+示例:
+  cc apix                 显示交互式 Codex 管理菜单
+  cc apix --add           添加新 Codex 配置
+  cc apix --auto          开启/关闭自动模式
+  cc apix --delete        删除 Codex 配置
+  cc apix --edit          编辑 Codex 配置文件
+  cc apix --help          显示此帮助信息
+  cc apix --list          列出所有 Codex 配置
+  cc apix --switch        切换 Codex 配置
 
-      // 如果配置文件不存在，认为未开启
-      if (!await fs.pathExists(codexConfigFile)) {
-        return false;
-      }
-
-      // 读取配置文件内容
-      const configContent = await fs.readFile(codexConfigFile, 'utf8');
-      const lines = configContent.split('\n');
-
-      let hasApprovalPolicy = false;
-      let hasSandboxMode = false;
-
-      // 检查是否包含YOLO模式的两个配置
-      for (const line of lines) {
-        const trimmedLine = line.trim();
-        if (trimmedLine === 'approval_policy = "never"') {
-          hasApprovalPolicy = true;
-        }
-        if (trimmedLine === 'sandbox_mode = "danger-full-access"') {
-          hasSandboxMode = true;
-        }
-      }
-
-      // 两个配置都存在才认为YOLO模式已开启
-      return hasApprovalPolicy && hasSandboxMode;
-
-    } catch (error) {
-      // 发生错误时认为未开启
-      return false;
-    }
+配置文件位置:
+  ~/.cc-cli/api_configs.json    统一配置文件
+  ~/.codex/config.toml          Codex 主配置文件
+  ~/.codex/auth.json            Codex 认证文件
+`);
   }
 
-  /**
-   * 开启或关闭YOLO模式
-   */
-  async toggleYoloMode() {
-    try {
-      const fs = (await import('fs-extra')).default;
-      const path = (await import('path')).default;
-      const os = (await import('os')).default;
-
-      const codexConfigDir = path.join(os.homedir(), '.codex');
-      const codexConfigFile = path.join(codexConfigDir, 'config.toml');
-
-      // 检查当前YOLO模式状态
-      const currentStatus = await this.checkYoloModeStatus();
-
-      // 确保目录存在
-      await fs.ensureDir(codexConfigDir);
-
-      // 读取现有配置
-      let existingConfig = '';
-      if (await fs.pathExists(codexConfigFile)) {
-        existingConfig = await fs.readFile(codexConfigFile, 'utf8');
-      }
-
-      let newConfig;
-      if (currentStatus) {
-        // 当前已开启，关闭YOLO模式
-        console.log(chalk.yellow('\n🛑 关闭YOLO模式...'));
-        console.log(chalk.gray('将移除YOLO模式配置：'));
-        console.log(chalk.gray('  - 移除 approval_policy = "never"'));
-        console.log(chalk.gray('  - 移除 sandbox_mode = "danger-full-access"'));
-
-        newConfig = this.removeYoloConfig(existingConfig);
-
-        // 写入配置文件
-        await fs.writeFile(codexConfigFile, newConfig, 'utf8');
-
-        console.log(chalk.green('✅ YOLO模式已关闭！'));
-        console.log(chalk.blue('ℹ️  已恢复为安全模式'));
-      } else {
-        // 当前未开启，开启YOLO模式
-        console.log(chalk.yellow('\n🚀 开启YOLO模式...'));
-        console.log(chalk.gray('将设置最宽松的配置模式：'));
-        console.log(chalk.gray('  - approval_policy = "never"'));
-        console.log(chalk.gray('  - sandbox_mode = "danger-full-access"'));
-
-        newConfig = this.generateYoloConfig(existingConfig);
-
-        // 写入配置文件
-        await fs.writeFile(codexConfigFile, newConfig, 'utf8');
-
-        console.log(chalk.green('✅ YOLO模式已开启！'));
-        console.log(chalk.yellow('⚠️  警告：当前为最宽松模式，请谨慎使用'));
-      }
-
-      console.log(chalk.gray(`配置文件: ${codexConfigFile}`));
-
-      // 等待用户确认后返回
-      await waitForBackConfirm('YOLO模式操作完成');
-
-    } catch (error) {
-      console.error(chalk.red('❌ 操作YOLO模式失败:'), error.message);
-
-      // 错误情况下也等待用户确认
-      await waitForBackConfirm('操作完成');
-    }
-  }
-
-  /**
-   * 移除YOLO模式配置
-   * @param {string} existingConfig 现有配置内容
-   * @returns {string} 移除YOLO配置后的内容
-   */
-  removeYoloConfig(existingConfig) {
-    const lines = existingConfig.split('\n');
-    const newConfig = [];
-
-    // 过滤掉YOLO模式配置行
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-
-      // 跳过YOLO模式配置
-      if (trimmedLine === 'approval_policy = "never"' ||
-          trimmedLine === 'sandbox_mode = "danger-full-access"') {
-        continue;
-      }
-
-      newConfig.push(line);
-    }
-
-    // 移除开头的空行
-    while (newConfig.length > 0 && newConfig[0].trim() === '') {
-      newConfig.shift();
-    }
-
-    return newConfig.join('\n').trim() + '\n';
-  }
-
-  /**
-   * 生成YOLO模式配置
-   * @param {string} existingConfig 现有配置内容
-   * @returns {string} 新的配置内容
-   */
-  generateYoloConfig(existingConfig) {
-    const lines = existingConfig.split('\n');
-    const newConfig = [];
-    let hasApprovalPolicy = false;
-    let hasSandboxMode = false;
-
-    // 首先添加YOLO模式配置到最上方
-    newConfig.push('approval_policy = "never"');
-    newConfig.push('sandbox_mode = "danger-full-access"');
-    newConfig.push('');
-
-    // 处理现有配置，跳过重复的YOLO模式配置
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-
-      if (trimmedLine.startsWith('approval_policy =')) {
-        hasApprovalPolicy = true;
-        continue; // 跳过，已在上方添加
-      }
-
-      if (trimmedLine.startsWith('sandbox_mode =')) {
-        hasSandboxMode = true;
-        continue; // 跳过，已在上方添加
-      }
-
-      // 保留其他配置
-      newConfig.push(line);
-    }
-
-    return newConfig.join('\n').trim() + '\n';
-  }
-
-  /**
-   * 执行Codex命令
-   * @param {Array} args 参数
-   */
+  // 执行Codex命令
   async execute(args = []) {
     await this.showInteractiveMenu();
   }
