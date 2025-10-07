@@ -13,47 +13,38 @@ A command-line tool for one-click switching of Claude Code / Codex configuration
 ```
 ┌──────────────────────────────────────────────────────┐
 │                                                      │
-│   ____   ____     ____  _      ___                  │
-│  / ___| / ___|   / ___|| |    |_ _|                 │
-│ | |    | |      | |    | |     | |                  │
-│ | |___ | |___   | |___ | |___  | |                  │
-│  \____| \____|   \____||_____||___|                 │
+│         ___ ___    ___ _    ___                      │
+│        / __/ __|  / __| |  |_ _|                     │
+│       | (_| (__  | (__| |__ | |                      │
+│        ______|  ___|____|___|                        │
 │                                                      │
-│  CC CLI 终端配置管理工具                             │
-│  v3.0.0 (最新)                                       │
+│      Claude Code配置管理CLI工具                      │
+│             v2.10.0 (最新)                          │
 │                                                      │
-└──────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────┐
-│ 📊 当前状态 & 工具                                    │
+│   🤖 当前激活配置                                    │
+│   ══════════════════════════════════════════════════ │
+│   📡 Claude Code: siliconflow                       │
+│     BASEURL: http://192.168.5.10:3001/proxy/siliconflow │
+│     TOKEN: sk-bTRkGXYhv3w3...                        │
+│     MODEL: deepseek-ai/DeepSeek-V3.1-Terminus        │
 │                                                      │
-│ 🤖 当前激活配置                                      │
-│ ════════════════════════════════════════════════════ │
-│ 📡 Claude Code: Claude Official                     │
-│   站点: Claude Official                             │
-│   URL: https://api.anthropic.com...                 │
+│   💻 Codex API: api                                  │
+│     BASEURL: http://192.168.5.10:3001/proxy/coreshub/v1 │
+│     API Key: sk-bTRkGXYhv3w3...                      │
+│     MODEL: DeepSeek-V3.1-Terminus                    │
 │                                                      │
-│ 💻 Codex API: OpenAI Official                       │
-│   站点: OpenAI Official                             │
-│   服务商: OpenAI                                    │
-│   URL: https://api.openai.com...                    │
+│   💡 快速使用: cc use | cc usex                      │
+│   🛠️  管理工具: cc api | cc apix                     │
 │                                                      │
-│ ⚡ Crush AI: DeepSeek API                          │
-│   站点: DeepSeek API                               │
-│   URL: https://api.deepseek.com...                 │
-│                                                      │
-│ 💡 快速使用: cc use | cc usex | cc usec             │
-│                                                      │
-│ 🛠️  管理工具: cc api | cc apix | cc apic           │
 └──────────────────────────────────────────────────────┘
 
 ? 请选择功能模块：
-  📡 Claude配置管理 - Claude Code API
-  💻 Codex配置管理 - Codex API
-  💘 Crush配置管理 - Crush AI API
-  📊 查看当前状态 - Status
-  ❓ 帮助文档 - Help
-  ──────────
+  📡 Claude 配置管理 - Claude Code API 
+  💻 Codex  配置管理 - OpenAI Codex API 
+  📊 查看当前API状态 - Status
+  📦 备份与恢复配置 - Backup & Restore
+  ❓ 查看命令帮助文档 - Help
+  ──────────────
   🚪 Exit - 退出
 ```
 
@@ -69,11 +60,10 @@ A command-line tool for one-click switching of Claude Code / Codex configuration
 
 - 🔄 **One-Click Switching** - Quickly switch between different API sites and tokens
 - 📋 **Configuration Management** - View, add, and delete API configurations
-- 🔗 **Intelligent Merging** - Automatically sync with Claude Code/Codex/Crush configuration files
-- ⚙️ **Full Support** - Supports all Claude Code/Codex/Crush configuration items
+- 🔗 **Intelligent Merging** - Automatically sync with Claude Code/Codex configuration files
+- ⚙️ **Full Support** - Supports all Claude Code/Codex configuration items
 - 💻 **Codex Support** - Manage Codex configurations with auto mode support
-- 💘 **Crush Support** - Manage Crush AI configurations with auto mode support
-- 🚀 **Auto Mode** - Unconditionally approve all tool usage requests (Claude Code / Codex / Crush)
+- 🚀 **Auto Mode** - Unconditionally approve all tool usage requests (Claude Code / Codex)
 
 ## 📦 Installation
 
@@ -107,7 +97,6 @@ cc use
 
 # Command line operations
 cc api --list        # List all configurations
-cc api --switch      # Switch configuration
 cc api --add         # Add new configuration
 cc api --edit        # Edit configuration file
 cc api --delete      # Delete configuration
@@ -125,28 +114,9 @@ cc usex
 
 # Command line operations
 cc apix --list       # List all configurations
-cc apix --switch     # Switch configuration
 cc apix --edit       # Edit configuration file
 cc apix --auto       # Enable/Disable auto mode
 cc apix --help       # Show help
-```
-
-### Crush AI Commands
-
-```bash
-# Interactive management interface
-cc apic
-
-# Quick switch configuration (Recommended)
-cc usec
-
-# Command line operations
-cc apic --list       # List all configurations
-cc apic --switch     # Switch configuration
-cc apic --add        # Add new configuration
-cc apic --edit       # Edit configuration file
-cc apic --delete     # Delete configuration
-cc apic --help       # Show help
 ```
 
 ### Other Commands
@@ -154,6 +124,9 @@ cc apic --help       # Show help
 ```bash
 # View current configuration status
 cc status
+
+# Backup and restore configuration
+cc backup
 
 # View global help
 cc --help
@@ -225,29 +198,6 @@ The tool will automatically merge your selected API configuration with existing 
 }
 ```
 
-#### 3. Crush Configuration
-```json
-{
-  "sites": {
-    "Crush Example": {
-      "url": "https://api.crush.ai",
-      "description": "Crush AI configuration",
-      "crush": {
-        "env": {
-          "CRUSH_API_KEY": {
-            "Primary Key": "crush-xxxxxxxxxxxxxx",
-            "Backup Key": "crush-yyyyyyyyyyyyyy"
-          },
-          "CRUSH_BASE_URL": "https://api.crush.ai"
-        }
-      }
-    }
-  }
-}
-```
-
-
-
 ### Codex Advanced Authentication
 
 Codex supports two authentication modes:
@@ -299,11 +249,6 @@ Codex supports two authentication modes:
 - Set `sandbox_mode: "danger-full-access"`
 - Most permissive execution permissions
 - Allows all system operations without confirmation
-
-**Crush Auto Mode**:
-- Set `auto_mode: true` in crush.json configuration
-- Uses `cc crush-auto` command for automatic tool approval
-- Automatically approves all tool usage requests
 
 ⚠️ **Warning**: Auto mode will unconditionally approve all operations, use with caution!
 
