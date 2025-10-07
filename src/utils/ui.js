@@ -5,15 +5,13 @@ import figlet from 'figlet';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { getSiteIcon } from './formatter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf8'));
 
-/**
- * 显示启动Banner
- * @param {Object} updateInfo 更新信息（可选）
- */
+// 显示启动Banner
 function showBanner(updateInfo = null) {
 
   const banner = figlet.textSync('CC CLI', {
@@ -42,7 +40,7 @@ function showBanner(updateInfo = null) {
     content += '\n\n' +
       chalk.yellow('🚀 新版本可用! ') +
       chalk.dim(updateInfo.current) + ' → ' + chalk.green(updateInfo.latest) + '\n' +
-      chalk.gray('运行 ') + chalk.cyan('npm install -g @cjh0/cc-cli') + chalk.gray(' 更新');
+      chalk.gray('运行 ') + chalk.cyan('npm install -g @rebecca554owen/cc-cli') + chalk.gray(' 更新');
   }
 
   const boxedBanner = boxen(
@@ -59,34 +57,32 @@ function showBanner(updateInfo = null) {
   console.log(boxedBanner);
 }
 
-/**
- * 显示主菜单
- * @returns {string} 用户选择
- */
+// 显示主菜单
 async function showMainMenu() {
   const choices = [
     {
-      name: '📡 Claude Code API - Claude Code Claude配置管理',
+      name: '📡 Claude 配置管理 - Claude Code API',
       value: 'api',
       short: 'Claude Code API'
     },
     {
-      name: '💻 Codex API - Codex配置管理',
-      value: 'codexapi',
-      short: 'CodexAPI'
+      name: '💻 Codex  配置管理 - OpenAI Codex API',
+      value: 'apix',
+      short: 'OpenAI Codex API'
     },
+
     {
-      name: '🔄 Backup - 备份与恢复',
-      value: 'backup',
-      short: 'Backup'
-    },
-    {
-      name: '📊 Status - 查看当前状态',
+      name: '📊 查看当前API状态 - Status',
       value: 'status',
       short: 'Status'
     },
     {
-      name: '❓ Help - 帮助文档',
+      name: '📦 备份与恢复配置 - Backup & Restore',
+      value: 'backup',
+      short: 'Backup'
+    },
+    {
+      name: '❓ 查看命令帮助文档 - Help',
       value: 'help',
       short: 'Help'
     },
@@ -111,21 +107,16 @@ async function showMainMenu() {
   return choice;
 }
 
-/**
- * 显示API菜单
- * @param {Object} options 选项参数
- * @param {boolean} options.yoloStatus YOLO模式状态
- * @returns {string} 用户选择
- */
+// 显示API菜单
 async function showApiMenu(options = {}) {
   console.log(chalk.cyan.bold('\n📡 Claude配置管理'));
   console.log(chalk.gray('═'.repeat(40)));
 
-  // 构建YOLO模式菜单项
-  const yoloActionText = options.yoloStatus ?
-    '🛑 关闭YOLO模式 - 禁用最宽松配置模式' :
-    '🚀 开启YOLO模式 - 启用最宽松配置模式';
-  const yoloStatusText = options.yoloStatus ?
+  // 构建自动模式菜单项
+  const autoActionText = options.autoStatus ?
+    '🛑 自动模式 - 禁用自动批准功能' :
+    '🚀 自动模式 - 启用自动批准功能';
+  const autoStatusText = options.autoStatus ?
     chalk.green('[已开启]') :
     chalk.gray('[已关闭]');
 
@@ -146,19 +137,19 @@ async function showApiMenu(options = {}) {
       short: '添加配置'
     },
     {
-      name: '✏️  编辑配置 - 修改现有配置',
+      name: '✏️ 编辑配置 - 修改现有配置',
       value: 'edit',
       short: '编辑配置'
     },
     {
-      name: '🗑️  删除配置 - 删除API配置',
+      name: '🗑️ 删除配置 - 删除API配置',
       value: 'delete',
       short: '删除配置'
     },
     {
-      name: `${yoloActionText} ${yoloStatusText}`,
-      value: 'yolo',
-      short: 'YOLO模式'
+      name: `${autoActionText} ${autoStatusText}`,
+      value: 'auto',
+      short: '自动模式'
     },
     new inquirer.Separator(),
     createBackChoice('back')
@@ -177,11 +168,7 @@ async function showApiMenu(options = {}) {
   return choice;
 }
 
-/**
- * 选择站点
- * @param {Object} sites 站点配置
- * @returns {string} 选择的站点key
- */
+// 选择站点
 async function selectSite(sites) {
   const choices = Object.entries(sites).map(([key, config]) => {
     const icon = getSiteIcon(key, config);
@@ -209,11 +196,7 @@ async function selectSite(sites) {
   return site;
 }
 
-/**
- * 选择URL
- * @param {Object} urls URL配置
- * @returns {string} 选择的URL
- */
+// 选择URL
 async function selectUrl(urls) {
   const choices = Object.entries(urls).map(([name, url]) => ({
     name: `${getRegionIcon(name)} ${name} (${url})`,
@@ -234,11 +217,7 @@ async function selectUrl(urls) {
   return url;
 }
 
-/**
- * 选择Token
- * @param {Object} tokens Token配置
- * @returns {string} 选择的Token
- */
+// 选择Token
 async function selectToken(tokens) {
   const choices = Object.entries(tokens).map(([name, token]) => ({
     name: `${getTokenIcon(name)} ${name} (${token.substring(0, 10)}...)`,
@@ -262,11 +241,7 @@ async function selectToken(tokens) {
   return token;
 }
 
-/**
- * 确认配置切换
- * @param {Object} config 配置信息
- * @returns {boolean} 是否确认
- */
+// 确认配置切换
 async function confirmSwitch(config) {
   console.log(chalk.white('\n📋 即将切换到以下配置：'));
   
@@ -296,53 +271,27 @@ async function confirmSwitch(config) {
   return confirm;
 }
 
-/**
- * 显示成功消息
- * @param {string} message 消息内容
- */
+// 显示成功消息
 function showSuccess(message) {
   console.log(chalk.green('✨ ' + message));
 }
 
-/**
- * 显示警告消息
- * @param {string} message 消息内容
- */
+// 显示警告消息
 function showWarning(message) {
   console.log(chalk.yellow('⚠️  ' + message));
 }
 
-/**
- * 显示错误消息
- * @param {string} message 消息内容
- */
+// 显示错误消息
 function showError(message) {
   console.log(chalk.red('❌ ' + message));
 }
 
-/**
- * 显示信息消息
- * @param {string} message 消息内容
- */
+// 显示信息消息
 function showInfo(message) {
   console.log(chalk.blue('ℹ️  ' + message));
 }
 
-/**
- * 获取站点图标（通用版）
- * @param {string} siteKey 站点标识
- * @param {Object} siteConfig 站点配置对象（可选）
- * @returns {string} 图标
- */
-function getSiteIcon(siteKey, siteConfig = null) {
-  return '🌐'; // 通用网络服务图标
-}
-
-/**
- * 获取地区图标
- * @param {string} regionName 地区名称
- * @returns {string} 图标
- */
+// 获取地区图标
 function getRegionIcon(regionName) {
   const lowerName = regionName.toLowerCase();
   if (lowerName.includes('日本') || lowerName.includes('japan')) return '🇯🇵';
@@ -353,20 +302,12 @@ function getRegionIcon(regionName) {
   return '🌍';
 }
 
-/**
- * 获取Token图标（固定版）
- * @param {string} tokenName Token名称
- * @returns {string} 图标
- */
+// 获取Token图标
 function getTokenIcon(tokenName) {
   return '🔑'; // 固定Token图标
 }
 
-/**
- * 通用返回确认
- * @param {string} message 提示消息
- * @returns {Promise<void>} 等待用户确认返回
- */
+// 通用返回确认
 async function waitForBackConfirm(message = '操作完成') {
   await inquirer.prompt([
     {
@@ -380,11 +321,7 @@ async function waitForBackConfirm(message = '操作完成') {
   ]);
 }
 
-/**
- * 创建标准返回按钮选项
- * @param {string} value - 返回值 ('back' | '__back__')
- * @returns {Object} 标准返回按钮配置
- */
+// 创建标准返回按钮选项
 function createBackChoice(value = 'back') {
   return {
     name: '⬅️  返回上一级菜单',
@@ -410,4 +347,139 @@ export {
   getTokenIcon,
   waitForBackConfirm,
   createBackChoice
+};
+
+// ===============================
+// 新增：通用菜单和选择器组件
+// ===============================
+
+// 创建通用管理菜单
+function createGenericMenu(options) {
+  return async () => {
+    const inquirer = (await import('inquirer')).default;
+
+    while (true) {
+      try {
+        console.log(chalk.cyan.bold(`\n${options.title}`));
+        console.log(chalk.gray('═'.repeat(40)));
+
+        // 获取自动模式状态（如果配置了）
+        let autoStatus = false;
+        if (options.getAutoStatus) {
+          autoStatus = await options.getAutoStatus();
+        }
+
+        // 构建菜单项
+        const choices = [...options.menuItems];
+
+        // 添加自动模式选项（如果配置了自动管理器）
+        if (options.autoManager) {
+          const autoActionText = autoStatus ?
+            '🛑 自动模式 - 禁用自动批准功能' :
+            '🚀 自动模式 - 启用自动批准功能';
+          const autoStatusText = autoStatus ?
+            chalk.green('[已开启]') :
+            chalk.gray('[已关闭]');
+
+          choices.push({
+            name: `${autoActionText} ${autoStatusText}`,
+            value: 'auto',
+            short: '自动模式'
+          });
+        }
+
+        // 添加返回选项
+        choices.push(createBackChoice('back'));
+
+        const { choice } = await inquirer.prompt([{
+          type: 'list',
+          name: 'choice',
+          message: '请选择操作：',
+          choices,
+          pageSize: 10
+        }]);
+
+        if (choice === 'back') {
+          return; // 返回主菜单
+        }
+
+        // 处理自动模式
+        if (choice === 'auto' && options.autoManager) {
+          await options.autoManager.toggleAutoMode();
+          continue;
+        }
+
+        // 处理其他菜单项
+        const menuItem = options.menuItems.find(item => item.value === choice);
+        if (menuItem && menuItem.handler) {
+          await menuItem.handler();
+          continue;
+        }
+
+        // 如果菜单项是命令对象，执行其execute方法
+        if (menuItem && menuItem.command) {
+          await menuItem.command.execute([]);
+          continue;
+        }
+
+        console.log(chalk.red('❌ 无效选择'));
+
+      } catch (error) {
+        console.error(chalk.red('❌ 菜单操作失败:'), error.message);
+      }
+    }
+  };
+}
+
+// 智能选择器
+async function smartSelector(options) {
+  const inquirer = (await import('inquirer')).default;
+
+  let displayChoices = [...options.choices];
+
+  // 添加返回选项
+  if (options.includeBackOption !== false) {
+    displayChoices.push({
+      name: '↩️  返回',
+      value: options.backValue || '__back__',
+      short: '返回'
+    });
+  }
+
+  // 智能选择逻辑
+  if (options.autoSelectWhenSingle !== false &&
+      displayChoices.length === (options.includeBackOption !== false ? 2 : 1)) {
+    const selected = displayChoices[0].value;
+    if (selected !== (options.backValue || '__back__')) {
+      console.log(chalk.gray(`✓ 自动选择: ${displayChoices[0].short || selected}`));
+      return selected;
+    }
+  }
+
+  // 显示选择界面
+  const { choice } = await inquirer.prompt([{
+    type: 'list',
+    name: 'choice',
+    message: options.title,
+    choices: displayChoices,
+    pageSize: 10
+  }]);
+
+  return choice;
+}
+
+// 创建选择器配置
+function createSelectorConfig(items, nameFormatter = null, iconGetter = null, shortFormatter = null) {
+  return Object.entries(items).map(([key, item]) => ({
+    name: nameFormatter ? nameFormatter(key, item) : key,
+    value: key,
+    short: shortFormatter ? shortFormatter(key, item) : key
+  }));
+}
+
+// 导出新增的函数
+export {
+  createGenericMenu,
+  smartSelector,
+  createSelectorConfig
 };

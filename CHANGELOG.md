@@ -1,90 +1,118 @@
-## [2.8.0](https://github.com/cjh-store/cc-cli/compare/v2.7.0...v2.8.0) (2025-09-30)
+## [Unreleased]
+
+### ♻️ Refactor
+
+* 统一快速切换命令，使用 QuickUseCommandBase 基类
+
+## [2.8.3](https://github.com/rebecca554owen/cc-cli/compare/v2.8.2...v2.8.3) (2025-10-06)
 
 ### ✨ Features
 
-* **codex:** 新增Codex配置切换成功信息格式化功能 ([539869d](https://github.com/cjh-store/cc-cli/commit/539869d85452fe2f0f970e92432c1692ff21371c))
+* 新增 Codex 快速切换命令 `cc apiusex`
+* 为 `cc api` 添加 `--switch` 选项
+
+### 📝 Docs
+
+* 优化中英文文档和命令说明
+
+### 🔧 Chore
+
+* 升级 webdav 到 5.8.0
+* 添加自动创建 GitHub Release
+
+## [2.8.2](https://github.com/rebecca554owen/cc-cli/compare/v2.8.0...v2.8.2) (2025-10-06)
+
+### 🔧 Chore
+
+* 强化备份配置处理
+
+## [2.8.0](https://github.com/rebecca554owen/cc-cli/compare/v2.7.0...v2.8.0) (2025-09-30)
+
+### ✨ Features
+
+* 新增 Codex 配置切换成功信息格式化
 
 ## [2.7.0](https://github.com/cjh-store/cc-cli/compare/v2.6.4...v2.7.0) (2025-09-30)
 
 ### ✨ Features
 
-* **claude:** 统一使用 claude 字段并兼容老格式配置 ([29a2ddf](https://github.com/cjh-store/cc-cli/commit/29a2ddfc8c925d28217e5042b6a30b81fc0f4dd4))
+* 统一使用 claude 字段并兼容老格式配置
 
 ## [2.6.4](https://github.com/cjh-store/cc-cli/compare/v2.6.3...v2.6.4) (2025-09-30)
 
 ### ⚡ Performance
 
-* **项目:** 优化命令执行完成后主动退出进程 ([4c0752a](https://github.com/cjh-store/cc-cli/commit/4c0752a9cfb403881805af70099bd6acf0a0f724))
+* 优化命令执行完成后主动退出进程
 
 ## [2.6.3](https://github.com/cjh-store/cc-cli/compare/v2.6.2...v2.6.3) (2025-09-30)
 
 ### ⚡ Performance
 
-* **项目:** 优化配置管理中的认证字段清理逻辑 ([859de51](https://github.com/cjh-store/cc-cli/commit/859de51f26599babbcf341e48f6f182f037b1051))
+* 优化配置管理中的认证字段清理逻辑
 
 ## [2.6.2](https://github.com/cjh-store/cc-cli/compare/v2.6.1...v2.6.2) (2025-09-29)
 
 ### 🐛 Bug Fixes
 
-* **安全:** 修复安全漏洞并升级依赖 ([dd7362c](https://github.com/cjh-store/cc-cli/commit/dd7362cc39ab0f38f07fa67ce259e64989d20678))
+* 修复安全漏洞并升级依赖
 
 ## [2.6.1](https://github.com/cjh-store/cc-cli/compare/v2.6.0...v2.6.1) (2025-09-29)
 
 ### 🔧 Chore
 
-* **项目:** 新增手动发布工作流并更新README文档 ([ffc140e](https://github.com/cjh-store/cc-cli/commit/ffc140ea5112571546db1233312cc61f05d7fe74))
+* 新增手动发布工作流并更新文档
 
 ## [2.6.0](https://github.com/cjh-store/cc-cli/compare/v2.5.1...v2.6.0) (2025-09-29)
 
 ### ✨ Features
 
-* **项目:** 新增 model_reasoning_effort 配置项支持 ([8507105](https://github.com/cjh-store/cc-cli/commit/8507105d7597d265b23b7ac4748546d46ba27ddc))
+* 新增 model_reasoning_effort 配置项支持
 
 ## [2.5.1](https://github.com/cjh-store/cc-cli/compare/v2.5.0...v2.5.1) (2025-09-29)
 
 ### ⚡ Performance
 
-* **codex:** 优化模型提供商名称显示逻辑 ([0cf63ae](https://github.com/cjh-store/cc-cli/commit/0cf63aed404eecc6ded5dd50e593c0069d6b7ab2))
+* 优化模型提供商名称显示逻辑
 
 ## [2.5.0](https://github.com/cjh-store/cc-cli/compare/v2.4.3...v2.5.0) (2025-09-29)
 
 ### ✨ Features
 
-* **codex:** 支持保存和读取当前Codex配置 ([ed8d9c7](https://github.com/cjh-store/cc-cli/commit/ed8d9c7a4a13f813b6addea1347d642594ea5bcc))
+* 支持保存和读取当前 Codex 配置
 
 ## [2.4.3](https://github.com/cjh-store/cc-cli/compare/v2.4.2...v2.4.3) (2025-09-28)
 
 ### ⚡ Performance
 
-* **项目:** 优化写法 ([9b289f4](https://github.com/cjh-store/cc-cli/commit/9b289f477202a96211e4480e839784f03de5ee9b))
+* 优化写法
 
 ## [2.4.2](https://github.com/cjh-store/cc-cli/compare/v2.4.1...v2.4.2) (2025-09-28)
 
 ### 🔧 Chore
 
-* **项目:** 更新项目版本号并优化备份模块代码 ([0e2d8d3](https://github.com/cjh-store/cc-cli/commit/0e2d8d355434183797387f6d59d4a251e9a101ae))
+* 更新项目版本号并优化备份模块代码
 
 ## [2.4.1](https://github.com/cjh-store/cc-cli/compare/v2.4.0...v2.4.1) (2025-09-27)
 
 ### ⚡ Performance
 
-* **token:** 增强Token配置支持，兼容字符串和对象格式 ([d2b742f](https://github.com/cjh-store/cc-cli/commit/d2b742fb84e26a7a0dc973d0bb9077089305f8ec))
+* 增强 Token 配置支持，兼容字符串和对象格式
 
 ## [2.4.0](https://github.com/cjh-store/cc-cli/compare/v2.3.5...v2.4.0) (2025-09-25)
 
 ### ✨ Features
 
-* **claude:** 添加YOLO模式支持 ([c82deda](https://github.com/cjh-store/cc-cli/commit/c82dedaa383965fde41ea7a4697ff1230b2cfefd))
+* 添加 YOLO 模式支持
 
 ### 🔧 Chore
 
-* **项目:** 更新仓库URL为cc-cli ([5f021b9](https://github.com/cjh-store/cc-cli/commit/5f021b92a3d8eb54f21a2b6490183282a849916b))
+* 更新仓库 URL 为 cc-cli
 
 ## [2.3.5](https://github.com/cjh-store/cc-cli/compare/v2.3.4...v2.3.5) (2025-09-24)
 
 ### 🔧 Chore
 
-* **项目:** 更新发布配置和移除许可证信息 ([533295a](https://github.com/cjh-store/cc-cli/commit/533295aa2de581a5edbe92f85e7c657c9ec320b3))
+* 更新发布配置和移除许可证信息
 
 ## [2.3.4](https://github.com/cjh-store/cc-cli/compare/v2.3.3...v2.3.4) (2025-09-24)
 

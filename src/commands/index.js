@@ -29,49 +29,54 @@ class CommandRegistry {
 
       // 注册API快速使用命令
       const { default: apiUseCommand } = await import('./claude/apiuse.js');
-      this.commands.set('apiuse', apiUseCommand);
-      program
-        .command('apiuse')
-        .description('快速切换 Claude Code API 配置')
-        .action(async () => {
-          await this.executeCommand('apiuse', []);
-        });
+      this.commands.set('use', apiUseCommand);
+      await apiUseCommand.register(program);
 
-      // 注册Codex命令（仅用于交互式菜单，不注册独立命令）
+      // 注册Codex命令
       const { default: codexCommand } = await import('./codex/index.js');
-      this.commands.set('codexapi', codexCommand);
+      this.commands.set('apix', codexCommand);
+      await codexCommand.register(program);
 
-      // 注册备份命令（仅用于交互式菜单，不注册独立命令）
+      // 注册Codex快速使用命令
+      const { default: codexApiUseCommand } = await import('./codex/apiuse.js');
+      this.commands.set('usex', codexApiUseCommand);
+      await codexApiUseCommand.register(program);
+
+      // 注册备份命令
       const { default: backupCommand } = await import('./backup/index.js');
       this.commands.set('backup', backupCommand);
+      await backupCommand.register(program);
 
       // 注册状态命令
       program
         .command('status')
-        .description('查看当前配置状态')
+        .description('查看当前配置状态               ')
         .action(async () => {
           await this.executeCommand('status', []);
         });
 
-      // 注册Claude YOLO Hook命令（供Claude Code hooks内部调用）
-      const { default: claudeYoloCommand } = await import('./claude/yolo.js');
+      // 注册Claude自动模式Hook命令（供Claude Code hooks内部调用）
+      const { default: claudeAutoCommand } = await import('./claude/auto.js');
       program
-        .command('claude-yolo')
-        .description('Claude Code YOLO模式钩子处理器（内部使用）')
+        .command('claude-auto')
+        .description('Claude Code自动模式钩子处理器（内部使用）')
         .option('-h, --help', '显示帮助信息')
         .action(async (options) => {
           if (options.help) {
-            claudeYoloCommand.showHelp();
+            claudeAutoCommand.showHelp();
             return;
           }
-          await claudeYoloCommand.execute();
+          await claudeAutoCommand.execute();
         });
+
+
 
       // 注册帮助命令
       program
         .command('help')
         .description('显示帮助信息')
         .action(async () => {
+          console.clear();
           program.help();
         });
 
@@ -98,9 +103,11 @@ class CommandRegistry {
         return;
       }
 
-      if (commandName === 'apiuse') {
-        const apiUseCommand = this.commands.get('apiuse');
-        await apiUseCommand.execute(args);
+      if (commandName === 'backup') {
+        const command = this.commands.get('backup');
+        if (command) {
+          await command.execute(args);
+        }
         return;
       }
 
@@ -124,6 +131,8 @@ class CommandRegistry {
    * 显示帮助信息
    */
   async showHelp() {
+    // 清屏
+    console.clear();
     const { formatMainHelp } = await import('../utils/formatter.js');
     console.log(formatMainHelp());
   }
@@ -132,15 +141,25 @@ class CommandRegistry {
    * 显示当前状态
    */
   async showStatus() {
-    const { default: ConfigManager } = await import('../core/ConfigManager.js');
-    const configManager = new ConfigManager();
+    const { default: ManagerConfig } = await import('../core/manager-config.js');
+    const configManager = new ManagerConfig();
 
     try {
       const currentConfig = await configManager.getCurrentConfig();
       const currentCodexConfig = await configManager.getCurrentCodexConfig();
-      const { formatStatus } = await import('../utils/formatter.js');
 
-      console.log(formatStatus(currentConfig, currentCodexConfig));
+      const { formatStatus } = await import('../utils/formatter.js');
+      
+      // 读取版本信息
+      const { readFileSync } = await import('fs');
+      const { join, dirname } = await import('path');
+      const { fileURLToPath } = await import('url');
+      
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const pkg = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf8'));
+
+      console.log(formatStatus(currentConfig, currentCodexConfig, pkg.version));
     } catch (error) {
       console.log(chalk.yellow('⚠️  当前没有配置或配置文件不存在'));
     }

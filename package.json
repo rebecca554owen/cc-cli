@@ -1,12 +1,12 @@
 {
-  "name": "@cjh0/cc-cli",
-  "version": "2.8.0",
-  "description": "Claude Code配置管理CLI工具",
+  "name": "@rebecca554owen/cc-cli",
+  "version": "2.10.0",
+  "description": "CC CLI 终端配置管理工具 - Claude Code / Codex 配置管理",
   "main": "src/index.js",
   "type": "module",
   "bin": {
-    "cc": "./bin/cc.js",
-    "cc-cli": "./bin/cc.js"
+    "cc": "bin/cc.js",
+    "cc-cli": "bin/cc.js"
   },
   "publishConfig": {
     "access": "public"
@@ -16,12 +16,6 @@
     "link": "npm link",
     "unlink": "npm unlink",
     "start": "node bin/cc.js",
-    "git:push": "git add -A && git-pro commit && git pull --rebase && git push",
-    "release": "semantic-release",
-    "release:dry": "semantic-release --dry-run",
-    "version:patch": "npm version patch && git push --tags",
-    "version:minor": "npm version minor && git push --tags",
-    "version:major": "npm version major && git push --tags",
     "prepublishOnly": "npm test"
   },
   "keywords": [
@@ -35,7 +29,7 @@
     "configuration",
     "tool"
   ],
-  "author": "cjh0 <your-email@example.com>",
+  "author": "rebecca554owen <rebecca554owen@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "boxen": "^5.1.2",
@@ -45,28 +39,19 @@
     "fs-extra": "^11.1.0",
     "inquirer": "^8.2.0",
     "ora": "^5.4.1",
-    "update-notifier": "^7.3.1",
-    "webdav": "^5.3.1"
+    "toml": "^3.0.0",
+    "update-notifier": "^7.3.1"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cjh-store/cc-cli.git"
+    "url": "https://github.com/rebecca554owen/cc-cli.git"
   },
-  "homepage": "https://github.com/cjh-store/cc-cli#readme",
+  "homepage": "https://github.com/rebecca554owen/cc-cli#readme",
   "bugs": {
-    "url": "https://github.com/cjh-store/cc-cli/issues"
+    "url": "https://github.com/rebecca554owen/cc-cli/issues"
   },
-  "preferGlobal": true,
-  "devDependencies": {
-    "@cjh0/git-pro": "^8.2.3",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^11.0.6",
-    "@semantic-release/npm": "^12.0.1",
-    "conventional-changelog-conventionalcommits": "^8.0.0",
-    "semantic-release": "^24.1.0"
-  }
+  "preferGlobal": true
 }

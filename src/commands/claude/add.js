@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import ora from 'ora';
 import fs from 'fs-extra';
 
-import ConfigManager from '../../core/ConfigManager.js';
+import ManagerConfig from '../../core/manager-config.js';
 import { showError, showSuccess, showInfo, showWarning } from '../../utils/ui.js';
 import { formatError } from '../../utils/formatter.js';
 
@@ -12,7 +12,7 @@ import { formatError } from '../../utils/formatter.js';
  */
 class AddCommand {
   constructor() {
-    this.configManager = new ConfigManager();
+    this.configManager = new ManagerConfig();
   }
 
   /**

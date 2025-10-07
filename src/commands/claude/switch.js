@@ -1,8 +1,9 @@
 import chalk from 'chalk';
 import ora from 'ora';
 
-import ConfigManager from '../../core/ConfigManager.js';
-import { selectSite, selectToken, confirmSwitch, showSuccess, showError, showInfo } from '../../utils/ui.js';
+import ManagerConfig from '../../core/manager-config.js';
+import GenericSelector from '../../utils/selectors.js';
+import { confirmSwitch, showSuccess, showError, showInfo } from '../../utils/ui.js';
 import { formatSwitchSuccess } from '../../utils/formatter.js';
 
 /**
@@ -10,7 +11,7 @@ import { formatSwitchSuccess } from '../../utils/formatter.js';
  */
 class SwitchCommand {
   constructor() {
-    this.configManager = new ConfigManager();
+    this.configManager = new ManagerConfig();
   }
 
   /**
@@ -25,14 +26,14 @@ class SwitchCommand {
       if (!await this.configManager.configExists()) {
         spinner.fail();
         showError('配置文件不存在');
-        showInfo('请确保 ~/.claude/api_configs.json 文件存在');
+        showInfo('请确保 ~/.cc-cli/api_configs.json 文件存在');
         return false; // 配置文件不存在，操作未完成
       }
 
       // 读取所有配置
       const allConfigs = await this.configManager.getAllConfigs();
       
-      if (!this.configManager.validateConfig(allConfigs)) {
+      if (!this.configManager.validateConfigStructure(allConfigs)) {
         spinner.fail();
         showError('配置文件格式无效');
         return false; // 配置格式无效，操作未完成
@@ -40,18 +41,34 @@ class SwitchCommand {
 
       spinner.succeed('配置加载完成');
 
-      // 1. 选择站点
-      const selectedSite = await selectSite(allConfigs.sites);
+      // 1. 过滤出有Claude配置的站点
+      const claudeSites = {};
+      for (const [siteKey, siteConfig] of Object.entries(allConfigs.sites)) {
+        // 只检查claude字段
+        if (siteConfig.claude) {
+          claudeSites[siteKey] = siteConfig;
+        }
+      }
+
+      // 检查是否有可用的Claude配置
+      if (Object.keys(claudeSites).length === 0) {
+        showError('没有找到Claude配置');
+        showInfo('请在api_configs.json中添加带有"claude"字段的站点配置');
+        return false;
+      }
+
+      // 2. 选择站点
+      const selectedSite = await GenericSelector.selectSite(claudeSites);
 
       // 检查是否选择返回
       if (selectedSite === '__back__') {
         return false; // 用户选择返回，操作被取消
       }
 
-      const siteConfig = allConfigs.sites[selectedSite];
+      const siteConfig = claudeSites[selectedSite];
 
-      // 获取Claude配置（兼容老格式）
-      const claudeConfig = this.configManager.getClaudeConfig(siteConfig);
+      // 获取Claude配置
+      const claudeConfig = siteConfig.claude;
 
       console.log(chalk.gray(`✓ 选择站点: ${selectedSite}`));
       console.log(chalk.gray(`✓ URL: ${claudeConfig.env.ANTHROPIC_BASE_URL}`));
@@ -61,20 +78,11 @@ class SwitchCommand {
       const rawTokens = claudeConfig.env.ANTHROPIC_AUTH_TOKEN;
       const tokens = typeof rawTokens === 'string' ? { '默认Token': rawTokens } : rawTokens;
 
-      if (Object.keys(tokens).length === 1) {
-        selectedToken = Object.values(tokens)[0];
-        const tokenName = Object.keys(tokens)[0];
-        console.log(chalk.gray(`✓ Token自动选择: ${tokenName} (${selectedToken.substring(0, 10)}...)`));
-      } else {
-        selectedToken = await selectToken(tokens);
+      selectedToken = await GenericSelector.selectCredential(tokens, 'Token');
 
-        // 检查是否选择返回
-        if (selectedToken === '__back__') {
-          return false; // 用户选择返回，操作被取消
-        }
-
-        const tokenName = Object.keys(tokens).find(key => tokens[key] === selectedToken);
-        console.log(chalk.gray(`✓ 选择Token: ${tokenName}`));
+      // 检查是否选择返回
+      if (selectedToken === '__back__') {
+        return false; // 用户选择返回，操作被取消
       }
 
       // 3. 确认切换
@@ -119,7 +127,7 @@ class SwitchCommand {
 
       if (error.message.includes('配置文件不存在')) {
         showInfo('请确保以下文件存在：');
-        console.log(chalk.gray('  ~/.claude/api_configs.json'));
+        console.log(chalk.gray('  ~/.cc-cli/api_configs.json'));
       }
 
       return false; // 操作失败

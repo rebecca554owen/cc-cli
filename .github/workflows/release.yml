@@ -1,9 +1,6 @@
 name: Release and Publish
 
 on:
-  push:
-    tags:
-      - 'v*'  # 当推送tag时触发，如 v1.0.0
   workflow_dispatch:
 
 jobs:
@@ -13,7 +10,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 获取完整历史，用于生成changelog
+          fetch-depth: 0
+
+      - name: Get version from package.json
+        id: package_version
+        run: |
+          PKG_VERSION=$(node -pe "require('./package.json').version")
+          echo "version=$PKG_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$PKG_VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Version: $PKG_VERSION"
+          echo "🏷️ Tag: v$PKG_VERSION"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,35 +35,32 @@ jobs:
 
       - name: Build (if needed)
         run: |
-          # 如果有构建步骤，在这里添加
           echo "No build step required for CLI tool"
 
       - name: Publish to npm
-        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.package_version.outputs.tag }}
+          name: Release ${{ steps.package_version.outputs.tag }}
           body: |
-            ## 🎉 新版本发布
+            ## 🎉 Release ${{ steps.package_version.outputs.tag }}
 
-            ### 📦 安装方式
+            ### 📦 安装
             ```bash
-            npm install -g @cjh0/cc-cli
+            npm install -g @rebecca554owen/cc-cli
             ```
 
-            ### 🔄 更新方式
-            ```bash
-            npm update -g @cjh0/cc-cli
-            ```
+            ### 📝 更新日志
+            请查看 [CHANGELOG.md](https://github.com/rebecca554owen/cc-cli/blob/main/CHANGELOG.md) 获取详细更新内容。
 
-            ### 📋 更新内容
-            查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) 了解详细更新内容。
+            ### 🔗 NPM 包
+            https://www.npmjs.com/package/@rebecca554owen/cc-cli
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
