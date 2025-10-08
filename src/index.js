@@ -46,7 +46,7 @@ async function showInteractiveMenu(commandRegistry) {
   const updateInfo = checkForUpdates();
 
   // 显示banner（如果有更新会一起显示）
-  showBanner(updateInfo);
+  await showBanner(updateInfo);
 
   while (true) {
     try {
