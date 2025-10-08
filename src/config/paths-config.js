@@ -13,6 +13,7 @@ class ConfigPaths {
     this._homeDir = os.homedir();
     this._claudeDir = path.join(this._homeDir, '.claude');
     this._codexDir = path.join(this._homeDir, '.codex');
+    this._iflowDir = path.join(this._homeDir, '.iflow');
     this._ccCliDir = path.join(this._homeDir, '.cc-cli');
   }
 
@@ -40,6 +41,14 @@ class ConfigPaths {
    */
   get codexDir() {
     return this._codexDir;
+  }
+
+  /**
+   * iFlow 配置目录 (~/.iflow)
+   * @returns {string} iFlow 配置目录路径
+   */
+  get iflowDir() {
+    return this._iflowDir;
   }
 
   /**
@@ -86,6 +95,24 @@ class ConfigPaths {
     return path.join(this._codexDir, 'auth.json');
   }
 
+  // ==================== iFlow 相关路径 ====================
+
+  /**
+   * iFlow 主配置文件 (~/.iflow/config.json)
+   * @returns {string} config.json 文件路径
+   */
+  get iflowConfig() {
+    return path.join(this._iflowDir, 'config.json');
+  }
+
+  /**
+   * iFlow 认证文件 (~/.iflow/auth.json)
+   * @returns {string} auth.json 文件路径
+   */
+  get iflowAuth() {
+    return path.join(this._iflowDir, 'auth.json');
+  }
+
 
 
   // ==================== CC-CLI 相关路径 ====================
@@ -116,6 +143,7 @@ class ConfigPaths {
     return [
       { name: 'Claude', path: this.claudeDir },
       { name: 'Codex', path: this.codexDir },
+      { name: 'iFlow', path: this.iflowDir },
       { name: 'CC-CLI', path: this.ccCliDir }
     ];
   }
@@ -142,6 +170,16 @@ class ConfigPaths {
         description: 'Codex 认证文件'
       },
       {
+        name: 'iFlow Config',
+        path: this.iflowConfig,
+        description: 'iFlow 主配置文件'
+      },
+      {
+        name: 'iFlow Auth',
+        path: this.iflowAuth,
+        description: 'iFlow 认证文件'
+      },
+      {
         name: 'API Configs',
         path: this.apiConfigs,
         description: 'CC-CLI 统一 API 配置'
@@ -151,13 +189,14 @@ class ConfigPaths {
 
   /**
    * 获取指定服务的配置目录
-   * @param {'claude'|'codex'|'ccCli'} service 服务名称
+   * @param {'claude'|'codex'|'iflow'|'ccCli'} service 服务名称
    * @returns {string} 配置目录路径
    */
   getServiceDir(service) {
     const dirs = {
       claude: this.claudeDir,
       codex: this.codexDir,
+      iflow: this.iflowDir,
       ccCli: this.ccCliDir
     };
     return dirs[service] || null;

@@ -14,7 +14,7 @@ function formatConfigItem(config, title, titleColor, tokenKey, setupCommand) {
 }
 
 // 格式化当前状态显示
-function formatStatus(currentConfig, currentCodexConfig = null, versionInfo = null) {
+function formatStatus(hasClaudeConfig, hasCodexConfig, hasIflowConfig, claudeConfig, codexConfig, iflowConfig, versionInfo = null, claudeSite = null, codexSite = null, iflowSite = null) {
   // 合并Banner和状态显示
   let statusContent = '';
   
@@ -37,44 +37,89 @@ function formatStatus(currentConfig, currentCodexConfig = null, versionInfo = nu
   statusContent += chalk.gray("═".repeat(50)) + "\n";
 
   // Claude配置
-  if (currentConfig) {
-    statusContent += chalk.blue("📡 Claude Code: ") + 
-      chalk.white(currentConfig.siteName || "未设置") + "\n";
-    if (currentConfig.ANTHROPIC_BASE_URL) {
+  if (hasClaudeConfig && claudeConfig) {
+    statusContent += chalk.blue("📡 Claude Code 当前使用站点: ") + 
+      chalk.white(claudeSite || "未知配置") + "\n";
+    if (claudeConfig.env && claudeConfig.env.ANTHROPIC_BASE_URL) {
       statusContent += chalk.gray("  BASEURL: ") + 
-        chalk.cyan(currentConfig.ANTHROPIC_BASE_URL) + "\n";
+        chalk.cyan(claudeConfig.env.ANTHROPIC_BASE_URL) + "\n";
     }
-    if (currentConfig.ANTHROPIC_AUTH_TOKEN) {
+    if (claudeConfig.env && claudeConfig.env.ANTHROPIC_AUTH_TOKEN) {
+      // 显示完整的 TOKEN，不截断
+      const token = claudeConfig.env.ANTHROPIC_AUTH_TOKEN;
+      const displayToken = typeof token === 'string' ? token : JSON.stringify(token);
       statusContent += chalk.gray("  TOKEN: ") + 
-        chalk.cyan(currentConfig.ANTHROPIC_AUTH_TOKEN.substring(0, 15) + "...") + "\n";
+        chalk.cyan(displayToken) + "\n";
     }
-    if (currentConfig.ANTHROPIC_MODEL) {
+    if (claudeConfig.env && claudeConfig.env.ANTHROPIC_MODEL) {
       statusContent += chalk.gray("  MODEL: ") + 
-        chalk.cyan(currentConfig.ANTHROPIC_MODEL) + "\n";
+        chalk.cyan(claudeConfig.env.ANTHROPIC_MODEL) + "\n";
     }
     statusContent += "\n";
   }
 
   // Codex配置
-  if (currentCodexConfig) {
-    statusContent += chalk.magenta("💻 Codex API: ") + 
-      chalk.white(currentCodexConfig.siteName || "未设置") + "\n";
-    if (currentCodexConfig.baseUrl) {
+  if (hasCodexConfig && codexConfig) {
+    statusContent += chalk.magenta("💻 Codex API 当前使用站点: ") + 
+      chalk.white(codexSite || "未知配置") + "\n";
+    if (codexConfig.content) {
+      // 从TOML内容中提取信息
+      const lines = codexConfig.content.split('\n');
+      let baseUrl = '';
+      let model = '';
+      let apiKey = '';
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('base_url = ')) {
+          baseUrl = trimmedLine.replace('base_url = ', '').replace(/"/g, '');
+        } else if (trimmedLine.startsWith('model = ')) {
+          model = trimmedLine.replace('model = ', '').replace(/"/g, '');
+        } else if (trimmedLine.includes('Authorization') && trimmedLine.includes('Bearer')) {
+          const match = trimmedLine.match(/Bearer\s+([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) {
+            apiKey = match[1];
+          }
+        }
+      }
+      
+      if (baseUrl) {
+        statusContent += chalk.gray("  BASEURL: ") + 
+          chalk.cyan(baseUrl) + "\n";
+      }
+      if (apiKey) {
+        // 显示完整的 API Key，不截断
+        statusContent += chalk.gray("  TOKEN: ") + 
+          chalk.cyan(apiKey) + "\n";
+      }
+      if (model) {
+        statusContent += chalk.gray("  MODEL: ") + chalk.cyan(model) + "\n";
+      }
+    }
+    statusContent += "\n";
+  }
+
+  // iFlow配置
+  if (hasIflowConfig && iflowConfig) {
+    statusContent += chalk.green("🌊 iFlow API 当前使用站点: ") + 
+      chalk.white(iflowSite || "未知配置") + "\n";
+    if (iflowConfig.baseUrl) {
       statusContent += chalk.gray("  BASEURL: ") + 
-        chalk.cyan(currentCodexConfig.baseUrl) + "\n";
+        chalk.cyan(iflowConfig.baseUrl) + "\n";
     }
-    if (currentCodexConfig.apiKey && currentCodexConfig.apiKey !== '未设置') {
-      statusContent += chalk.gray("  API Key: ") + 
-        chalk.cyan(currentCodexConfig.apiKey.substring(0, 15) + "...") + "\n";
+    if (iflowConfig.apiKey && iflowConfig.apiKey !== '未设置' && iflowConfig.apiKey !== '自动从默认配置获取') {
+      // 显示完整的 API Key，不截断
+      statusContent += chalk.gray("  TOKEN: ") + 
+        chalk.cyan(iflowConfig.apiKey) + "\n";
     }
-    if (currentCodexConfig.model) {
-      statusContent += chalk.gray("  MODEL: ") + chalk.cyan(currentCodexConfig.model) + "\n";
+    if (iflowConfig.model || iflowConfig.modelName) {
+      statusContent += chalk.gray("  MODEL: ") + chalk.cyan(iflowConfig.model || iflowConfig.modelName) + "\n";
     }
     statusContent += "\n";
   }
 
   // 如果没有配置，显示提示信息
-  if (!currentConfig && !currentCodexConfig) {
+  if (!hasClaudeConfig && !hasCodexConfig && !hasIflowConfig) {
     statusContent += chalk.yellow("⚠️  当前没有配置\n\n") +
       chalk.white("请使用 ") +
       chalk.cyan("cc api") +
@@ -86,12 +131,14 @@ function formatStatus(currentConfig, currentCodexConfig = null, versionInfo = nu
   // 快速使用提示
   statusContent += chalk.gray("💡 快速使用: ") + 
     chalk.cyan("cc use") + chalk.gray(" | ") + 
-    chalk.cyan("cc usex") + "\n";
+    chalk.cyan("cc usex") + chalk.gray(" | ") + 
+    chalk.cyan("cc usei") + "\n";
 
   // 工具选项
   statusContent += chalk.gray("🛠️  管理工具: ") + 
     chalk.cyan("cc api") + chalk.gray(" | ") + 
-    chalk.cyan("cc apix");
+    chalk.cyan("cc apix") + chalk.gray(" | ") + 
+    chalk.cyan("cc apii");
 
   return boxen(statusContent, {
     padding: 1,
@@ -110,6 +157,11 @@ function formatConfigList(allConfigs, currentConfig) {
   output += chalk.gray("═".repeat(40)) + "\n\n";
 
   for (const [siteKey, siteConfig] of Object.entries(allConfigs.sites)) {
+    // 跳过没有claude配置的站点
+    if (!siteConfig.claude) {
+      continue;
+    }
+
     const siteIcon = getSiteIcon(siteKey, siteConfig);
     const isCurrentSite = currentConfig && currentConfig.site === siteKey;
 
@@ -131,21 +183,11 @@ function formatConfigList(allConfigs, currentConfig) {
 
     // ANTHROPIC_BASE_URL
     const claudeConfig = siteConfig.claude;
-    const baseUrl = claudeConfig?.env?.ANTHROPIC_BASE_URL;
-    const isCurrentUrl =
-      currentConfig &&
-      currentConfig.site === siteKey &&
-      currentConfig.ANTHROPIC_BASE_URL === baseUrl;
-
-    if (isCurrentUrl) {
-      output += chalk.green(`├─ 📡 ANTHROPIC_BASE_URL: ${baseUrl}`);
-    } else {
-      output += `├─ 📡 ANTHROPIC_BASE_URL: ${baseUrl}`;
-    }
-    output += "\n";
+    const baseUrl = claudeConfig?.env?.ANTHROPIC_BASE_URL || claudeConfig?.baseUrl;
+    output += `├─ 📡 ANTHROPIC_BASE_URL: ${baseUrl}\n`;
 
     // ANTHROPIC_AUTH_TOKEN - 支持字符串和对象格式
-    const authTokensRaw = claudeConfig?.env?.ANTHROPIC_AUTH_TOKEN;
+    const authTokensRaw = claudeConfig?.env?.ANTHROPIC_AUTH_TOKEN || claudeConfig?.token;
     const tokensSource =
       typeof authTokensRaw === "string"
         ? { "默认Token": authTokensRaw }
@@ -156,10 +198,7 @@ function formatConfigList(allConfigs, currentConfig) {
     tokens.forEach(([tokenName, tokenValue], index) => {
       const isLastToken = index === tokens.length - 1;
       const prefix = isLastToken ? "   └─" : "   ├─";
-      const isCurrentToken =
-        currentConfig &&
-        currentConfig.site === siteKey &&
-        currentConfig.token === tokenValue;
+      const isCurrentToken = isCurrentSite && currentConfig && currentConfig.token === tokenValue;
 
       if (isCurrentToken) {
         output += chalk.green(`${prefix} ${tokenName}: ${formatToken(tokenValue)}`);
@@ -207,12 +246,12 @@ function formatCodexConfigList(allConfigs, currentConfig) {
 
     const codexConfig = siteConfig.codex;
 
-    // Model
-    const model = codexConfig.model || 'gpt-5';
+    // Model - 支持新的配置结构
+    const model = codexConfig.model || codexConfig.modelName || 'gpt-5';
     output += `├─ 📡 Model: ${model}\n`;
 
-    // OPENAI_API_KEY - 支持字符串和对象格式
-    const apiKeysRaw = codexConfig.OPENAI_API_KEY;
+    // OPENAI_API_KEY - 支持字符串和对象格式，兼容新结构
+    const apiKeysRaw = codexConfig.OPENAI_API_KEY || codexConfig.token || codexConfig.apiKey;
     const keysSource =
       typeof apiKeysRaw === "string"
         ? { [siteKey]: apiKeysRaw }
@@ -226,7 +265,7 @@ function formatCodexConfigList(allConfigs, currentConfig) {
       const isCurrentKey =
         currentConfig &&
         currentConfig.site === siteKey &&
-        currentConfig.apiKey === keyValue;
+        (currentConfig.apiKey === keyValue || currentConfig.token === keyValue);
 
       if (isCurrentKey) {
         output += chalk.green(`${prefix} ${keyName}: ${formatToken(keyValue)}`);
@@ -236,27 +275,32 @@ function formatCodexConfigList(allConfigs, currentConfig) {
       output += "\n";
     });
 
-    // Model Providers
-    if (codexConfig.model_providers) {
-      const providers = Object.entries(codexConfig.model_providers);
+    // Model Providers - 兼容新旧结构
+    const modelProviders = codexConfig.model_providers || codexConfig.providers;
+    if (modelProviders) {
+      const providers = Object.entries(modelProviders);
       output += `└─ 💻 服务提供商 (${providers.length}个):\n`;
 
       providers.forEach(([providerKey, provider], index) => {
         const isLastProvider = index === providers.length - 1;
         const prefix = isLastProvider ? "   └─" : "   ├─";
         const providerName = provider.name || providerKey;
+        const providerUrl = provider.base_url || provider.baseUrl || provider.url;
         const isCurrentProvider =
           currentConfig &&
           currentConfig.site === siteKey &&
-          currentConfig.provider === providerKey;
+          (currentConfig.provider === providerKey || currentConfig.providerName === providerKey);
 
         if (isCurrentProvider) {
-          output += chalk.green(`${prefix} ${providerName}: ${provider.base_url}`);
+          output += chalk.green(`${prefix} ${providerName}: ${providerUrl}`);
         } else {
-          output += `${prefix} ${providerName}: ${provider.base_url}`;
+          output += `${prefix} ${providerName}: ${providerUrl}`;
         }
         output += "\n";
       });
+    } else if (codexConfig.baseUrl) {
+      // 新结构：直接显示baseUrl
+      output += `└─ 📡 BASEURL: ${codexConfig.baseUrl}\n`;
     }
 
     output += "\n";
@@ -450,10 +494,71 @@ ${chalk.white("使用示例:")}
 `;
 }
 
+// 格式化iFlow配置列表
+function formatIflowConfigList(allConfigs, currentConfig) {
+  let output = chalk.cyan.bold("🌊 iFlow配置列表\n");
+  output += chalk.gray("═".repeat(40)) + "\n\n";
+
+  for (const [siteKey, siteConfig] of Object.entries(allConfigs.sites)) {
+    // 只显示有 iflow 配置的站点
+    if (!siteConfig.iflow) {
+      continue;
+    }
+
+    const siteIcon = getSiteIcon(siteKey, siteConfig);
+    const isCurrentSite = currentConfig && currentConfig.site === siteKey;
+
+    if (isCurrentSite) {
+      output += chalk.green.bold(`${siteIcon} ${siteKey}`);
+    } else {
+      output += chalk.white.bold(`${siteIcon} ${siteKey}`);
+    }
+
+    if (siteConfig.description) {
+      output += chalk.gray(` [${siteConfig.description}]`);
+    }
+
+    if (isCurrentSite) {
+      output += chalk.yellow(" ⭐");
+    }
+
+    output += "\n";
+
+    const iflowConfig = siteConfig.iflow;
+
+    // Model - 支持新的配置结构
+    const model = iflowConfig.model || iflowConfig.modelName || '未设置';
+    output += `├─ 📡 Model: ${model}\n`;
+
+    // API Key - 支持新的配置结构
+    const apiKey = iflowConfig.apiKey || iflowConfig.token;
+    if (apiKey && apiKey !== '未设置' && apiKey !== '自动从默认配置获取') {
+      const isCurrentKey = isCurrentSite && (currentConfig.apiKey === apiKey || currentConfig.token === apiKey);
+      const keyPrefix = isCurrentKey ? chalk.green('├─ 🔑 API密钥: ') : '├─ 🔑 API密钥: ';
+      output += `${keyPrefix}${formatToken(apiKey)}\n`;
+    } else {
+      output += `├─ 🔑 API密钥: 未设置\n`;
+    }
+
+    // Base URL - 支持新的配置结构
+    const baseUrl = iflowConfig.baseUrl || iflowConfig.url;
+    if (baseUrl) {
+      output += `└─ 📡 BASEURL: ${baseUrl}\n`;
+    } else {
+      output += `└─ 📡 BASEURL: 未设置\n`;
+    }
+
+    output += "\n";
+  }
+
+  return output;
+}
+
 export {
   formatStatus,
   formatConfigList,
   formatCodexConfigList,
+  formatIflowConfigList,
   formatSwitchSuccess,
   formatCodexSwitchSuccess,
   formatError,

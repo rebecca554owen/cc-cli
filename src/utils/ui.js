@@ -70,6 +70,11 @@ async function showMainMenu() {
       value: 'apix',
       short: 'OpenAI Codex API'
     },
+    {
+      name: '🌊 iFlow  配置管理 - iFlow API',
+      value: 'apii',
+      short: 'iFlow API'
+    },
 
     {
       name: '📊 查看当前API状态 - Status',

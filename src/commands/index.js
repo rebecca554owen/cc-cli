@@ -42,6 +42,16 @@ class CommandRegistry {
       this.commands.set('usex', codexApiUseCommand);
       await codexApiUseCommand.register(program);
 
+      // 注册iFlow命令
+      const { default: iflowCommand } = await import('./iflow/index.js');
+      this.commands.set('apii', iflowCommand);
+      await iflowCommand.register(program);
+
+      // 注册iFlow快速使用命令
+      const { default: iflowApiUseCommand } = await import('./iflow/apiuse.js');
+      this.commands.set('usei', iflowApiUseCommand);
+      await iflowApiUseCommand.register(program);
+
       // 注册备份命令
       const { default: backupCommand } = await import('./backup/index.js');
       this.commands.set('backup', backupCommand);
@@ -145,8 +155,30 @@ class CommandRegistry {
     const configManager = new ManagerConfig();
 
     try {
-      const currentConfig = await configManager.getCurrentConfig();
-      const currentCodexConfig = await configManager.getCurrentCodexConfig();
+      // 直接获取原始配置信息
+      const claudeConfig = await configManager.getClaudeConfig();
+      const codexConfig = await configManager.getCodexConfig();
+      const iflowConfig = await configManager.getIflowConfig();
+
+      // 检查是否有配置
+      const hasClaudeConfig = claudeConfig && Object.keys(claudeConfig).length > 0;
+      const hasCodexConfig = codexConfig && Object.keys(codexConfig).length > 0;
+      const hasIflowConfig = iflowConfig && Object.keys(iflowConfig).length > 0;
+
+      // 找出匹配的 site
+      let claudeSite = null;
+      let codexSite = null;
+      let iflowSite = null;
+      
+      if (hasClaudeConfig) {
+        claudeSite = await configManager.findMatchingSite('claude', claudeConfig);
+      }
+      if (hasCodexConfig) {
+        codexSite = await configManager.findMatchingSite('codex', codexConfig);
+      }
+      if (hasIflowConfig) {
+        iflowSite = await configManager.findMatchingSite('iflow', iflowConfig);
+      }
 
       const { formatStatus } = await import('../utils/formatter.js');
       
@@ -159,9 +191,15 @@ class CommandRegistry {
       const __dirname = dirname(__filename);
       const pkg = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf8'));
 
-      console.log(formatStatus(currentConfig, currentCodexConfig, pkg.version));
+      // 传递配置和匹配的 site 名称给 formatStatus
+      const statusContent = formatStatus(hasClaudeConfig, hasCodexConfig, hasIflowConfig, 
+        claudeConfig, codexConfig, iflowConfig, pkg.version,
+        claudeSite, codexSite, iflowSite);
+      console.log(statusContent);
     } catch (error) {
-      console.log(chalk.yellow('⚠️  当前没有配置或配置文件不存在'));
+      console.error(chalk.red('显示状态失败:'), error.message);
+      console.error(chalk.red('错误堆栈:'), error.stack);
+      process.exit(1);
     }
   }
 

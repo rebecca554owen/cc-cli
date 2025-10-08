@@ -12,7 +12,6 @@ class ClaudeListCommand extends ListCommandBase {
       displayName: 'Claude',
       commandName: 'api',
       validateMethod: 'validateClaudeConfig',
-      getCurrentMethod: 'getCurrentConfig',
       formatMethod: formatConfigList
     });
   }

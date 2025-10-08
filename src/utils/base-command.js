@@ -241,7 +241,12 @@ export class DeleteCommandBase {
       // 读取所有配置
       const allConfigs = await this.configManager.getAllConfigs();
 
-      if (!this.configManager.validateConfigStructure(allConfigs)) {
+      // 验证配置结构 - 使用特定类型的验证方法
+      const isValid = this.commandType === 'claude' 
+        ? this.configManager.validateClaudeConfig(allConfigs)
+        : this.configManager.validateCodexConfig(allConfigs);
+        
+      if (!isValid) {
         showError("配置文件格式无效");
         return;
       }
@@ -818,7 +823,12 @@ export class QuickUseCommandBase {
       // 读取所有配置
       const allConfigs = await this.configManager.getAllConfigs();
 
-      if (!this.configManager.validateConfigStructure(allConfigs)) {
+      // 验证配置结构 - 使用特定类型的验证方法
+      const isValid = this.commandType === 'claude' 
+        ? this.configManager.validateClaudeConfig(allConfigs)
+        : this.configManager.validateCodexConfig(allConfigs);
+        
+      if (!isValid) {
         spinner.fail();
         showError('配置文件格式无效');
         showInfo('请检查配置文件格式或使用命令编辑配置');
@@ -922,13 +932,10 @@ export class ListCommandBase {
         return;
       }
 
-      // 读取当前配置
-      const currentConfig = await this.getCurrentConfig();
-
       spinner.succeed('配置加载完成');
 
-      // 显示配置列表
-      const configList = this.formatMethod(allConfigs, currentConfig);
+      // 显示配置列表（不再传递currentConfig）
+      const configList = this.formatMethod(allConfigs);
       console.log(configList);
 
       // 等待用户确认后返回
@@ -963,12 +970,6 @@ export class ListCommandBase {
     );
   }
 
-  // 获取当前配置
-  async getCurrentConfig() {
-    if (this.getCurrentMethod) {
-      return await this.configManager[this.getCurrentMethod]();
-    }
-    return null;
-  }
+
 }
 

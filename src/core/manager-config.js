@@ -14,6 +14,9 @@ class ManagerConfig {
     this.configPath = configPaths.apiConfigs;
     this.codexConfigPath = configPaths.codexConfig;
     this.codexAuthPath = configPaths.codexAuth;
+    this.iflowDir = configPaths.iflowDir;
+    this.iflowConfigPath = configPaths.iflowConfig;
+    this.iflowAuthPath = configPaths.iflowAuth;
     this.backupsDir = configPaths.backupsDir;
   }
 
@@ -24,6 +27,7 @@ class ManagerConfig {
     try {
       await fs.ensureDir(this.claudeDir);
       await fs.ensureDir(this.ccCliDir);
+      await fs.ensureDir(path.dirname(this.iflowConfigPath));
     } catch (error) {
       throw new Error(`创建配置目录失败: ${error.message}`);
     }
@@ -70,9 +74,7 @@ class ManagerConfig {
       await this.ensureConfigDir();
       
       const initialConfig = {
-        sites: {},
-        currentConfig: null,
-        currentCodexConfig: null
+        sites: {}
       };
 
       // 1. 尝试读取Claude配置
@@ -84,14 +86,11 @@ class ManagerConfig {
           if (claudeConfig.env && claudeConfig.env.ANTHROPIC_BASE_URL) {
             initialConfig.sites['claude-auto'] = {
               description: '自动检测的Claude配置',
-              url: claudeConfig.env.ANTHROPIC_BASE_URL,
-              claude: {
-                env: {
-                  ANTHROPIC_BASE_URL: claudeConfig.env.ANTHROPIC_BASE_URL,
-                  ANTHROPIC_AUTH_TOKEN: claudeConfig.env.ANTHROPIC_AUTH_TOKEN || '未设置',
-                  ANTHROPIC_MODEL: claudeConfig.env.ANTHROPIC_MODEL || '未设置'
-                }
-              }
+              baseUrl: claudeConfig.env.ANTHROPIC_BASE_URL,
+              token: claudeConfig.env.ANTHROPIC_AUTH_TOKEN || '未设置',
+              model: claudeConfig.env.ANTHROPIC_MODEL || '未设置',
+              siteName: '自动检测的Claude配置',
+              site: 'claude-auto'
             };
             console.log(chalk.green('✅ 已读取Claude配置'));
           }
@@ -122,11 +121,11 @@ class ManagerConfig {
           if (baseUrl !== '未设置') {
             initialConfig.sites['codex-auto'] = {
               description: '自动检测的Codex配置',
-              url: baseUrl,
-              codex: {
-                model: model,
-                OPENAI_API_KEY: '从认证文件中读取'
-              }
+              baseUrl: baseUrl,
+              model: model,
+              token: '从认证文件中读取',
+              siteName: '自动检测的Codex配置',
+              site: 'codex-auto'
             };
             console.log(chalk.green('✅ 已读取Codex配置'));
           }
@@ -135,19 +134,59 @@ class ManagerConfig {
         }
       }
 
+      // 3. 尝试读取iFlow配置
+      const iflowSettingsPath = path.join(this.iflowDir, 'settings.json');
+      if (await fs.pathExists(iflowSettingsPath)) {
+        try {
+          const iflowConfigContent = await fs.readFile(iflowSettingsPath, 'utf8');
+          const iflowConfig = JSON.parse(iflowConfigContent);
+          
+          if (iflowConfig.baseUrl) {
+            initialConfig.sites['iflow-auto'] = {
+              description: '自动检测的iFlow配置',
+              baseUrl: iflowConfig.baseUrl,
+              model: iflowConfig.modelName || '自动从默认配置获取',
+              token: iflowConfig.apiKey,
+              siteName: '自动检测的iFlow配置',
+              site: 'iflow-auto'
+            };
+            console.log(chalk.green('✅ 已读取iFlow配置'));
+          }
+        } catch (error) {
+          console.warn(chalk.yellow('⚠️  读取iFlow配置失败:'), error.message);
+        }
+      }
+
       // 如果没有检测到任何配置，创建示例配置
       if (Object.keys(initialConfig.sites).length === 0) {
         console.log(chalk.yellow('⚠️  未检测到现有配置，创建示例配置'));
-        initialConfig.sites['example'] = {
-          description: '示例配置',
-          url: 'https://api.example.com',
-          claude: {
-            env: {
-              ANTHROPIC_BASE_URL: 'https://api.anthropic.com',
-              ANTHROPIC_AUTH_TOKEN: 'your-token-here',
-              ANTHROPIC_MODEL: 'claude-3-sonnet-20240229'
-            }
-          }
+        
+        // 创建完整的示例配置，包含所有三种服务
+        initialConfig.sites['claude-example'] = {
+          description: 'Claude示例配置',
+          site: 'claude-example',
+          siteName: 'Claude示例配置',
+          baseUrl: 'https://api.anthropic.com',
+          token: 'your-claude-token-here',
+          model: 'claude-3-sonnet-20240229'
+        };
+        
+        initialConfig.sites['codex-example'] = {
+          description: 'Codex示例配置',
+          site: 'codex-example',
+          siteName: 'Codex示例配置',
+          baseUrl: 'https://api.openai.com',
+          token: 'your-codex-token-here',
+          model: 'gpt-4'
+        };
+        
+        initialConfig.sites['iflow-example'] = {
+          description: 'iFlow示例配置',
+          site: 'iflow-example',
+          siteName: 'iFlow示例配置',
+          baseUrl: 'https://api.iflow.com',
+          token: 'your-iflow-token-here',
+          model: 'gpt-3.5-turbo'
         };
       }
 
@@ -230,20 +269,11 @@ class ManagerConfig {
   }
 
   /**
-   * 获取当前使用的配置
-   * @returns {Object} 当前配置
+   * 获取Claude配置
+   * @returns {Object} Claude配置
    */
-  async getCurrentConfig() {
+  async getClaudeConfig() {
     try {
-      // 首先读取当前激活的配置信息
-      let currentConfigInfo = null;
-      if (await fs.pathExists(this.configPath)) {
-        const configContent = await fs.readFile(this.configPath, 'utf8');
-        const allConfigs = JSON.parse(configContent);
-        currentConfigInfo = allConfigs.currentConfig;
-      }
-      
-      // Claude 配置应该从独立的 Claude 配置文件中读取
       const claudeConfigPath = this.settingsPath;
       
       // 检查 Claude 配置文件是否存在
@@ -255,45 +285,20 @@ class ManagerConfig {
       const claudeConfigContent = await fs.readFile(claudeConfigPath, 'utf8');
       const claudeConfig = JSON.parse(claudeConfigContent);
       
-      // 从 Claude 配置中提取当前配置信息
-      if (claudeConfig.env) {
-        // 从URL中提取服务商信息
-        const baseUrl = claudeConfig.env.ANTHROPIC_BASE_URL || '';
-        let provider = '未设置';
-        if (baseUrl.includes('coreshub')) provider = 'CoreHub';
-        else if (baseUrl.includes('deepseek')) provider = 'DeepSeek';
-        else if (baseUrl.includes('paratera')) provider = 'Paratera';
-        else if (baseUrl.includes('siliconflow')) provider = 'SiliconFlow';
-        else if (baseUrl.includes('anthropic.com')) provider = 'Anthropic';
-        else if (baseUrl.includes('openai.com')) provider = 'OpenAI';
-        
-        return {
-          siteName: currentConfigInfo ? currentConfigInfo.siteName : 'Claude配置',
-          site: currentConfigInfo ? currentConfigInfo.site : 'Claude',
-          providerName: provider,
-          ANTHROPIC_BASE_URL: baseUrl || '未设置',
-          ANTHROPIC_AUTH_TOKEN: claudeConfig.env.ANTHROPIC_AUTH_TOKEN ? claudeConfig.env.ANTHROPIC_AUTH_TOKEN.substring(0, 15) + '...' : '未设置',
-          ANTHROPIC_MODEL: claudeConfig.env.ANTHROPIC_MODEL || '未设置',
-          type: 'Claude'
-        };
-      }
-      
-      return null;
+      return claudeConfig;
     } catch (error) {
-      console.warn(chalk.yellow("⚠️  读取当前配置失败:"), error.message);
+      console.warn(chalk.yellow("⚠️  读取Claude配置失败:"), error.message);
       return null;
     }
   }
 
   /**
-   * 获取当前使用的Codex配置
-   * @returns {Object} 当前Codex配置
+   * 获取Codex配置
+   * @returns {Object} Codex配置
    */
-  async getCurrentCodexConfig() {
+  async getCodexConfig() {
     try {
-      // Codex 配置应该从独立的 Codex 配置文件中读取
       const codexConfigPath = this.codexConfigPath;
-      const codexAuthPath = this.codexAuthPath;
       
       // 检查 Codex 配置文件是否存在
       if (!await fs.pathExists(codexConfigPath)) {
@@ -303,68 +308,262 @@ class ManagerConfig {
       // 读取 Codex 配置文件（TOML 格式）
       const codexConfigContent = await fs.readFile(codexConfigPath, 'utf8');
       
-      // 简化处理：直接从内容中提取基本信息，避免复杂的 TOML 解析
+      return {
+        content: codexConfigContent,
+        path: codexConfigPath
+      };
+    } catch (error) {
+      console.warn(chalk.yellow("⚠️  读取Codex配置失败:"), error.message);
+      return null;
+    }
+  }
+
+  /**
+   * 获取iFlow配置
+   * @returns {Object} iFlow配置
+   */
+  async getIflowConfig() {
+    try {
+      const iflowSettingsPath = path.join(this.iflowDir, 'settings.json');
+      
+      // 检查 iFlow 配置文件是否存在
+      if (!await fs.pathExists(iflowSettingsPath)) {
+        return null;
+      }
+      
+      // 读取 iFlow 配置文件（JSON 格式）
+      const iflowConfigContent = await fs.readFile(iflowSettingsPath, 'utf8');
+      const iflowConfig = JSON.parse(iflowConfigContent);
+      
+      return iflowConfig;
+    } catch (error) {
+      console.warn(chalk.yellow("⚠️  读取iFlow配置失败:"), error.message);
+      return null;
+    }
+  }
+
+  /**
+   * 同步所有服务配置到API配置文件中
+   * 在每次启动时检查并读取各服务配置，确保三者都能正确同步
+   * @returns {boolean} 是否成功同步
+   */
+  async syncAllServiceConfigs() {
+    try {
+      console.log(chalk.cyan('🔍 正在同步所有服务配置...'));
+      
+      // 确保配置目录存在
+      await this.ensureConfigDir();
+
+      // 读取当前的API配置
+      let currentConfig = {
+        sites: {},
+        currentConfig: null,
+        currentCodexConfig: null,
+        currentIflowConfig: null
+      };
+
+      if (await fs.pathExists(this.configPath)) {
+        try {
+          const configContent = await fs.readFile(this.configPath, 'utf8');
+          currentConfig = JSON.parse(configContent);
+        } catch (error) {
+          console.warn(chalk.yellow('⚠️  读取现有配置文件失败，将创建新配置:'), error.message);
+        }
+      }
+
+      let updated = false;
+
+      // 1. 同步Claude配置
+      if (await this.syncClaudeConfig(currentConfig)) {
+        updated = true;
+      }
+
+      // 2. 同步Codex配置
+      if (await this.syncCodexConfig(currentConfig)) {
+        updated = true;
+      }
+
+      // 3. 同步iFlow配置
+      if (await this.syncIflowConfig(currentConfig)) {
+        updated = true;
+      }
+
+      if (updated) {
+        // 保存更新后的配置
+        await fs.writeFile(
+          this.configPath,
+          JSON.stringify(currentConfig, null, 2),
+          'utf8'
+        );
+        console.log(chalk.green('✅ 所有服务配置同步完成'));
+      } else {
+        console.log(chalk.gray('ℹ️  所有配置已是最新，无需同步'));
+      }
+
+      return updated;
+    } catch (error) {
+      console.error(chalk.red('❌ 同步服务配置失败:'), error.message);
+      return false;
+    }
+  }
+
+  /**
+   * 同步Claude配置
+   */
+  async syncClaudeConfig(currentConfig) {
+    try {
+      if (!await fs.pathExists(this.settingsPath)) {
+        console.log(chalk.gray('ℹ️  Claude配置文件不存在，跳过同步'));
+        return false;
+      }
+
+      const claudeConfigContent = await fs.readFile(this.settingsPath, 'utf8');
+      const claudeConfig = JSON.parse(claudeConfigContent);
+
+      if (!claudeConfig.env || !claudeConfig.env.ANTHROPIC_BASE_URL) {
+        console.warn(chalk.yellow('⚠️  Claude配置缺少必要字段，跳过同步'));
+        return false;
+      }
+
+      // 查找是否已存在相同URL的Claude配置
+      const existingClaudeConfig = Object.entries(currentConfig.sites).find(([_, siteConfig]) => 
+        siteConfig.claude && siteConfig.claude.env?.ANTHROPIC_BASE_URL === claudeConfig.env.ANTHROPIC_BASE_URL
+      );
+
+      if (existingClaudeConfig) {
+        console.log(chalk.gray(`ℹ️  已存在相同URL的Claude配置: ${existingClaudeConfig[0]}`));
+        return false;
+      }
+
+      // 添加Claude配置
+      currentConfig.sites['claude-auto'] = {
+        description: '自动检测的Claude配置',
+        url: claudeConfig.env.ANTHROPIC_BASE_URL,
+        claude: {
+          env: {
+            ANTHROPIC_BASE_URL: claudeConfig.env.ANTHROPIC_BASE_URL,
+            ANTHROPIC_AUTH_TOKEN: claudeConfig.env.ANTHROPIC_AUTH_TOKEN || '未设置',
+            ANTHROPIC_MODEL: claudeConfig.env.ANTHROPIC_MODEL || '未设置'
+          }
+        }
+      };
+
+      console.log(chalk.green('✅ 已同步Claude配置'));
+      return true;
+    } catch (error) {
+      console.warn(chalk.yellow('⚠️  同步Claude配置失败:'), error.message);
+      return false;
+    }
+  }
+
+  /**
+   * 同步Codex配置
+   */
+  async syncCodexConfig(currentConfig) {
+    try {
+      if (!await fs.pathExists(this.codexConfigPath)) {
+        console.log(chalk.gray('ℹ️  Codex配置文件不存在，跳过同步'));
+        return false;
+      }
+
+      const codexConfigContent = await fs.readFile(this.codexConfigPath, 'utf8');
+      
+      // 简单解析TOML格式
       const lines = codexConfigContent.split('\n');
       let model = '未设置';
-      let modelProvider = '未设置';
       let baseUrl = '未设置';
-      let apiKeyFromHeaders = '未设置';
       
       for (const line of lines) {
         const trimmedLine = line.trim();
         if (trimmedLine.startsWith('model = ')) {
           model = trimmedLine.replace('model = ', '').replace(/"/g, '');
-        } else if (trimmedLine.startsWith('model_provider = ')) {
-          modelProvider = trimmedLine.replace('model_provider = ', '').replace(/"/g, '');
         } else if (trimmedLine.startsWith('base_url = ')) {
           baseUrl = trimmedLine.replace('base_url = ', '').replace(/"/g, '');
-        } else if (trimmedLine.includes('Authorization') && trimmedLine.includes('Bearer')) {
-          // 从HTTP headers中提取token
-          const match = trimmedLine.match(/Bearer\s+([a-zA-Z0-9_-]+)/);
-          if (match && match[1]) {
-            apiKeyFromHeaders = match[1];
-          }
         }
       }
       
-      // 读取 Codex 认证文件获取 API Key
-      let apiKeyFromAuth = '未设置';
-      if (await fs.pathExists(codexAuthPath)) {
-        try {
-          const authContent = await fs.readFile(codexAuthPath, 'utf8');
-          const authConfig = JSON.parse(authContent);
-          if (authConfig.OPENAI_API_KEY) {
-            apiKeyFromAuth = authConfig.OPENAI_API_KEY;
-          }
-        } catch (error) {
-          console.warn(chalk.yellow("⚠️  读取Codex认证文件失败:"), error.message);
+      if (baseUrl === '未设置') {
+        console.warn(chalk.yellow('⚠️  Codex配置缺少base_url，跳过同步'));
+        return false;
+      }
+
+      // 查找是否已存在相同URL的Codex配置
+      const existingCodexConfig = Object.entries(currentConfig.sites).find(([_, siteConfig]) => 
+        siteConfig.codex && siteConfig.codex.baseUrl === baseUrl
+      );
+
+      if (existingCodexConfig) {
+        console.log(chalk.gray(`ℹ️  已存在相同URL的Codex配置: ${existingCodexConfig[0]}`));
+        return false;
+      }
+
+      // 添加Codex配置
+      currentConfig.sites['codex-auto'] = {
+        description: '自动检测的Codex配置',
+        url: baseUrl,
+        codex: {
+          model: model,
+          baseUrl: baseUrl,
+          apiKey: '从认证文件中读取'
         }
-      }
-      
-      // 优先使用headers中的token，如果没有则使用auth文件中的token
-      let apiKey = apiKeyFromHeaders !== '未设置' ? apiKeyFromHeaders : apiKeyFromAuth;
-      
-      // 读取当前激活的Codex配置信息
-      let currentCodexConfigInfo = null;
-      if (await fs.pathExists(this.configPath)) {
-        const configContent = await fs.readFile(this.configPath, 'utf8');
-        const allConfigs = JSON.parse(configContent);
-        currentCodexConfigInfo = allConfigs.currentCodexConfig;
-      }
-      
-      // 返回完整的配置信息
-      return {
-        siteName: currentCodexConfigInfo ? currentCodexConfigInfo.siteName : 'Codex配置',
-        site: currentCodexConfigInfo ? currentCodexConfigInfo.site : 'Codex',
-        providerName: modelProvider,
-        baseUrl: baseUrl,
-        model: model,
-        apiKey: apiKey,
-        type: 'Codex'
       };
+
+      console.log(chalk.green('✅ 已同步Codex配置'));
+      return true;
     } catch (error) {
-      console.warn(chalk.yellow("⚠️  读取当前Codex配置失败:"), error.message);
-      return null;
+      console.warn(chalk.yellow('⚠️  同步Codex配置失败:'), error.message);
+      return false;
+    }
+  }
+
+  /**
+   * 同步iFlow配置（改进版）
+   */
+  async syncIflowConfig(currentConfig) {
+    try {
+      // 检查iFlow配置文件是否存在（使用settings.json）
+      const iflowSettingsPath = path.join(this.iflowDir, 'settings.json');
+      if (!await fs.pathExists(iflowSettingsPath)) {
+        console.log(chalk.gray('ℹ️  iFlow配置文件不存在，跳过同步'));
+        return false;
+      }
+
+      // 读取iFlow配置
+      const iflowConfigContent = await fs.readFile(iflowSettingsPath, 'utf8');
+      const iflowConfig = JSON.parse(iflowConfigContent);
+
+      if (!iflowConfig.baseUrl) {
+        console.warn(chalk.yellow('⚠️  iFlow配置缺少baseUrl，跳过同步'));
+        return false;
+      }
+
+      // 查找是否已存在相同URL的iFlow配置
+      const existingIflowConfig = Object.entries(currentConfig.sites).find(([_, siteConfig]) => 
+        siteConfig.iflow && siteConfig.iflow.baseUrl === iflowConfig.baseUrl
+      );
+
+      if (existingIflowConfig) {
+        console.log(chalk.gray(`ℹ️  已存在相同URL的iFlow配置: ${existingIflowConfig[0]}`));
+        return false;
+      }
+
+      // 添加iFlow配置
+      currentConfig.sites['iflow-auto'] = {
+        description: '自动检测的iFlow配置',
+        url: iflowConfig.baseUrl,
+        iflow: {
+          providerName: '自动从默认配置获取',
+          baseUrl: iflowConfig.baseUrl,
+          model: iflowConfig.modelName || iflowConfig.model || '自动从默认配置获取',
+          apiKey: iflowConfig.apiKey || '自动从默认配置获取'
+        }
+      };
+
+      console.log(chalk.green('✅ 已同步iFlow配置'));
+      return true;
+    } catch (error) {
+      console.error(chalk.red('❌ 同步iFlow配置失败:'), error.message);
+      return false;
     }
   }
 
@@ -376,13 +575,11 @@ class ManagerConfig {
     try {
       await this.ensureConfigDir();
 
+      // 统一配置字段结构，移除无用字段
       const configToSave = {
         site: config.site,
         siteName: config.siteName,
-        url: config.url,
-        urlName: config.urlName,
         token: config.token,
-        tokenName: config.tokenName,
         updatedAt: new Date().toISOString(),
       };
 
@@ -411,14 +608,12 @@ class ManagerConfig {
     try {
       await this.ensureConfigDir();
 
+      // 统一配置字段结构，移除冗余字段
       const configToSave = {
         site: config.site,
         siteName: config.siteName,
         model: config.model,
         apiKey: config.apiKey,
-        apiKeyName: config.apiKeyName,
-        provider: config.provider,
-        providerName: config.providerName,
         baseUrl: config.baseUrl,
         updatedAt: new Date().toISOString(),
       };
@@ -441,6 +636,41 @@ class ManagerConfig {
   }
 
 
+
+  /**
+   * 保存当前iFlow配置
+   * @param {Object} config iFlow配置对象
+   */
+  async saveCurrentIflowConfig(config) {
+    try {
+      await this.ensureConfigDir();
+
+      // 统一配置字段结构，移除冗余字段
+      const configToSave = {
+        site: config.site,
+        siteName: config.siteName,
+        model: config.model,
+        apiKey: config.apiKey,
+        baseUrl: config.baseUrl,
+        updatedAt: new Date().toISOString(),
+      };
+
+      // 读取现有配置
+      const allConfigs = await this.getAllConfigs();
+
+      // 更新当前iFlow配置
+      allConfigs.currentIflowConfig = configToSave;
+
+      // 保存到 api_configs.json
+      await fs.writeFile(
+        this.configPath,
+        JSON.stringify(allConfigs, null, 2),
+        "utf8"
+      );
+    } catch (error) {
+      throw new Error(`保存当前iFlow配置失败: ${error.message}`);
+    }
+  }
 
   /**
    * 读取settings.json配置
@@ -677,6 +907,38 @@ class ManagerConfig {
     return false; // 没有找到有效的Codex配置
   }
 
+  /**
+   * 验证包含iFlow配置的所有站点
+   * @param {Object} config 配置对象
+   * @returns {boolean} 是否至少有一个有效的iFlow配置
+   */
+  validateIflowConfig(config) {
+    if (!config || typeof config !== "object") {
+      return false;
+    }
+
+    if (!config.sites || typeof config.sites !== "object") {
+      return false;
+    }
+
+    // 检查是否至少有一个站点包含有效的iFlow配置
+    for (const [siteKey, siteConfig] of Object.entries(config.sites)) {
+      if (siteConfig.iflow) {
+        // iFlow配置至少需要baseUrl，apiKey和model可选
+        const iflowConfig = siteConfig.iflow;
+        if (
+          iflowConfig.baseUrl
+        ) {
+          // site字段始终是必需的，因为它是配置的键名
+          // baseUrl字段对于iFlow配置是必需的
+          return true; // 至少有一个有效的iFlow配置
+        }
+      }
+    }
+
+    return false; // 没有找到有效的iFlow配置
+  }
+
 
 
   /**
@@ -688,11 +950,11 @@ class ManagerConfig {
   }
 
   /**
-   * 获取Claude配置
+   * 从站点配置中获取Claude配置
    * @param {Object} siteConfig 站点配置对象
    * @returns {Object} Claude配置对象
    */
-  getClaudeConfig(siteConfig) {
+  getSiteClaudeConfig(siteConfig) {
     if (siteConfig.claude) {
       return siteConfig.claude;
     }
@@ -722,7 +984,7 @@ class ManagerConfig {
       // 复制配置文件到备份目录
       await fs.copy(this.configPath, backupPath);
 
-      // 清理旧备份（只保留最新5个）
+      // 清理旧备份（只保留最新的5个）
       await this.cleanOldBackups();
 
       return backupPath;
@@ -826,7 +1088,7 @@ class ManagerConfig {
         }
       }
 
-      // 清理旧的完整备份（只保留最新3个）
+      // 清理旧的完整备份（只保留最新的3个）
       await this.cleanOldFullBackups();
 
       return backupResults;
@@ -1265,6 +1527,234 @@ class ManagerConfig {
     } catch (error) {
       console.error(chalk.red("恢复备份时出错:"), error.message);
       return false;
+    }
+  }
+
+  /**
+   * 获取当前配置
+   * @returns {Object|null} 当前配置对象，如果不存在则返回null
+   */
+  async getCurrentConfig() {
+    try {
+      const allConfigs = await this.getAllConfigs();
+      return allConfigs.currentConfig || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * 获取当前Codex配置
+   * @returns {Object|null} 当前Codex配置对象，如果不存在则返回null
+   */
+  async getCurrentCodexConfig() {
+    try {
+      const allConfigs = await this.getAllConfigs();
+      return allConfigs.currentCodexConfig || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * 获取当前iFlow配置
+   * @returns {Object|null} 当前iFlow配置对象，如果不存在则返回null
+   */
+  async getCurrentIflowConfig() {
+    try {
+      const allConfigs = await this.getAllConfigs();
+      return allConfigs.currentIflowConfig || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * 获取当前配置路径
+   * @returns {string|null} 当前配置路径，如果不存在则返回null
+   */
+  get currentConfigPath() {
+    return this.configPath;
+  }
+
+  /**
+   * 通过比对配置找出匹配的 site
+   * @param {string} configType 配置类型（'claude'、'codex'、'iflow'）
+   * @param {Object} configData 配置数据对象
+   * @returns {string|null} 匹配的 site 名称，如果没有匹配则返回 null
+   */
+  async findMatchingSite(configType, configData) {
+    try {
+      if (!configData) {
+        return null;
+      }
+
+      // 获取所有配置
+      const allConfigs = await this.getAllConfigs();
+      
+      // 根据配置类型提取关键字段 - 完全按照写入方式反向提取
+      let baseUrl, apiKey, model;
+      
+      if (configType === 'claude') {
+        // Claude: 从 settings.json 的 env 字段中提取
+        baseUrl = configData.env?.ANTHROPIC_BASE_URL;
+        // 处理 ANTHROPIC_AUTH_TOKEN 可能是对象的情况
+        const authToken = configData.env?.ANTHROPIC_AUTH_TOKEN;
+        if (typeof authToken === 'object' && authToken !== null) {
+          // 取第一个 token 值
+          apiKey = Object.values(authToken)[0];
+        } else {
+          apiKey = authToken;
+        }
+        model = configData.env?.ANTHROPIC_MODEL;
+      } else if (configType === 'codex') {
+        // Codex: 从 TOML 配置中提取，优先使用 model_providers 中的配置
+        if (configData.content) {
+          const lines = configData.content.split('\n');
+          let currentProvider = null;
+          let inModelProviders = false;
+          
+          for (const line of lines) {
+            const trimmedLine = line.trim();
+            
+            // 检测进入 model_providers 部分
+            if (trimmedLine.startsWith('[model_providers.')) {
+              inModelProviders = true;
+              currentProvider = trimmedLine.match(/\[model_providers\.(\w+)\]/)?.[1];
+              continue;
+            }
+            
+            // 检测退出 model_providers 部分
+            if (trimmedLine.startsWith('[') && !trimmedLine.startsWith('[model_providers.')) {
+              inModelProviders = false;
+              currentProvider = null;
+              continue;
+            }
+            
+            // 在 model_providers 中提取 base_url
+            if (inModelProviders && trimmedLine.startsWith('base_url = ')) {
+              baseUrl = trimmedLine.replace('base_url = ', '').replace(/"/g, '');
+              // 找到第一个 provider 的 base_url 就停止
+              break;
+            }
+          }
+          
+          // 如果在 model_providers 中没有找到，查找顶级 base_url
+          if (!baseUrl) {
+            for (const line of lines) {
+              const trimmedLine = line.trim();
+              if (trimmedLine.startsWith('base_url = ')) {
+                baseUrl = trimmedLine.replace('base_url = ', '').replace(/"/g, '');
+                break;
+              } else if (trimmedLine.startsWith('model = ')) {
+                model = trimmedLine.replace('model = ', '').replace(/"/g, '');
+              }
+            }
+          }
+        }
+        
+        // API Key 从 auth.json 中获取（按照写入方式）
+        if (configData.path) {
+          try {
+            const authPath = path.join(path.dirname(configData.path), 'auth.json');
+            if (await fs.pathExists(authPath)) {
+              const authContent = await fs.readFile(authPath, 'utf8');
+              const authData = JSON.parse(authContent);
+              if (authData.api_key) {
+                apiKey = authData.api_key;
+              }
+            }
+          } catch (error) {
+            // 忽略读取 auth.json 的错误
+          }
+        }
+      } else if (configType === 'iflow') {
+        // iFlow: 直接从配置对象中提取
+        baseUrl = configData.baseUrl;
+        apiKey = configData.apiKey;
+        model = configData.modelName || configData.model;
+      }
+      
+      // 遍历所有站点，寻找匹配
+      for (const [siteName, siteConfig] of Object.entries(allConfigs.sites)) {
+        if (!siteConfig[configType]) {
+          continue;
+        }
+        
+        const siteConfigData = siteConfig[configType];
+        let siteBaseUrl, siteApiKey, siteModel;
+        
+        // 统一的配置提取逻辑 - 完全按照写入方式反向提取
+        if (configType === 'claude') {
+          // Claude: 从站点配置的 env 字段提取
+          siteBaseUrl = siteConfigData.env?.ANTHROPIC_BASE_URL;
+          // 处理 ANTHROPIC_AUTH_TOKEN 可能是对象的情况
+          const siteAuthToken = siteConfigData.env?.ANTHROPIC_AUTH_TOKEN;
+          if (typeof siteAuthToken === 'object' && siteAuthToken !== null) {
+            // 取第一个 token 值
+            siteApiKey = Object.values(siteAuthToken)[0];
+          } else {
+            siteApiKey = siteAuthToken;
+          }
+          siteModel = siteConfigData.env?.ANTHROPIC_MODEL;
+        } else if (configType === 'codex') {
+          // Codex: 优先使用 model_providers 中的 base_url，然后使用站点 url
+          if (siteConfigData.model_providers) {
+            for (const providerName of Object.keys(siteConfigData.model_providers)) {
+              const provider = siteConfigData.model_providers[providerName];
+              if (provider.base_url) {
+                siteBaseUrl = provider.base_url;
+                break;
+              }
+            }
+          }
+          // 如果没有找到 model_providers 的 base_url，使用 siteConfig.url
+          if (!siteBaseUrl && siteConfig.url) {
+            siteBaseUrl = siteConfig.url;
+          }
+          siteModel = siteConfigData.model;
+          siteApiKey = siteConfigData.OPENAI_API_KEY;
+        } else if (configType === 'iflow') {
+          // iFlow: 直接从站点配置中提取
+          siteBaseUrl = siteConfigData.baseUrl;
+          siteApiKey = siteConfigData.apiKey;
+          siteModel = siteConfigData.model;
+        }
+        
+        // 1. 首先正常匹配（完全匹配 BASEURL）
+        if (baseUrl && siteBaseUrl && baseUrl === siteBaseUrl) {
+          if (apiKey && siteApiKey) {
+            // 对于 API Key，只比对前几个字符，因为可能显示的是...
+            const apiKeyPrefix = typeof apiKey === 'string' ? 
+              apiKey.substring(0, Math.min(10, apiKey.length)) : 
+              apiKey;
+            const siteApiKeyPrefix = typeof siteApiKey === 'string' ? 
+              siteApiKey.substring(0, Math.min(10, siteApiKey.length)) : 
+              siteApiKey;
+            
+            if (apiKeyPrefix === siteApiKeyPrefix) {
+              return siteName;
+            }
+          } else if (model && siteModel && model === siteModel) {
+            // 如果没有 API Key 或 API Key 不匹配，尝试比对模型
+            return siteName;
+          } else if (!apiKey && !model) {
+            // 如果既没有 API Key 也没有模型，只比对 BASEURL
+            return siteName;
+          }
+        }
+      }
+      
+      // 如果都不符合，就直接用 URL 作为 site 名称
+      if (baseUrl) {
+        // 直接使用整个 URL 作为 site 名称，保持简单
+        return baseUrl;
+      }
+      
+      return null;
+    } catch (error) {
+      console.warn(chalk.yellow(`⚠️  查找匹配 site 失败:`), error.message);
+      return null;
     }
   }
 }
