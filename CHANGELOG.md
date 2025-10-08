@@ -1,3 +1,9 @@
+## [2.8.1](https://github.com/cjh-store/cc-cli/compare/v2.8.0...v2.8.1) (2025-10-08)
+
+### ⚡ Performance
+
+* **项目:** 优化 banner 显示逻辑，增强 UI 模块异步处理能力 ([d7f393e](https://github.com/cjh-store/cc-cli/commit/d7f393eacbf983bbde3920de4cf753bd33fbe98c))
+
 ## [2.8.0](https://github.com/cjh-store/cc-cli/compare/v2.7.0...v2.8.0) (2025-09-30)
 
 ### ✨ Features
