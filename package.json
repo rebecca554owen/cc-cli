@@ -1,6 +1,6 @@
 {
   "name": "@rebecca554owen/cc-cli",
-  "version": "2.10.0",
+  "version": "2.12.0",
   "description": "CC CLI 终端配置管理工具 - Claude Code / Codex 配置管理",
   "main": "src/index.js",
   "type": "module",

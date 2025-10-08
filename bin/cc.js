@@ -23,6 +23,7 @@ program.addHelpText('after', `
 主要功能:
   📡 Claude 配置管理      切换、查看、添加、删除 Claude API 配置
   💻 Codex  配置管理      切换、查看、添加、删除 Codex  API 配置
+  🌊 iFlow  配置管理      切换、查看、添加、删除 iFlow API 配置
 
   📊 状态查看             查看当前使用的配置信息
 
@@ -32,6 +33,8 @@ program.addHelpText('after', `
   cc use          快速切换 Claude Code API 配置
   cc apix         Codex配置管理
   cc usex         快速切换 Codex API 配置
+  cc apii         iFlow配置管理
+  cc usei         iFlow API快速使用
 
   cc status       查看当前状态
 
@@ -40,19 +43,25 @@ program.addHelpText('after', `
   cc status            # 查看当前配置状态
   cc api               # Claude 配置管理菜单
   cc apix              # Codex 配置管理菜单
+  cc apii              # iFlow 配置管理菜单
   cc api --list        # 列出所有 Claude Code 配置
   cc apix --list       # 列出所有 Codex 配置
+  cc apii --list       # 列出所有 iFlow 配置
   cc api --switch      # 切换 Claude Code 配置
   cc apix --switch     # 切换 Codex 配置
+  cc apii --switch     # 切换 iFlow 配置
   cc api --auto        # 开启/关闭自动模式
   cc apix --auto       # 开启/关闭自动模式
+  cc apii --auto       # 开启/关闭自动模式
   cc use               # 快速切换 Claude Code 配置
   cc usex              # 快速切换 Codex 配置
+  cc usei              # 快速切换 iFlow 配置
 
 配置文件:
   ~/.cc-cli/api_configs.json    统一配置文件
   ~/.claude/settings.json       Claude Code 配置
   ~/.codex/config.toml          Codex 配置
+  ~/.iflow/config.json          iFlow 配置
 
 `);
 

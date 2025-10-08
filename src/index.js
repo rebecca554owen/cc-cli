@@ -55,6 +55,12 @@ async function showInteractiveMenu(commandRegistry) {
   if (await configManager.isFirstUse()) {
     await configManager.autoInitializeConfig();
     console.log(''); // 添加空行
+  } else {
+    // 如果不是首次使用，检查并同步所有服务配置
+    const synced = await configManager.syncAllServiceConfigs();
+    if (synced) {
+      console.log(''); // 添加空行
+    }
   }
 
   // 显示整合后的状态（包含banner信息）
@@ -76,6 +82,9 @@ async function showInteractiveMenu(commandRegistry) {
       } else if (choice === "apix") {
         // 进入Codex子菜单（子菜单自己处理循环）
         await commandRegistry.executeCommand("apix", []);
+      } else if (choice === "apii") {
+        // 进入iFlow子菜单（子菜单自己处理循环）
+        await commandRegistry.executeCommand("apii", []);
 
       } else if (choice === "backup") {
         // 进入备份子菜单（子菜单自己处理循环）

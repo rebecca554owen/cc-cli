@@ -33,7 +33,7 @@ class SwitchCommand {
       // 读取所有配置
       const allConfigs = await this.configManager.getAllConfigs();
       
-      if (!this.configManager.validateConfigStructure(allConfigs)) {
+      if (!this.configManager.validateClaudeConfig(allConfigs)) {
         spinner.fail();
         showError('配置文件格式无效');
         return false; // 配置格式无效，操作未完成
