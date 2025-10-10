@@ -90,7 +90,14 @@ async function getCurrentStatusBrief() {
       return null;
     }
 
-    let statusLines = [];
+    // 创建分割线
+    const statusText = "配置状态";
+    const totalWidth = 40;
+    const textWidth = statusText.length;
+    const dashWidth = Math.floor((totalWidth - textWidth) / 2);
+    const dividerLine = chalk.gray("╌".repeat(dashWidth) + statusText + "╌".repeat(dashWidth));
+
+    let statusLines = [dividerLine];
 
     // Claude配置信息
     if (currentConfig) {
