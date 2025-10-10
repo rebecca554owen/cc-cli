@@ -1,3 +1,9 @@
+## [2.9.0](https://github.com/cjh-store/cc-cli/compare/v2.8.1...v2.9.0) (2025-10-10)
+
+### ✨ Features
+
+* **项目:** 添加配置状态分割线展示功能 ([4ef5188](https://github.com/cjh-store/cc-cli/commit/4ef5188628c719215e661f5c48251f2f815de8e9))
+
 ## [2.8.1](https://github.com/cjh-store/cc-cli/compare/v2.8.0...v2.8.1) (2025-10-08)
 
 ### ⚡ Performance
