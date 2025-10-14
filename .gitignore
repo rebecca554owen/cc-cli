@@ -137,3 +137,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Ignore all dotfiles except .vscode
+!.vscode/
+!.github/
+.*
+!.gitignore
