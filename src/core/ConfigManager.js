@@ -287,6 +287,7 @@ class ConfigManager {
         delete currentSettings.env.ANTHROPIC_AUTH_TOKEN;
         delete currentSettings.env.ANTHROPIC_AUTH_KEY;
         delete currentSettings.env.ANTHROPIC_API_KEY;
+        delete currentSettings.env.ANTHROPIC_MODEL;
       }
       // 重置模型配置
       delete currentSettings.model;
