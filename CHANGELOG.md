@@ -1,3 +1,9 @@
+## [2.10.0](https://github.com/cjh-store/cc-cli/compare/v2.9.0...v2.10.0) (2025-10-16)
+
+### ✨ Features
+
+* **项目:** 新增删除 ANTHROPIC_MODEL 环境变量配置 ([0b3335e](https://github.com/cjh-store/cc-cli/commit/0b3335e2ffaf229ba4b82afc5b496aa12f2a0ab6))
+
 ## [2.9.0](https://github.com/cjh-store/cc-cli/compare/v2.8.1...v2.9.0) (2025-10-10)
 
 ### ✨ Features
