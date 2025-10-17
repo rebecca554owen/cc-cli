@@ -1,3 +1,9 @@
+## [2.11.0](https://github.com/cjh-store/cc-cli/compare/v2.10.0...v2.11.0) (2025-10-17)
+
+### ✨ Features
+
+* **codex:** 新增官方OAuth认证模式切换功能 ([ee39230](https://github.com/cjh-store/cc-cli/commit/ee392307a38f99f375d59d29494a9ee6c1c0d390))
+
 ## [2.10.0](https://github.com/cjh-store/cc-cli/compare/v2.9.0...v2.10.0) (2025-10-16)
 
 ### ✨ Features
