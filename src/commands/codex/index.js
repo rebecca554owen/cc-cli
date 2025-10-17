@@ -34,6 +34,7 @@ class CodexCommand {
     console.log('  🔄 切换配置    选择不同的Codex服务提供商');
     console.log('  📋 查看配置    列出所有Codex配置');
     console.log('  📝 编辑配置    编辑Codex配置文件');
+    console.log('  🔐 官方认证    切换到官方OAuth认证模式（OPENAI_API_KEY=null）');
     console.log('  🚀 YOLO模式    开启/关闭最宽松配置模式（approval_policy=never, sandbox_mode=danger-full-access）');
     console.log();
     console.log(chalk.white('配置文件:'));
@@ -44,6 +45,7 @@ class CodexCommand {
     console.log(`  ${chalk.green('cc')}                     # 启动主菜单`);
     console.log(`  ${chalk.green('选择 💻 CodexAPI')}         # 进入Codex管理`);
     console.log(`  ${chalk.green('选择切换配置')}              # 配置Codex服务`);
+    console.log(`  ${chalk.green('选择官方认证')}              # 切换OAuth认证`);
     console.log(`  ${chalk.green('选择YOLO模式')}              # 开启/关闭最宽松模式`);
   }
 
@@ -150,6 +152,11 @@ class CodexCommand {
             short: '编辑配置'
           },
           {
+            name: '🔐 使用官方认证 - 切换到官方OAuth认证模式',
+            value: 'official',
+            short: '官方认证'
+          },
+          {
             name: `${yoloActionText} ${yoloStatusText}`,
             value: 'yolo',
             short: 'YOLO模式'
@@ -181,6 +188,9 @@ class CodexCommand {
           case 'edit':
             await this.subCommands.edit.execute([]);
             break;
+          case 'official':
+            await this.useOfficialAuth();
+            break;
           case 'yolo':
             await this.toggleYoloMode();
             break;
@@ -194,6 +204,67 @@ class CodexCommand {
         console.error(chalk.red('❌ Codex菜单操作失败:'), error.message);
         // 发生错误后也直接回到菜单循环，不询问
       }
+    }
+  }
+
+  /**
+   * 使用官方认证模式（将 OPENAI_API_KEY 设置为 null）
+   */
+  async useOfficialAuth() {
+    try {
+      const fs = (await import('fs-extra')).default;
+      const path = (await import('path')).default;
+      const os = (await import('os')).default;
+
+      const codexConfigDir = path.join(os.homedir(), '.codex');
+      const codexAuthFile = path.join(codexConfigDir, 'auth.json');
+
+      console.log(chalk.yellow('\n🔐 切换到官方OAuth认证模式...'));
+
+      // 确保目录存在
+      await fs.ensureDir(codexConfigDir);
+
+      // 读取现有认证配置
+      let existingAuth = {};
+      if (await fs.pathExists(codexAuthFile)) {
+        try {
+          const content = await fs.readFile(codexAuthFile, 'utf8');
+          existingAuth = JSON.parse(content);
+          console.log(chalk.gray('✓ 读取现有认证配置'));
+        } catch (error) {
+          console.log(chalk.gray('⚠️  无法读取现有配置，将创建新文件'));
+        }
+      }
+
+      // 合并配置（保留其他字段，只更新 OPENAI_API_KEY 为 null）
+      const authConfig = {
+        ...existingAuth,
+        OPENAI_API_KEY: null
+      };
+
+      // 写入配置文件
+      await fs.writeFile(codexAuthFile, JSON.stringify(authConfig, null, 2), 'utf8');
+
+      console.log(chalk.green('✅ 已切换到官方认证模式！'));
+      console.log(chalk.blue('ℹ️  OPENAI_API_KEY 已设置为 null'));
+
+      // 如果存在 tokens 字段，提示用户
+      if (authConfig.tokens) {
+        console.log(chalk.cyan('ℹ️  将使用 OAuth tokens 进行认证'));
+      } else {
+        console.log(chalk.yellow('⚠️  注意：未检测到 OAuth tokens，请确保已完成官方登录'));
+      }
+
+      console.log(chalk.gray(`配置文件: ${codexAuthFile}`));
+
+      // 等待用户确认后返回
+      await waitForBackConfirm('认证模式切换完成');
+
+    } catch (error) {
+      console.error(chalk.red('❌ 切换官方认证模式失败:'), error.message);
+
+      // 错误情况下也等待用户确认
+      await waitForBackConfirm('操作完成');
     }
   }
 

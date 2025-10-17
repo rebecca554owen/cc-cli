@@ -424,7 +424,7 @@ class CodexSwitchCommand {
   }
 
   /**
-   * 写入认证配置文件
+   * 写入认证配置文件（合并模式，保留现有字段）
    * @param {string} token API token
    */
   async writeAuthConfig(token) {
@@ -432,11 +432,24 @@ class CodexSwitchCommand {
       // 确保目录存在
       await fs.ensureDir(this.codexConfigDir);
 
+      // 读取现有配置（如果存在）
+      let existingAuth = {};
+      if (await fs.pathExists(this.codexAuthFile)) {
+        try {
+          const content = await fs.readFile(this.codexAuthFile, 'utf8');
+          existingAuth = JSON.parse(content);
+        } catch (error) {
+          showWarning(`读取现有 auth.json 失败: ${error.message}，将创建新文件`);
+        }
+      }
+
+      // 合并配置（保留现有字段，只更新 OPENAI_API_KEY）
       const authConfig = {
+        ...existingAuth,
         OPENAI_API_KEY: token
       };
 
-      // 写入认证文件
+      // 写入合并后的认证文件
       await fs.writeFile(this.codexAuthFile, JSON.stringify(authConfig, null, 2), 'utf8');
 
     } catch (error) {
