@@ -1,3 +1,9 @@
+## [2.12.0](https://github.com/cjh-store/cc-cli/compare/v2.11.0...v2.12.0) (2025-10-19)
+
+### ✨ Features
+
+* **项目:** 新增清除第三方服务提供商配置的功能方法 ([003b0c4](https://github.com/cjh-store/cc-cli/commit/003b0c428b916c45babaa63d8ce6e43be06bd89c))
+
 ## [2.11.0](https://github.com/cjh-store/cc-cli/compare/v2.10.0...v2.11.0) (2025-10-17)
 
 ### ✨ Features
